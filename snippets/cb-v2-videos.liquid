@@ -108,26 +108,35 @@
 
         {%- comment -%} Instagram Reels {%- endcomment -%}
         {%- elsif platform == 'instagram_reels' or platform == 'instagram' -%}
-          {%- assign ig_permalink = '' -%}
+          {%- assign embed_url = '' -%}
           {%- if video_url contains '/reel/' -%}
             {%- assign video_id = video_url | split: '/reel/' | last | split: '/' | first | split: '?' | first -%}
-            {%- assign ig_permalink = 'https://www.instagram.com/reel/' | append: video_id | append: '/' -%}
+            {%- assign embed_url = 'https://www.instagram.com/reel/' | append: video_id | append: '/embed/' -%}
           {%- elsif video_url contains '/p/' -%}
             {%- assign video_id = video_url | split: '/p/' | last | split: '/' | first | split: '?' | first -%}
-            {%- assign ig_permalink = 'https://www.instagram.com/p/' | append: video_id | append: '/' -%}
+            {%- assign embed_url = 'https://www.instagram.com/p/' | append: video_id | append: '/embed/' -%}
           {%- endif -%}
 
-          {%- if ig_permalink != blank -%}
-            <div class="cb-video-card cb-video-card--instagram-embed">
-              <blockquote
-                class="instagram-media"
-                data-instgrm-captioned
-                data-instgrm-permalink="{{ ig_permalink }}?utm_source=ig_embed"
-                data-instgrm-version="14"
-                style="background:#FFF; border:0; border-radius:16px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 0; max-width:100%; min-width:280px; padding:0; width:100%;">
-              </blockquote>
+          {%- if embed_url != blank -%}
+            <div class="cb-video-card cb-video-card--portrait cb-video-card--instagram">
+              <div class="cb-video-card__wrapper">
+                <iframe
+                  src="{{ embed_url }}"
+                  class="cb-video-card__iframe cb-video-card__iframe--instagram"
+                  frameborder="0"
+                  scrolling="no"
+                  allowtransparency="true"
+                  allowfullscreen
+                  loading="lazy"
+                  title="Instagram Reel"
+                ></iframe>
+              </div>
+              <div class="cb-video-card__platform cb-video-card__platform--instagram">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </div>
             </div>
-            {%- assign has_instagram = true -%}
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
@@ -221,24 +230,16 @@
     color: #fff;
   }
 
-  /* Instagram Embed Card - full width for proper rendering */
-  .cb-video-card--instagram-embed {
-    grid-column: 1 / -1;
-    background: transparent;
-    box-shadow: none;
-    border-radius: 16px;
-    overflow: hidden;
+  /* Instagram Reel iframe - hide header/footer, show only video */
+  .cb-video-card--instagram {
+    background: #000;
   }
 
-  .cb-video-card--instagram-embed:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  .cb-video-card--instagram-embed .instagram-media {
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
+  .cb-video-card__iframe--instagram {
+    width: 100%;
+    height: 180%; /* Overflow to crop header/footer */
+    margin-top: -40%; /* Shift up to hide header */
+    border: none;
   }
 
   /* Mobile adjustments */
@@ -265,7 +266,3 @@
   }
 </style>
 
-{%- comment -%} Instagram Embed Script - only load if we have Instagram content {%- endcomment -%}
-{%- if has_instagram -%}
-  <script async src="//www.instagram.com/embed.js"></script>
-{%- endif -%}
