@@ -2839,6 +2839,38 @@ font-weight: var(--cb-weight-normal);
 }
 
 /* ============================================
+   HERO ALIGNMENT - CENTER
+   ============================================ */
+.cb-hero__content--center {
+  text-align: center;
+  align-items: center;
+}
+
+.cb-hero__content--center .cb-hero__badges {
+  justify-content: center;
+}
+
+.cb-hero__content--center .cb-hero__bio {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================
+   ONE PAGE SECTION HEADERS
+   ============================================ */
+.cb-section-header {
+  padding: 32px 20px 12px;
+}
+
+.cb-section-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--cb-text-dark);
+  margin: 0;
+}
+
+/* ============================================
    RESPONSIVE (Desktop centering)
    ============================================ */
 

@@ -146,16 +146,18 @@
   data-creator="{{ username }}"
   data-user-id="{{ user_id }}"
   data-collection="{{ collection_handle }}"
+  data-alignment="{{ section.settings.text_alignment }}"
+  data-nav-style="{{ section.settings.navigation_style }}"
   style="
-    --cb-bg-primary: #D4C4A8;
-    --cb-bg-secondary: #C9B896;
-    --cb-text-dark: #3C3226;
-    --cb-text-medium: #5C4D3C;
-    --cb-text-light: #8B7D6B;
-    --cb-text-muted: #A99B8A;
+    --cb-bg-primary: {{ section.settings.bg_primary }};
+    --cb-bg-secondary: {{ section.settings.bg_secondary }};
+    --cb-text-dark: {{ section.settings.text_dark }};
+    --cb-text-medium: {{ section.settings.text_dark | color_modify: 'alpha', 0.7 }};
+    --cb-text-light: {{ section.settings.text_dark | color_modify: 'alpha', 0.5 }};
+    --cb-text-muted: {{ section.settings.text_dark | color_modify: 'alpha', 0.4 }};
     --cb-card-bg: rgba(255,255,255,0.7);
     --cb-border: rgba(92,77,60,0.15);
-    --cb-accent: #1A1A1A;
+    --cb-accent: {{ section.settings.accent_color }};
   "
 >
 
@@ -168,7 +170,9 @@
     avatar_url: avatar_url,
     b_score: b_score,
     b_score_reviews: b_score_reviews,
-    enable_email_signup: enable_email_signup
+    enable_email_signup: enable_email_signup,
+    text_alignment: section.settings.text_alignment,
+    name_single_line: section.settings.name_single_line
   -%}
 
   {%- comment -%} ========== CONTENT AREA ========== {%- endcomment -%}
@@ -188,7 +192,8 @@
       enable_music_player: enable_music_player,
       music_player_title: music_player_title,
       music_player_theme: music_player_theme,
-      music_items: music_items
+      music_items: music_items,
+      navigation_style: section.settings.navigation_style
     -%}
   </div>
 
@@ -275,6 +280,56 @@
       "type": "collection",
       "id": "collection",
       "label": "Product Collection (fallback)"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Hero Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "name_single_line",
+      "label": "Display name on single line",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "navigation_style",
+      "label": "Bottom Navigation Style",
+      "options": [
+        { "value": "tabs", "label": "Tabs" },
+        { "value": "onepage", "label": "One Page Scroll" }
+      ],
+      "default": "tabs"
+    },
+    {
+      "type": "color",
+      "id": "bg_primary",
+      "label": "Background Primary",
+      "default": "#D4C4A8"
+    },
+    {
+      "type": "color",
+      "id": "bg_secondary",
+      "label": "Background Secondary",
+      "default": "#C9B896"
+    },
+    {
+      "type": "color",
+      "id": "text_dark",
+      "label": "Text Color",
+      "default": "#3C3226"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#1A1A1A"
     }
   ],
   "presets": [

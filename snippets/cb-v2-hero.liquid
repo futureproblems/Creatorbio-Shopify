@@ -41,14 +41,18 @@
   {%- endif -%}
 
   {%- comment -%} Creator Info {%- endcomment -%}
-  <div class="cb-hero__content">
-    {%- comment -%} Name - split into words for styling {%- endcomment -%}
-    {%- assign name_words = creator_name | split: ' ' -%}
-    <h1 class="cb-hero__name">
-      {%- for word in name_words -%}
-        <span class="cb-hero__name-word">{{ word }}</span>
-      {%- endfor -%}
-    </h1>
+  <div class="cb-hero__content{% if text_alignment == 'center' %} cb-hero__content--center{% endif %}">
+    {%- comment -%} Name {%- endcomment -%}
+    {%- if name_single_line -%}
+      <h1 class="cb-hero__name">{{ creator_name }}</h1>
+    {%- else -%}
+      {%- assign name_words = creator_name | split: ' ' -%}
+      <h1 class="cb-hero__name">
+        {%- for word in name_words -%}
+          <span class="cb-hero__name-word">{{ word }}</span>
+        {%- endfor -%}
+      </h1>
+    {%- endif -%}
 
     {%- comment -%} Badge Pills {%- endcomment -%}
     {%- if creator_tags != blank and creator_tags.size > 0 -%}
@@ -58,7 +62,6 @@
         {%- endfor -%}
       </div>
     {%- else -%}
-      {%- comment -%} Default badges if none specified {%- endcomment -%}
       <div class="cb-hero__badges">
         <span class="cb-badge">Creator</span>
       </div>
