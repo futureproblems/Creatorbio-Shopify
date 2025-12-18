@@ -9,6 +9,7 @@
   - collection: Shopify collection object
   - categories_array: Array of category strings
   - links_json: JSON string of links
+  - videos_json: JSON string of video embeds (YouTube, TikTok, etc.)
   - social_stats: Social stats object
   - instagram_url, tiktok_url, youtube_url, twitter_url: Social URLs
   - enable_music_player: Boolean to enable music player
@@ -273,6 +274,13 @@
     </div>
 
     <div class="cb-section-header">
+      <h3 class="cb-section-title">Videos</h3>
+    </div>
+    <div class="cb-tab-content" data-tab-content="videos">
+      {%- render 'cb-v2-videos', videos_json: videos_json -%}
+    </div>
+
+    <div class="cb-section-header">
       <h3 class="cb-section-title">Exclusive</h3>
     </div>
     <div class="cb-tab-content" data-tab-content="exclusive">
@@ -291,6 +299,7 @@
     <div class="cb-bottom-tabs">
       <button class="cb-bottom-tab active" data-tab="socials">SOCIALS</button>
       <button class="cb-bottom-tab" data-tab="links">LINKS</button>
+      <button class="cb-bottom-tab" data-tab="videos">VIDEOS</button>
       <button class="cb-bottom-tab" data-tab="exclusive">EXCLUSIVE</button>
       <button class="cb-bottom-tab" data-tab="reviews">REVIEWS</button>
     </div>
@@ -331,6 +340,10 @@
       {%- else -%}
         <div class="cb-empty-state cb-empty-state--small"><p>No links added yet.</p></div>
       {%- endif -%}
+    </div>
+
+    <div class="cb-tab-content" data-tab-content="videos" style="display: none;">
+      {%- render 'cb-v2-videos', videos_json: videos_json -%}
     </div>
 
     <div class="cb-tab-content" data-tab-content="exclusive" style="display: none;">
