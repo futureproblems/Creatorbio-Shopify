@@ -1,0 +1,186 @@
+<script>
+(function() {
+  'use strict';
+  
+  // Check if we have creator pricing in session
+  const creatorRef = sessionStorage.getItem('creator_ref');
+const pricingDelta = parseFloat(sessionStorage.getItem('pricing_delta') || 0) / 100; // Convert percentage to decimal
+  const timestamp = sessionStorage.getItem('pricing_timestamp');
+  const creatorProductsJson = sessionStorage.getItem('creator_products');
+  
+  // Only apply if session is less than 24 hours old
+  const sessionAge = Date.now() - parseInt(timestamp || 0);
+  const maxAge = 24 * 60 * 60 * 1000;
+  
+  if (!creatorRef || !pricingDelta || !creatorProductsJson || sessionAge > maxAge) {
+    return; // No active creator session
+  }
+  
+  const creatorProducts = JSON.parse(creatorProductsJson);
+  const isProductPage = window.location.pathname.indexOf('/products/') !== -1;
+  const isCollectionPage = window.location.pathname.indexOf('/collections/') !== -1;
+  
+  // Only run on product or collection pages
+  if (!isProductPage && !isCollectionPage) {
+    return;
+  }
+  
+  console.log('Dynamic pricing active:', {
+    creator: creatorRef,
+delta: `${pricingDelta.toFixed(2)}%`, // pricingDelta is now in percentage form
+    shadowProducts: creatorProducts.length,
+    pageType: isProductPage ? 'product' : 'collection'
+  });
+  
+  // Apply pricing on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    if (isProductPage) {
+      applyProductPagePricing();
+      addCreatorBadge();
+    } else if (isCollectionPage) {
+      applyCollectionPagePricing();
+    }
+  });
+  
+  function applyProductPagePricing() {
+    const currentProductId = getCurrentProductId();
+    
+    if (!currentProductId) {
+      console.log('Could not determine product ID');
+      return;
+    }
+    
+    // Only apply if this specific product is in the creator's shadow product list
+    if (!creatorProducts.includes(currentProductId)) {
+      console.log('Product not in creator collection, skipping pricing');
+      return;
+    }
+    
+    console.log('Applying product page pricing for:', currentProductId);
+    
+    // Target specific price elements
+    const priceSelectors = [
+      '.price__regular .price-item--regular',
+      '.price-item--regular',
+      '.product__price',
+      '[data-product-price]'
+    ];
+    
+    priceSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      
+      elements.forEach(element => {
+        const text = element.textContent;
+        const priceMatch = text.match(/\$?([\d,]+\.?\d*)/);
+        
+        if (priceMatch) {
+          const basePrice = parseFloat(priceMatch[1].replace(',', ''));
+          
+          if (basePrice < 10) return;
+          
+          const newPrice = basePrice * (1 + pricingDelta);
+          element.textContent = `$${newPrice.toFixed(2)}`;
+          element.dataset.dynamicPrice = 'true';
+        }
+      });
+    });
+  }
+  
+  function applyCollectionPagePricing() {
+    console.log('Applying collection page pricing');
+    
+    // Find all product cards
+    const productCards = document.querySelectorAll('.card-wrapper, .product-card, [data-product-id]');
+    
+    productCards.forEach(card => {
+      const productId = card.dataset.productId || 
+                        card.querySelector('[data-product-id]')?.dataset.productId;
+      
+      // Only apply if product is in creator's shadow product list
+      if (!productId || !creatorProducts.includes(productId)) {
+        return;
+      }
+      
+      // Find price element within this card
+      const priceElement = card.querySelector('.price, .card__information .price-item, [class*="price"]');
+      
+      if (!priceElement) return;
+      
+      const text = priceElement.textContent;
+      const priceMatch = text.match(/\$?([\d,]+\.?\d*)/);
+      
+      if (priceMatch) {
+        const basePrice = parseFloat(priceMatch[1].replace(',', ''));
+        
+        if (basePrice < 10) return;
+        
+        const newPrice = basePrice * (1 + pricingDelta);
+        
+        // Replace price in the element
+        priceElement.innerHTML = priceElement.innerHTML.replace(
+          priceMatch[0],
+          `$${newPrice.toFixed(2)}`
+        );
+        
+        priceElement.dataset.dynamicPrice = 'true';
+        
+        // Add demand indicator
+        const indicator = document.createElement('span');
+        indicator.textContent = ' 🔥';
+        indicator.style.fontSize = '0.9em';
+        priceElement.appendChild(indicator);
+        
+        console.log(`Applied pricing to product ${productId}: $${basePrice} → $${newPrice.toFixed(2)}`);
+      }
+    });
+  }
+  
+  function getCurrentProductId() {
+    // Try multiple methods to get product ID
+    if (typeof ShopifyAnalytics !== 'undefined' && 
+        ShopifyAnalytics.meta?.product?.id) {
+      return ShopifyAnalytics.meta.product.id.toString();
+    }
+    
+    const productElement = document.querySelector('[data-product-id]');
+    if (productElement) {
+      return productElement.dataset.productId;
+    }
+    
+    const jsonLd = document.querySelector('script[type="application/ld+json"]');
+    if (jsonLd) {
+      try {
+        const data = JSON.parse(jsonLd.textContent);
+        if (data.productID) {
+          return data.productID.toString();
+        }
+      } catch (e) {}
+    }
+    
+    return null;
+  }
+  
+  function addCreatorBadge() {
+    if (document.getElementById('creator-attribution-badge')) return;
+    
+    const badge = document.createElement('div');
+    badge.id = 'creator-attribution-badge';
+    badge.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: system-ui, -apple-system, sans-serif;
+      z-index: 9999;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    badge.textContent = `Curated by ${creatorRef}`;
+    document.body.appendChild(badge);
+  }
+})();
+</script>

@@ -1,0 +1,329 @@
+{%- comment -%}
+  CB Commerce V2 - Social Proof Cards Component
+  Native video uploads with follower counts overlaid
+
+  Required variables:
+  - social_stats: JSON object with platform stats
+    Example: { "instagram": { "followers": "2.5M" }, ... }
+  - social_proof_cards: JSON object with uploaded video URLs
+    Example: { "instagram": { "videoUrl": "...", "profileUrl": "..." }, ... }
+  - instagram_url, tiktok_url, youtube_url, twitter_url: Social URLs (fallbacks)
+{%- endcomment -%}
+
+{%- comment -%} Extract video URLs {%- endcomment -%}
+{%- assign ig_video_url = social_proof_cards.instagram.videoUrl -%}
+{%- assign ig_profile_url = social_proof_cards.instagram.profileUrl | default: instagram_url -%}
+{%- assign tt_video_url = social_proof_cards.tiktok.videoUrl -%}
+{%- assign tt_profile_url = social_proof_cards.tiktok.profileUrl | default: tiktok_url -%}
+{%- assign yt_video_url = social_proof_cards.youtube.videoUrl -%}
+{%- assign yt_channel_url = social_proof_cards.youtube.channelUrl | default: youtube_url -%}
+
+{%- comment -%} Get follower counts {%- endcomment -%}
+{%- assign ig_followers = social_stats.instagram.followers | default: '-' -%}
+{%- assign tt_followers = social_stats.tiktok.followers | default: '-' -%}
+{%- assign yt_subscribers = social_stats.youtube.followers | default: '-' -%}
+
+{%- comment -%} Check if we have any social content to show {%- endcomment -%}
+{%- assign has_instagram = false -%}
+{%- if ig_video_url != blank or instagram_url != blank or social_stats.instagram != blank -%}
+  {%- assign has_instagram = true -%}
+{%- endif -%}
+
+{%- assign has_tiktok = false -%}
+{%- if tt_video_url != blank or tiktok_url != blank or social_stats.tiktok != blank -%}
+  {%- assign has_tiktok = true -%}
+{%- endif -%}
+
+{%- assign has_youtube = false -%}
+{%- if yt_video_url != blank -%}
+  {%- assign has_youtube = true -%}
+{%- endif -%}
+
+{%- assign has_any_social = false -%}
+{%- if has_instagram or has_tiktok or has_youtube -%}
+  {%- assign has_any_social = true -%}
+{%- endif -%}
+
+{%- if has_any_social -%}
+  <div class="cb-social-proof">
+
+    {%- comment -%} ========== Instagram & TikTok - 2 Column Grid (9:16) ========== {%- endcomment -%}
+    {%- if has_instagram or has_tiktok -%}
+      <div class="cb-social-proof__grid">
+
+        {%- comment -%} Instagram Card {%- endcomment -%}
+        {%- if has_instagram -%}
+          <a href="{{ ig_profile_url | default: '#' }}"
+             class="cb-social-card cb-social-card--portrait"
+             target="_blank"
+             rel="noopener noreferrer">
+
+            {%- comment -%} Video Layer {%- endcomment -%}
+            <div class="cb-social-card__video">
+              {%- if ig_video_url != blank -%}
+                <video
+                  src="{{ ig_video_url }}"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  class="cb-social-card__video-el"
+                ></video>
+              {%- else -%}
+                <div class="cb-social-card__fallback cb-social-card__fallback--instagram"></div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} Gradient Overlay {%- endcomment -%}
+            <div class="cb-social-card__overlay"></div>
+
+            {%- comment -%} Platform Icon {%- endcomment -%}
+            <div class="cb-social-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0z"/>
+              </svg>
+            </div>
+
+            {%- comment -%} Stats {%- endcomment -%}
+            <div class="cb-social-card__stats">
+              <span class="cb-social-card__count">{{ ig_followers }}</span>
+              <span class="cb-social-card__label">FOLLOWERS</span>
+            </div>
+          </a>
+        {%- endif -%}
+
+        {%- comment -%} TikTok Card {%- endcomment -%}
+        {%- if has_tiktok -%}
+          <a href="{{ tt_profile_url | default: '#' }}"
+             class="cb-social-card cb-social-card--portrait"
+             target="_blank"
+             rel="noopener noreferrer">
+
+            {%- comment -%} Video Layer {%- endcomment -%}
+            <div class="cb-social-card__video">
+              {%- if tt_video_url != blank -%}
+                <video
+                  src="{{ tt_video_url }}"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  class="cb-social-card__video-el"
+                ></video>
+              {%- else -%}
+                <div class="cb-social-card__fallback cb-social-card__fallback--tiktok">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="white" opacity="0.3">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                </div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} Gradient Overlay {%- endcomment -%}
+            <div class="cb-social-card__overlay"></div>
+
+            {%- comment -%} Platform Icon {%- endcomment -%}
+            <div class="cb-social-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </div>
+
+            {%- comment -%} Stats {%- endcomment -%}
+            <div class="cb-social-card__stats">
+              <span class="cb-social-card__count">{{ tt_followers }}</span>
+              <span class="cb-social-card__label">FOLLOWERS</span>
+            </div>
+          </a>
+        {%- endif -%}
+
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ========== YouTube Card - Full Width (16:9) ========== {%- endcomment -%}
+    {%- if has_youtube -%}
+      <a href="{{ yt_channel_url | default: '#' }}"
+         class="cb-social-card cb-social-card--landscape"
+         target="_blank"
+         rel="noopener noreferrer">
+
+        {%- comment -%} Video Layer {%- endcomment -%}
+        <div class="cb-social-card__video">
+          <video
+            src="{{ yt_video_url }}"
+            autoplay
+            loop
+            muted
+            playsinline
+            class="cb-social-card__video-el"
+          ></video>
+        </div>
+
+        {%- comment -%} Gradient Overlay {%- endcomment -%}
+        <div class="cb-social-card__overlay"></div>
+
+        {%- comment -%} Platform Icon {%- endcomment -%}
+        <div class="cb-social-card__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+        </div>
+
+        {%- comment -%} Stats {%- endcomment -%}
+        <div class="cb-social-card__stats">
+          <span class="cb-social-card__count">{{ yt_subscribers }}</span>
+          <span class="cb-social-card__label">SUBSCRIBERS</span>
+        </div>
+      </a>
+    {%- endif -%}
+
+  </div>
+
+{%- else -%}
+  {%- comment -%} Empty State {%- endcomment -%}
+  <div class="cb-empty-state cb-empty-state--small">
+    <p>No social profiles connected yet.</p>
+  </div>
+{%- endif -%}
+
+<style>
+  /* Social Proof Cards Container */
+  .cb-social-proof {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 2-Column Grid for Instagram & TikTok */
+  .cb-social-proof__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Base Card Styles */
+  .cb-social-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #1A1A1A;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+
+  .cb-social-card:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Portrait Cards (9:16) - Instagram & TikTok */
+  .cb-social-card--portrait {
+    aspect-ratio: 9/16;
+  }
+
+  /* Landscape Card (16:9) - YouTube */
+  .cb-social-card--landscape {
+    aspect-ratio: 16/9;
+    grid-column: 1 / -1;
+  }
+
+  /* Video Container */
+  .cb-social-card__video {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Native Video Element */
+  .cb-social-card__video-el {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Fallback backgrounds */
+  .cb-social-card__fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cb-social-card__fallback--instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  }
+
+  .cb-social-card__fallback--tiktok {
+    background: #000;
+  }
+
+  /* Gradient Overlay */
+  .cb-social-card__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(180deg, transparent 0%, transparent 30%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.8) 100%);
+    pointer-events: none;
+  }
+
+  /* Platform Icon - Bottom Left */
+  .cb-social-card__icon {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 20;
+    color: #FFFFFF;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+  }
+
+  .cb-social-card:hover .cb-social-card__icon {
+    transform: scale(1.15);
+  }
+
+  /* Stats - Bottom Right */
+  .cb-social-card__stats {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 20;
+    text-align: right;
+    pointer-events: none;
+  }
+
+  .cb-social-card__count {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .cb-social-card__label {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 400px) {
+    .cb-social-card__count {
+      font-size: 18px;
+    }
+
+    .cb-social-card__icon svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+</style>

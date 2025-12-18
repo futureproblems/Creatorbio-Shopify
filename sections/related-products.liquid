@@ -1,0 +1,438 @@
+{% comment %}
+  Trending Products Section for Shopify
+  Save this as: sections/trending-products.liquid
+{% endcomment %}
+
+{{ 'trending-products.css' | asset_url | stylesheet_tag }}
+
+<div class="trending-section" data-section-id="{{ section.id }}" style="padding: 40px 0; background: {{ section.settings.background_color }};">
+  <div class="trending-container" style="width: 100%;">
+    
+    {% if section.settings.title != blank %}
+      <h2 class="section-title" style="text-align: center; font-size: 1rem; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem; color: {{ section.settings.text_color }}; padding: 0 20px;">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+    
+    <div class="carousel-wrapper" style="position: relative;">
+      
+      <div class="carousel-container" style="overflow-x: auto; overflow-y: hidden; position: relative; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; scroll-snap-type: x mandatory; scroll-behavior: smooth;">
+        <div class="products-grid" data-carousel-grid style="display: flex; gap: 0; transition: none; padding: 10px 0; will-change: transform;">
+          
+          {% if section.settings.collection != blank %}
+            {% assign collection = collections[section.settings.collection] %}
+            {% assign products_list = collection.products %}
+          {% else %}
+            {% assign products_list = collections.all.products %}
+          {% endif %}
+          
+          {% for product in products_list limit: section.settings.products_to_show %}
+            {%- comment -%} determine size option index for the quick tray {%- endcomment -%}
+            {% assign size_index = -1 %}
+            {% for opt in product.options_with_values %}
+              {% assign _n = opt.name | downcase %}
+              {% if _n == 'size' %}
+                {% assign size_index = forloop.index0 %}
+              {% endif %}
+            {% endfor %}
+
+            <div class="product-card" data-product-id="{{ product.id }}" style="flex: 0 0 25%; min-width: 250px; cursor: pointer; transition: transform 0.3s ease;">
+              
+              {%- comment -%} Product Image {%- endcomment -%}
+              <div class="product-image-wrapper" style="position: relative; margin-bottom: 10px; overflow: hidden; background: #fff;">
+                <a class="pc-media" href="{{ product.url }}" style="display: block; text-decoration: none;">
+                  {% if product.featured_image %}
+                    <img 
+                      src="{{ product.featured_image | image_url: width: 500 }}"
+                      srcset="{{ product.featured_image | image_url: width: 300 }} 300w,
+                              {{ product.featured_image | image_url: width: 500 }} 500w,
+                              {{ product.featured_image | image_url: width: 700 }} 700w"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      style="width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {% endif %}
+                </a>
+
+                {%- comment -%} QUICK CART TRAY (matches Featured Collection) {%- endcomment -%}
+                <div class="pc-quick">
+                  <p class="pc-quick__title" aria-hidden="true"></p>
+                  <div class="pc-sizes">
+                    {% if product.has_only_default_variant %}
+                      <button class="pc-single"
+                              data-variant="{{ product.first_available_variant.id }}"
+                              {% unless product.first_available_variant.available %}disabled{% endunless %}>
+                        Add to cart
+                      </button>
+                    {% else %}
+                      {% assign seen_sizes = '' %}
+                      {% for v in product.variants %}
+                        {% assign label = v.title %}
+                        {% if size_index != -1 %}
+                          {% assign label = v.options[size_index] %}
+                        {% endif %}
+                        {% unless seen_sizes contains label %}
+                          {% assign seen_sizes = seen_sizes | append: label | append: ',' %}
+                          <button data-variant="{{ v.id }}" {% unless v.available %}disabled{% endunless %}>{{ label }}</button>
+                        {% endunless %}
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+                {%- comment -%} /QUICK CART TRAY {%- endcomment -%}
+              </div>
+              
+              {%- comment -%} Product Info {%- endcomment -%}
+              <div class="product-info" style="padding: 0 10px; display: flex; flex-direction: column; gap: 5px;">
+                
+                {%- comment -%} Title and Price on same line {%- endcomment -%}
+                <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; white-space: nowrap;">
+                  <a href="{{ product.url }}" class="product-title" style="font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: {{ section.settings.text_color }}; line-height: 1.2; text-decoration: none; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">
+                    {{ product.title }}
+                  </a>
+                  
+                  <div class="product-price" style="font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: {{ section.settings.text_color }}; opacity: 0.65; flex-shrink: 0;">
+                    {% if product.compare_at_price > product.price %}
+                      <span style="color: #C90404;">{{ product.price | money }}</span>
+                    {% else %}
+                      {{ product.price | money }}
+                    {% endif %}
+                  </div>
+                </div>
+                
+                {%- comment -%} Color Swatches {%- endcomment -%}
+                {% if product.has_only_default_variant == false %}
+                  {% assign color_option = null %}
+                  {% for option in product.options_with_values %}
+                    {% assign option_name_downcase = option.name | downcase %}
+                    {% if option_name_downcase contains 'color' or option_name_downcase contains 'colour' %}
+                      {% assign color_option = option %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {% if color_option %}
+                    <div class="color-swatches" style="display: flex; gap: 3px; margin-top: 3px;">
+                      {% for value in color_option.values limit: 4 %}
+                        {% assign variant = product.variants | where: color_option.name, value | first %}
+                        {% if variant %}
+                          <div 
+                            class="color-swatch {% if forloop.first %}selected{% endif %}"
+                            style="width: 16px; height: 16px; border-radius: 50%; border: 1px solid #ccc; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 0 1px #fff, 0 0 0 2px {% if forloop.first %}#000{% else %}#ccc{% endif %}; background: {% if value contains 'Black' or value contains 'black' %}#000{% elsif value contains 'White' or value contains 'white' %}#fff{% elsif value contains 'Beige' or value contains 'beige' %}#c0a68b{% elsif value contains 'Ivory' or value contains 'ivory' %}#e7e9e7{% elsif value contains 'Grey' or value contains 'gray' %}#bebcbd{% elsif value contains 'Brown' %}#936b4f{% elsif value contains 'Blue' %}#00539c{% elsif value contains 'Green' %}#008c4d{% elsif value contains 'Red' %}#bf1932{% elsif value contains 'Pink' %}#d23c77{% elsif value contains 'Gold' %}#c8b273{% elsif value contains 'Cream' %}#f0eada{% else %}#e0e0e0{% endif %};"
+                            data-variant-id="{{ variant.id }}"
+                            {% if variant.featured_image %}
+                              data-image-url="{{ variant.featured_image | image_url: width: 500 }}"
+                            {% endif %}
+                            title="{{ value }}"
+                          ></div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endif %}
+                
+              </div>
+            </div>
+          {% endfor %}
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Hide scrollbar but keep functionality */
+  .carousel-container::-webkit-scrollbar { display: none; }
+  .carousel-container { scrollbar-width: none; -ms-overflow-style: none; }
+  
+  /* Product card snap on scroll */
+  .product-card { scroll-snap-align: start; }
+  
+  /* Hover Effects */
+  .product-card:hover { transform: translateY(-5px); }
+  /* (old icon button removed) .product-card:hover .quick-add-btn { opacity: 1 !important; } */
+  .product-title:hover { opacity: 0.7; }
+  .color-swatch:hover { box-shadow: 0 0 0 1px #fff, 0 0 0 2px #000 !important; }
+  
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .product-card { flex: 0 0 33.333% !important; min-width: 200px !important; }
+    .product-title, .product-price { font-size: 10px !important; }
+  }
+  @media (max-width: 768px) {
+    .product-card { flex: 0 0 50% !important; min-width: 150px !important; }
+    .product-title, .product-price { font-size: 9px !important; }
+    .section-title { font-size: 0.85rem !important; }
+    .color-swatch { width: 14px !important; height: 14px !important; }
+  }
+  @media (min-width: 769px) {
+    .product-title, .product-price { font-size: 12px !important; }
+    .section-title { font-size: 1.2rem !important; }
+  }
+  @media (min-width: 1200px) {
+    .product-title, .product-price { font-size: 13px !important; }
+    .section-title { font-size: 1.4rem !important; }
+  }
+
+  /* ===== QUICK CART TRAY (same as Featured Collection) ===== */
+  .product-image-wrapper { position: relative; }
+  .pc-quick{
+    position:absolute; left:50%; bottom:10px;
+    transform:translate(-50%, 100%);
+    transition:transform .2s ease, opacity .2s ease;
+    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    background:rgba(248,248,248,.8);
+    padding:6px 12px;
+    z-index:2; display:flex; align-items:center; gap:8px;
+    border-radius:18px; border:1px solid rgba(0,0,0,.06); opacity:0;
+    pointer-events:none; /* parent image still scrollable/tappable */
+  }
+  /* desktop reveal on hover */
+  @media (hover:hover) and (pointer:fine){
+    .product-card:hover .pc-quick{ transform:translate(-50%, 0); opacity:1; pointer-events:auto; }
+  }
+  /* mobile reveal when armed */
+  .product-card.in-view .pc-quick{ transform:translate(-50%, 0); opacity:1; pointer-events:auto; }
+
+  .pc-quick__title{ display:none; }
+
+  .pc-sizes{
+    display:flex; flex-wrap:nowrap; gap:8px; justify-content:center;
+    overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .pc-sizes::-webkit-scrollbar{ display:none; }
+
+  .pc-sizes button, .pc-sizes .pc-single{
+    appearance:none; border:0; padding:6px 10px;
+    border-radius:6px; background:#fff;
+    font-weight:600; font-size:12px; line-height:1;
+    cursor:pointer; -webkit-tap-highlight-color:transparent; white-space:nowrap;
+  }
+  .pc-sizes button:disabled{ background:#e9e9e9; color:#9aa1a9; cursor:not-allowed; }
+  .pc-sizes button:hover:not(:disabled),
+  .pc-sizes button:focus:not(:disabled),
+  .pc-sizes button:active:not(:disabled),
+  .pc-sizes .pc-single:hover:not(:disabled),
+  .pc-sizes .pc-single:focus:not(:disabled),
+  .pc-sizes .pc-single:active:not(:disabled){
+    background:#f3f3f3 !important; color:#111 !important; -webkit-text-fill-color:#111 !important;
+  }
+
+  /* ===== iPad/iOS Safari text color override (Trending section only) ===== */
+  @supports (-webkit-touch-callout: none) {
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-sizes button,
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-single,
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-sizes button *,
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-single * {
+      color:#000 !important;
+      -webkit-text-fill-color:#000 !important;
+      text-shadow:none !important;
+      mix-blend-mode:normal !important;
+    }
+
+    /* keep black on interaction states as well */
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-sizes button:hover:not(:disabled),
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-sizes button:active:not(:disabled),
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-sizes button:focus-visible:not(:disabled),
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-single:hover:not(:disabled),
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-single:active:not(:disabled),
+    [data-section-id="{{ section.id }}"] .pc-quick .pc-single:focus-visible:not(:disabled) {
+      color:#000 !important;
+      -webkit-text-fill-color:#000 !important;
+      text-shadow:none !important;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!section) return;
+    
+    // ===== Existing: Color swatches & basic behaviors =====
+
+    // Color Swatch Functionality (unchanged, with tiny addition to support single-button tray)
+    section.querySelectorAll('.color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        const swatches = this.parentElement.querySelectorAll('.color-swatch');
+        swatches.forEach(s => {
+          s.classList.remove('selected');
+          s.style.boxShadow = '0 0 0 1px #fff, 0 0 0 2px #ccc';
+        });
+        
+        this.classList.add('selected');
+        this.style.boxShadow = '0 0 0 1px #fff, 0 0 0 2px #000';
+        
+        const variantId = this.dataset.variantId;
+        const imageUrl = this.dataset.imageUrl;
+        const card = this.closest('.product-card');
+        
+        if (imageUrl) {
+          const img = card.querySelector('img');
+          if (img) img.src = imageUrl;
+        }
+
+        // If this product has a single quick-add button in the tray, update it to the selected color
+        const single = card.querySelector('.pc-quick .pc-single');
+        if (single && variantId) single.dataset.variant = variantId;
+      });
+    });
+
+    // ===== QUICK CART tray behaviors (matches Featured Collection) =====
+    const TAP_MAX_MOVE = 8;
+    const ARM_TIMEOUT  = 1500;
+
+    function dismissTrays(){
+      section.querySelectorAll('.product-card.in-view').forEach(el=>el.classList.remove('in-view'));
+    }
+
+    // Two-tap mobile: first tap shows tray on that card, second tap navigates
+    section.querySelectorAll('.pc-media').forEach(media=>{
+      const card = media.closest('.product-card');
+      if (!card) return;
+
+      // Desktop: default anchor behavior
+      if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+
+      let sx=0, sy=0, moved=false;
+
+      media.addEventListener('touchstart', (e)=>{
+        if (e.target.closest('.pc-sizes button,.pc-single')) return;
+        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
+      }, {passive:true});
+
+      media.addEventListener('touchmove', (e)=>{
+        const t=e.touches[0];
+        if (Math.abs(t.clientX - sx) > TAP_MAX_MOVE || Math.abs(t.clientY - sy) > TAP_MAX_MOVE) moved = true;
+      }, {passive:true});
+
+      media.addEventListener('touchend', (e)=>{
+        if (e.target.closest('.pc-sizes button,.pc-single')) return;
+        if (moved) return;
+        e.preventDefault(); e.stopPropagation();
+
+        if (card.classList.contains('in-view')) {
+          window.location.href = media.getAttribute('href'); // second tap -> navigate
+        } else {
+          section.querySelectorAll('.product-card.in-view').forEach(el=>{ if(el!==card) el.classList.remove('in-view'); });
+          card.classList.add('in-view');
+          clearTimeout(card._armTimer);
+          card._armTimer = setTimeout(()=>card.classList.remove('in-view'), ARM_TIMEOUT);
+        }
+      }, {passive:false});
+
+      // Prevent synthetic click on mobile
+      media.addEventListener('click', (e)=>{
+        if (window.matchMedia('(hover:none)').matches){
+          e.preventDefault(); e.stopPropagation();
+        }
+      }, {passive:false});
+    });
+
+    document.addEventListener('touchstart', (e)=>{
+      if (!e.target.closest('[data-section-id="{{ section.id }}"] .product-card')) {
+        dismissTrays();
+      }
+    }, {passive:true});
+
+    // Add-to-cart using tray buttons
+    async function addToCart(variantId, btn, ev){
+      if (ev){ ev.preventDefault(); ev.stopPropagation(); }
+      if (!variantId || btn.dataset.loading === '1') return;
+
+      const card = btn.closest('.product-card');
+      const original = btn.dataset.label || (btn.textContent || '').trim();
+      btn.dataset.label = original;
+
+      // lock buttons on this card
+      card.querySelectorAll('.pc-sizes button').forEach(b=>{ b.disabled = true; });
+      btn.dataset.loading = '1';
+      btn.textContent = 'Adding…';
+
+      try{
+        const res = await fetch('/cart/add.js', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json','Accept':'application/json' },
+          body: JSON.stringify({ id: Number(variantId), quantity: 1 })
+        });
+        if (!res.ok) throw new Error('add failed');
+
+        // Tell theme to refresh cart UI / drawer
+        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
+
+        btn.textContent = 'Added ✓';
+        setTimeout(()=>{
+          btn.textContent = original || 'Add to cart';
+          card.classList.remove('in-view');
+          card.querySelectorAll('.pc-sizes button').forEach(b=>{ b.disabled = false; });
+          btn.dataset.loading = '0';
+        }, 900);
+      }catch(e){
+        // Fallback: go to PDP
+        const mediaLink = card?.querySelector('.pc-media');
+        if (mediaLink) window.location.href = mediaLink.getAttribute('href');
+      }finally{
+        setTimeout(()=>{ card.querySelectorAll('.pc-sizes button').forEach(b=>b.disabled=false); btn.dataset.loading='0'; }, 300);
+      }
+    }
+
+    section.querySelectorAll('.pc-quick .pc-sizes button').forEach(btn=>{
+      btn.addEventListener('click', (ev)=>addToCart(btn.dataset.variant, btn, ev));
+    });
+
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Trending Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Trending Products..."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Select a collection to display products from. Leave empty to show all products."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "label": "Number of Products",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#1c1b1b"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trending Products",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

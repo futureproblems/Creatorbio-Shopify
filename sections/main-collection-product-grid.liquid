@@ -1,0 +1,795 @@
+{% comment %}
+Collection Grid — Amorayou Style (Load More)
+{% endcomment %}
+
+<section class="amorayou-collection" aria-label="{{ collection.title | escape }}">
+  <div class="amorayou-collection__header">
+    {% if collection.image %}
+      <div class="amorayou-collection__image">
+        <img src="{{ collection.image | image_url: width: 2400 }}" 
+             srcset="{{ collection.image | image_url: width: 800 }} 800w,
+                     {{ collection.image | image_url: width: 1200 }} 1200w,
+                     {{ collection.image | image_url: width: 1600 }} 1600w,
+                     {{ collection.image | image_url: width: 2400 }} 2400w"
+             sizes="(max-width: 768px) 100vw, 800px"
+             alt="{{ collection.title | escape }}" 
+             loading="lazy">
+      </div>
+    {% endif %}
+    
+    <h1 class="amorayou-collection__title">{{ collection.title }}</h1>
+    
+    {% if collection.description != blank %}
+      <div class="amorayou-collection__description">
+        {{ collection.description }}
+      </div>
+    {% endif %}
+
+    <div class="amorayou-collection__meta">
+      <span class="amorayou-collection__count">
+        {{ collection.products_count }} PRODUCTS
+      </span>
+      <div class="amorayou-collection__controls">
+        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+        <form class="amorayou-collection__sort-form">
+          <label for="SortBy" class="visually-hidden">Sort by</label>
+          <select name="sort_by" id="SortBy" class="amorayou-collection__sort-select">
+            <option value="">SORT BY</option>
+            <option value="manual"{% if sort_by == 'manual' %} selected{% endif %}>Featured</option>
+            <option value="best-selling"{% if sort_by == 'best-selling' %} selected{% endif %}>Best Selling</option>
+            <option value="title-ascending"{% if sort_by == 'title-ascending' %} selected{% endif %}>A-Z</option>
+            <option value="title-descending"{% if sort_by == 'title-descending' %} selected{% endif %}>Z-A</option>
+            <option value="price-ascending"{% if sort_by == 'price-ascending' %} selected{% endif %}>Price: Low to High</option>
+            <option value="price-descending"{% if sort_by == 'price-descending' %} selected{% endif %}>Price: High to Low</option>
+            <option value="created-ascending"{% if sort_by == 'created-ascending' %} selected{% endif %}>Oldest</option>
+            <option value="created-descending"{% if sort_by == 'created-descending' %} selected{% endif %}>Newest</option>
+          </select>
+        </form>
+        
+        <button class="amorayou-collection__filter" type="button">
+          FILTER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ul class="amorayou-grid" role="list" id="product-grid">
+    {%- paginate collection.products by 24 -%}
+      {% for product in collection.products %}
+        {%- assign size_index = -1 -%}
+        {%- for opt in product.options_with_values -%}
+          {%- assign opt_name = opt.name | downcase -%}
+          {%- if opt_name == 'size' -%}{%- assign size_index = forloop.index0 -%}{%- endif -%}
+        {%- endfor -%}
+
+        {%- assign main_image  = product.featured_image -%}
+        {%- assign hover_image = product.images[1] | default: product.featured_image -%}
+
+        <li class="amorayou-card">
+          <article class="product-card" role="listitem" data-product-id="{{ product.id }}">
+            <a class="pc-media" href="{{ product.url }}">
+              <img class="pc-img" 
+                   alt="{{ product.title | escape }}" 
+                   loading="lazy"
+                   src="{{ main_image | image_url: width: 1600 }}">
+              <img class="pc-img pc-img--hover" 
+                   alt="" 
+                   loading="lazy"
+                   src="{{ hover_image | image_url: width: 1600 }}">
+
+              <div class="pc-quick">
+                <p class="pc-quick__title"></p>
+                <div class="pc-sizes">
+                  {%- if product.has_only_default_variant -%}
+                    <button class="pc-single"
+                            data-variant="{{ product.first_available_variant.id }}"
+                            {%- unless product.first_available_variant.available -%}disabled{%- endunless -%}>
+                      Add to cart
+                    </button>
+                  {%- else -%}
+                    {%- assign seen_sizes = '' -%}
+                    {%- for v in product.variants -%}
+                      {%- assign label = v.title -%}
+                      {%- if size_index != -1 -%}{%- assign label = v.options[size_index] -%}{%- endif -%}
+                      {%- unless seen_sizes contains label -%}
+                        {%- assign seen_sizes = seen_sizes | append: label | append: ',' -%}
+                        <button data-variant="{{ v.id }}" {%- unless v.available -%}disabled{%- endunless -%}>{{ label }}</button>
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                </div>
+              </div>
+            </a>
+
+            <div class="pc-body">
+              <h3 class="pc-title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+              <div class="pc-price">
+                {% if product.compare_at_price > product.price %}
+                  <span class="pc-price--sale">${{ product.price | money_without_currency }}</span>
+                  <span class="pc-price--compare">${{ product.compare_at_price | money_without_currency }}</span>
+                {% else %}
+                  <span>${{ product.price | money_without_currency }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        </li>
+      {% endfor %}
+    
+      {% if paginate.next %}
+        <li class="amorayou-load-more-wrapper" id="load-more-wrapper">
+          <button class="amorayou-load-more" id="load-more-btn" data-next-url="{{ paginate.next.url }}">
+            Load More
+          </button>
+        </li>
+      {% endif %}
+    {%- endpaginate -%}
+  </ul>
+</section>
+
+<style>
+/* Load Nuckle fonts */
+@font-face {
+  font-family: 'Nuckle';
+  src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Semibold.ttf?v=1759189630') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nuckle';
+  src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.amorayou-collection{
+  --gap-m:10px; --gap-d:15px;
+  color:#000; 
+  font-family:'Nuckle','Helvetica Neue',Helvetica,Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  padding-block: clamp(28px, 4vw, 72px);
+}
+
+.visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+.amorayou-collection__header{
+  width:100%;margin:0 0 30px;padding:20px 30px;
+  border-bottom:1px solid #e5e5e5;background:#fff;
+}
+
+.amorayou-collection__image{
+  width:100%;max-width:800px;margin:0 auto 20px;
+  border-radius:0;overflow:hidden;
+}
+
+.amorayou-collection__image img{
+  width:100%;height:auto;display:block;
+  max-height:300px;object-fit:cover;object-position:center;
+}
+
+.amorayou-collection__title{
+  font-size:14px;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;margin:0 0 20px;text-align:center;
+}
+
+.amorayou-collection__description{
+  max-width:700px;margin:0 auto 20px;
+  font-size:13px;line-height:1.6;color:#666;
+  text-align:center;letter-spacing:.02em;
+}
+
+@media (max-width:480px){
+  .amorayou-collection__description{
+    line-height:1.5;
+    font-size:11px;
+  }
+  .amorayou-collection__header{padding:12px 15px;}
+  .amorayou-collection__image{margin:0 0 12px 0;}
+  .amorayou-collection__image img{max-height:150px;}
+}
+
+.amorayou-collection__meta{
+  display:flex;justify-content:space-between;align-items:center;
+  max-width:1400px;margin:0 auto;
+}
+
+.amorayou-collection__count{
+  font-size:12px;font-weight:400;letter-spacing:.05em;color:#666;
+}
+
+.amorayou-collection__controls{
+  display:flex;gap:15px;align-items:center;
+}
+
+.amorayou-collection__sort-select,.amorayou-collection__filter{
+  background:transparent;border:none;padding:8px 24px 8px 0;cursor:pointer;
+  font-size:11px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;
+  font-family:inherit;color:#000;-webkit-text-fill-color:#000;
+  appearance:none;-webkit-appearance:none;outline:none;box-shadow:none;
+}
+
+.amorayou-collection__sort-select{
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 4px center;min-width:120px;
+}
+
+.amorayou-grid{
+  list-style:none;padding:0 20px;display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:var(--gap-m);max-width:1400px;margin:0 auto;
+  position: relative;
+}
+
+@media (min-width:700px){
+  .amorayou-grid{grid-template-columns:repeat(3,minmax(0,1fr));padding:0 30px;}
+  .amorayou-collection__title{font-size:16px;}
+  .amorayou-collection__description{font-size:14px;}
+  .amorayou-collection__image{max-width:100%;}
+  .amorayou-collection__image img{max-height:280px;}
+}
+
+@media (min-width:1000px){
+  .amorayou-grid{
+    max-width:100%;width:100vw;padding:0;
+    grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap-d);
+  }
+  .amorayou-collection__title{font-size:18px;}
+  .amorayou-collection__description{font-size:15px;}
+  .amorayou-collection__image img{max-height:350px;}
+}
+
+.amorayou-card{display:block;}
+
+.product-card{
+  background:#fff;display:flex;flex-direction:column;
+  position:relative;width:100%;
+}
+
+.pc-media{
+  position:relative;display:block;aspect-ratio:2/3;
+  overflow:hidden;width:100%;background:#f9f9f9;
+}
+
+.pc-img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;transition:opacity .3s ease;
+}
+
+.pc-img--hover{opacity:0;}
+
+.pc-media:hover .pc-img--hover{opacity:1;}
+
+/* Quick Add */
+.pc-quick{
+  position: absolute; 
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%) translateY(100%);
+  transition: transform .2s ease, opacity .2s ease;
+  -webkit-backdrop-filter: blur(12px); 
+  backdrop-filter: blur(12px);
+  background: rgba(248, 248, 248, 0.8); 
+  padding: 10px 16px; 
+  z-index: 2;
+  display: flex; 
+  flex-direction: row; 
+  align-items: center; 
+  gap: 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  opacity: 0;
+}
+
+.product-card.in-view .pc-quick{ 
+  transform: translateX(-50%) translateY(0); 
+  opacity: 1; 
+}
+
+@media (min-width: 900px) {
+  .product-card:hover .pc-quick{ 
+    transform: translateX(-50%) translateY(0); 
+    opacity: 1; 
+  }
+}
+
+.pc-quick__title{
+  color:#111;font-size:12px;margin:0;opacity:.8;display:none;
+}
+
+.pc-sizes{
+  display:flex;flex-wrap:nowrap;gap:8px;justify-content:center;
+}
+
+.pc-sizes button{ 
+  appearance:none;border:0;padding:6px 12px;border-radius:6px;
+  background:#fff;font-family:'Nuckle','Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-weight:500;font-size:11px;cursor:pointer;
+}
+
+.jluxe-collection .pc-sizes button:hover{
+  background:#e5e5e5;color:#000;
+}
+
+.jluxe-collection .pc-sizes button:disabled{
+  background:#e9e9e9;color:#9aa1a9;cursor:not-allowed;
+}
+
+.pc-body{
+  padding:10px 8px 0;display:flex;flex-direction:column;gap:4px;
+}
+
+.pc-title{ 
+  font-weight:400;font-size:12px;line-height:16px;
+  letter-spacing:1.6px;margin:0;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;
+}
+
+.pc-title a{
+  color:#28282A;text-decoration:none;display:inline-block;max-width:100%;
+}
+
+.pc-price{ 
+  font-weight:400;font-size:12px;line-height:16px;
+  letter-spacing:1.6px;color:#28282A;
+}
+
+.pc-price--sale{color:#000;}
+
+.pc-price--compare{
+  text-decoration:line-through;color:#999;font-weight:400;margin-left:6px;
+}
+
+/* Load More Button */
+.amorayou-load-more-wrapper{
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 0 20px;
+}
+
+.amorayou-load-more{
+  appearance: none;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 14px 48px;
+  font-family: 'Nuckle', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .3s ease;
+  border-radius: 2px;
+}
+
+.amorayou-load-more:hover{
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.amorayou-load-more:active{
+  transform: translateY(0);
+}
+
+.amorayou-load-more:disabled{
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.amorayou-load-more.loading{
+  position: relative;
+  color: transparent;
+}
+
+.amorayou-load-more.loading::after{
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width:768px){
+  .amorayou-collection__header{padding:15px 20px;}
+  .amorayou-collection__image{
+    margin:0 0 15px 0;
+    max-width:100%;
+    border-radius:0;
+  }
+  .amorayou-collection__image img{
+    max-height:180px;
+  }
+  .amorayou-collection__title{margin-bottom:12px;}
+  .amorayou-collection__description{
+    font-size:12px;
+    margin-bottom:15px;
+    padding:0 5px;
+  }
+  .amorayou-collection__meta{flex-direction:column;gap:15px;align-items:stretch;}
+  .amorayou-collection__controls{justify-content:space-between;}
+  .pc-title{font-size:11px;}
+  .pc-price{font-size:12px;}
+  .amorayou-load-more{padding: 12px 36px;font-size: 11px;}
+}
+
+/* MOBILE: force text black and Quick Add styling */
+@media (max-width: 899.98px){
+  .amorayou-collection{ color:#000; }
+  .amorayou-collection .pc-title a{ color:#000; }
+  .amorayou-collection .pc-price{ color:#000; }
+  
+  .amorayou-collection .pc-quick,
+  .amorayou-collection .pc-quick *,
+  .amorayou-collection .pc-media,
+  .amorayou-collection .pc-media:link,
+  .amorayou-collection .pc-media:visited{
+    color:#000 !important;
+    -webkit-text-fill-color:#000;
+  }
+  
+  .amorayou-collection .pc-quick{
+    padding: 8px 20px !important;
+    white-space: nowrap;
+  }
+  
+  .amorayou-collection .pc-sizes button{
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+    min-width: auto !important;
+    flex-shrink: 0;
+  }
+  
+  /* Lighter hover for mobile */
+  .amorayou-collection .pc-sizes button:hover{
+    background:#e5e5e5;
+    color:#000;
+  }
+}
+
+/* iPad/iOS Safari quick-cart text hardening */
+<style id="ipad-quickcart-text-fix">
+  @supports (-webkit-touch-callout: none) {
+    .amorayou-collection .pc-quick .pc-sizes button,
+    .amorayou-collection .pc-quick .pc-sizes .pc-single{
+      color:#111 !important;
+      -webkit-text-fill-color:#111 !important;
+      text-decoration:none !important;
+    }
+    .amorayou-collection .pc-quick .pc-sizes button:hover,
+    .amorayou-collection .pc-quick .pc-sizes button:focus,
+    .amorayou-collection .pc-quick .pc-sizes button:active,
+    .amorayou-collection .pc-quick .pc-sizes .pc-single:hover,
+    .amorayou-collection .pc-quick .pc-sizes .pc-single:focus,
+    .amorayou-collection .pc-quick .pc-sizes .pc-single:active{
+      color:#111 !important;
+      -webkit-text-fill-color:#111 !important;
+      text-decoration:none !important;
+    }
+  }
+  /* Orientation hardening for iPad landscape */
+  @media (orientation: landscape) and (min-device-width:768px) and (max-device-width:1366px){
+    .amorayou-collection .pc-quick .pc-sizes button,
+    .amorayou-collection .pc-quick .pc-sizes .pc-single{
+      color:#111 !important;
+      -webkit-text-fill-color:#111 !important;
+    }
+  }
+</style>
+</style>
+
+<script>
+(function(){
+  const root = document.currentScript.closest('.amorayou-collection') || document.querySelector('.amorayou-collection');
+  if (!root) return;
+
+  // Sort functionality
+  const sortSelect = document.getElementById('SortBy');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort_by', this.value);
+      window.location.href = url.toString();
+    });
+  }
+
+  // Filter functionality
+  const filterButton = root.querySelector('.amorayou-collection__filter');
+  if (filterButton) {
+    filterButton.addEventListener('click', function() {
+      const selectors = [
+        '.js-drawer-open-collection-filters',
+        '[data-drawer-trigger="collection-filters"]',
+        '.mobile-facets__toggle',
+        '.js-filter',
+        '#FacetFiltersForm',
+        '.collection-filters__toggle',
+        '[aria-controls="FacetFiltersFormMobile"]'
+      ];
+      for (let sel of selectors) {
+        const el = document.querySelector(sel);
+        if (el) { el.click(); return; }
+      }
+      window.dispatchEvent(new CustomEvent('collection:filters:open'));
+    });
+  }
+
+  // Load More functionality
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  const productGrid = document.getElementById('product-grid');
+  
+  if (loadMoreBtn && productGrid) {
+    loadMoreBtn.addEventListener('click', async function() {
+      const nextUrl = this.getAttribute('data-next-url');
+      if (!nextUrl) return;
+      
+      // Disable button and show loading state
+      this.disabled = true;
+      this.classList.add('loading');
+      
+      try {
+        const response = await fetch(nextUrl);
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Get new products
+        const newProducts = doc.querySelectorAll('#product-grid .amorayou-card');
+        
+        // Append new products to grid
+        newProducts.forEach(product => {
+          productGrid.appendChild(product);
+        });
+        
+        // Check if there's another page
+        const newLoadMoreBtn = doc.getElementById('load-more-btn');
+        
+        if (newLoadMoreBtn) {
+          // Update next URL
+          const newNextUrl = newLoadMoreBtn.getAttribute('data-next-url');
+          this.setAttribute('data-next-url', newNextUrl);
+          this.disabled = false;
+          this.classList.remove('loading');
+        } else {
+          // No more pages - remove button
+          const wrapper = document.getElementById('load-more-wrapper');
+          if (wrapper) wrapper.remove();
+        }
+        
+        // Re-initialize functionality for new products
+        initializeNewProducts();
+        
+      } catch (error) {
+        console.error('Error loading more products:', error);
+        this.textContent = 'Error - Try Again';
+        this.disabled = false;
+        this.classList.remove('loading');
+      }
+    });
+  }
+
+  // Initialize functionality for dynamically loaded products
+  function initializeNewProducts() {
+    const newCards = root.querySelectorAll('.product-card:not([data-initialized])');
+    
+    newCards.forEach(card => {
+      card.setAttribute('data-initialized', 'true');
+      
+      // Mobile tap to show quick-add
+      const mediaLink = card.querySelector('.pc-media');
+      if (!mediaLink) return;
+      
+      if (window.matchMedia('(max-width: 899.98px)').matches) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isTap = false;
+        
+        mediaLink.addEventListener('touchstart', (e) => {
+          if (e.target.closest('.pc-sizes button')) return;
+          
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isTap = true;
+        }, {passive: true});
+        
+        mediaLink.addEventListener('touchmove', (e) => {
+          const touchX = e.touches[0].clientX;
+          const touchY = e.touches[0].clientY;
+          const deltaX = Math.abs(touchX - touchStartX);
+          const deltaY = Math.abs(touchY - touchStartY);
+          
+          if (deltaX > 10 || deltaY > 10) {
+            isTap = false;
+          }
+        }, {passive: true});
+        
+        mediaLink.addEventListener('touchend', (e) => {
+          if (e.target.closest('.pc-sizes button')) return;
+          
+          if (isTap) {
+            e.preventDefault();
+            
+            if (card.classList.contains('in-view')) {
+              window.location.href = mediaLink.getAttribute('href');
+            } else {
+              root.querySelectorAll('.product-card').forEach(otherCard => {
+                if (otherCard !== card) {
+                  otherCard.classList.remove('in-view');
+                }
+              });
+              
+              card.classList.add('in-view');
+            }
+          }
+        }, {passive: false});
+      }
+      
+      // Add to cart buttons
+      card.querySelectorAll('.pc-sizes button').forEach(btn => {
+        btn.addEventListener('click', (ev) => addToCart(btn.dataset.variant, btn, ev));
+      });
+      
+      // Title auto-shrink
+      const title = card.querySelector('.pc-title');
+      if (title) {
+        fitTitle(title);
+        const ro = new ResizeObserver(() => fitTitle(title));
+        ro.observe(title);
+      }
+    });
+  }
+
+  // Add to cart
+  async function addToCart(variantId, btn, ev){
+    try{
+      if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+      
+      btn.disabled = true; 
+      const originalText = btn.textContent;
+      btn.textContent = 'Adding…';
+      
+      const res = await fetch('/cart/add.js', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json','Accept':'application/json' },
+        body: JSON.stringify({ id:Number(variantId), quantity:1 })
+      });
+      
+      if(!res.ok) throw new Error('add failed');
+      
+      btn.textContent = 'Added';
+      document.dispatchEvent(new CustomEvent('cart:refresh'));
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 1200);
+      
+    }catch(e){
+      const mediaLink = btn.closest('.product-card').querySelector('.pc-media');
+      if(mediaLink) window.location.href = mediaLink.getAttribute('href');
+    }finally{
+      setTimeout(()=>{ 
+        btn.disabled = false; 
+      }, 1300);
+    }
+  }
+
+  // Title auto-shrink
+  const MIN_SIZE = 9;
+  function fitTitle(title){
+    const anchor = title.querySelector('a') || title;
+    const baseSize = parseFloat(getComputedStyle(title).fontSize) || 12;
+    title.style.fontSize = baseSize + 'px';
+    anchor.style.fontSize = title.style.fontSize;
+    if (anchor.scrollWidth > title.clientWidth){
+      const ratio = title.clientWidth / anchor.scrollWidth;
+      const newSize = Math.max(MIN_SIZE, Math.floor(baseSize * ratio * 100) / 100);
+      title.style.fontSize = newSize + 'px';
+      anchor.style.fontSize = title.style.fontSize;
+    }
+  }
+  
+  // Initialize existing products
+  const titles = Array.from(root.querySelectorAll('.pc-title'));
+  const ro = new ResizeObserver(entries => entries.forEach(e=>fitTitle(e.target)));
+  titles.forEach(t=>{ ro.observe(t); fitTitle(t); });
+  window.addEventListener('load', ()=>titles.forEach(fitTitle), {once:true});
+  window.addEventListener('resize', ()=>titles.forEach(fitTitle), {passive:true});
+  
+  // Initialize mobile tap functionality for initial products
+  root.querySelectorAll('.product-card').forEach(card => {
+    card.setAttribute('data-initialized', 'true');
+    const mediaLink = card.querySelector('.pc-media');
+    if (!mediaLink) return;
+    
+    if (window.matchMedia('(max-width: 899.98px)').matches) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isTap = false;
+      
+      mediaLink.addEventListener('touchstart', (e) => {
+        if (e.target.closest('.pc-sizes button')) return;
+        
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isTap = true;
+      }, {passive: true});
+      
+      mediaLink.addEventListener('touchmove', (e) => {
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const deltaX = Math.abs(touchX - touchStartX);
+        const deltaY = Math.abs(touchY - touchStartY);
+        
+        if (deltaX > 10 || deltaY > 10) {
+          isTap = false;
+        }
+      }, {passive: true});
+      
+      mediaLink.addEventListener('touchend', (e) => {
+        if (e.target.closest('.pc-sizes button')) return;
+        
+        if (isTap) {
+          e.preventDefault();
+          
+          if (card.classList.contains('in-view')) {
+            window.location.href = mediaLink.getAttribute('href');
+          } else {
+            root.querySelectorAll('.product-card').forEach(otherCard => {
+              if (otherCard !== card) {
+                otherCard.classList.remove('in-view');
+              }
+            });
+            
+            card.classList.add('in-view');
+          }
+        }
+      }, {passive: false});
+    }
+  });
+  
+  // Add to cart for initial products
+  root.querySelectorAll('.pc-sizes button').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>addToCart(btn.dataset.variant, btn, ev));
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Collection Grid",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 12,
+      "max": 48,
+      "step": 12,
+      "default": 24,
+      "label": "Products per page"
+    }
+  ],
+  "presets": [
+    { "name": "Collection Grid – Amorayou" }
+  ]
+}
+{% endschema %}

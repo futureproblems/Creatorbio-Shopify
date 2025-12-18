@@ -1,0 +1,192 @@
+{% comment %}
+Featured Categories — Rebuilt for proper desktop spacing
+Desktop: 4-up grid with gaps, Tablet: 4-up scroll, Mobile: 2-up scroll
+{% endcomment %}
+
+<div class="featured-cats-section" style="background-color: #ffffff; padding: 40px 0;">
+  
+  {% if section.settings.section_title != blank %}
+    <div class="featured-cats-title" style="padding: 0 24px; margin-bottom: 32px;">
+      <h2 style="font-family: 'Nuckle Semibold', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 19px; font-weight: 400; letter-spacing: 1.6px; text-transform: uppercase; margin: 0; color: #000000;">
+        {{ section.settings.section_title }}
+      </h2>
+    </div>
+  {% endif %}
+  
+  <!-- Desktop Layout -->
+  <div class="featured-cats-desktop">
+    <div style="padding: 0 24px;">
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); column-gap: 16px; row-gap: 16px;">
+        {% for block in section.blocks limit: 4 %}
+          {% assign img = block.settings.image %}
+          {% assign link = block.settings.link %}
+          <div class="featured-cat-item" {{ block.shopify_attributes }}>
+            <a href="{{ link | default: '#' }}" style="display: block; text-decoration: none; color: inherit;">
+              <div style="position: relative; width: 100%; padding-bottom: 133.3333%; background: #f5f5f5; overflow: hidden;">
+                {% if img != blank %}
+                  <img
+                    src="{{ img | image_url: width: 1600 }}"
+                    srcset="
+                      {{ img | image_url: width: 800 }} 800w,
+                      {{ img | image_url: width: 1200 }} 1200w,
+                      {{ img | image_url: width: 1600 }} 1600w,
+                      {{ img | image_url: width: 2000 }} 2000w"
+                    sizes="(max-width:767px) 48vw, (max-width:1023px) 25vw, 23vw"
+                    alt=""
+                    style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%;"
+                    loading="lazy" decoding="async">
+                {% else %}
+                  <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#f0f0f0,#e8e8e8);">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </div>
+              <p style="margin: 10px 0 0 0; font-family: 'NuckleRegular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 12px; font-weight: normal !important; letter-spacing: 1.6px; text-align: center; text-transform: capitalize; color: #000000;">
+                {{ block.settings.title | default: 'Category' }}
+              </p>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablet Layout -->
+  <div class="featured-cats-tablet">
+    <div style="display: flex; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 24px 10px 24px; gap: 16px; scrollbar-width: none; -ms-overflow-style: none;">
+      {% for block in section.blocks limit: 6 %}
+        {% assign img = block.settings.image %}
+        {% assign link = block.settings.link %}
+        <div style="flex: 0 0 calc(25% - 12px); min-width: 240px;" {{ block.shopify_attributes }}>
+          <a href="{{ link | default: '#' }}" style="display: block; text-decoration: none; color: inherit;">
+            <div style="position: relative; width: 100%; padding-bottom: 133.3333%; background: #f5f5f5; overflow: hidden;">
+              {% if img != blank %}
+                <img
+                  src="{{ img | image_url: width: 1400 }}"
+                  srcset="
+                    {{ img | image_url: width: 800 }} 800w,
+                    {{ img | image_url: width: 1000 }} 1000w,
+                    {{ img | image_url: width: 1400 }} 1400w"
+                  sizes="(max-width:1023px) 40vw, 25vw"
+                  alt=""
+                  style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%;"
+                  loading="lazy" decoding="async">
+              {% else %}
+                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#f0f0f0,#e8e8e8);">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+            <p style="margin: 10px 0 0 0; font-family: 'NuckleRegular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 12px; font-weight: normal !important; letter-spacing: 1.6px; text-align: center; text-transform: capitalize; color: #000000;">
+              {{ block.settings.title | default: 'Category' }}
+            </p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Mobile Layout -->
+  <div class="featured-cats-mobile">
+    <div style="display: flex; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 12px 10px 12px; gap: 12px; scrollbar-width: none; -ms-overflow-style: none;">
+      {% for block in section.blocks limit: 6 %}
+        {% assign img = block.settings.image %}
+        {% assign link = block.settings.link %}
+        <div style="flex: 0 0 calc(55% - 6px);" {{ block.shopify_attributes }}>
+          <a href="{{ link | default: '#' }}" style="display: block; text-decoration: none; color: inherit;">
+            <div style="position: relative; width: 100%; padding-bottom: 133.3333%; background: #f5f5f5; overflow: hidden;">
+              {% if img != blank %}
+                <img
+                  src="{{ img | image_url: width: 1000 }}"
+                  srcset="
+                    {{ img | image_url: width: 600 }} 600w,
+                    {{ img | image_url: width: 800 }} 800w,
+                    {{ img | image_url: width: 1000 }} 1000w"
+                  sizes="(max-width:767px) 56vw, 30vw"
+                  alt=""
+                  style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%;"
+                  loading="lazy" decoding="async">
+              {% else %}
+                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#f0f0f0,#e8e8e8);">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+            <p style="margin: 10px 0 0 0; font-family: 'NuckleRegular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important; font-size: 10px; font-weight: normal !important; letter-spacing: 1.6px; text-align: center; text-transform: capitalize; color: #000000;">
+              {{ block.settings.title | default: 'Category' }}
+            </p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+@font-face {
+  font-family: 'NuckleRegular';
+  src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NuckleSemibold';
+  src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Semibold.ttf?v=1759189630') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.featured-cat-item p { font-family:'NuckleRegular',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif!important; font-weight:normal!important; }
+.featured-cats-title h2 { font-family:'NuckleSemibold',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif!important; }
+
+/* Hide scrollbars on mobile/tablet */
+.featured-cats-tablet > div::-webkit-scrollbar,
+.featured-cats-mobile > div::-webkit-scrollbar { display:none; }
+
+/* Mobile title adjustment */
+@media (max-width: 767px) {
+  .featured-cats-title { padding:0 12px!important; margin-bottom:24px!important; }
+}
+
+/* Responsive display logic */
+.featured-cats-mobile, .featured-cats-tablet { display:none; }
+.featured-cats-desktop { display:block; }
+@media (max-width:1023px){ .featured-cats-desktop{display:none;} .featured-cats-tablet{display:block;} }
+@media (max-width:767px){ .featured-cats-desktop, .featured-cats-tablet{display:none;} .featured-cats-mobile{display:block;} }
+</style>
+
+{% schema %}
+{
+  "name": "Collection Categories",
+  "settings": [
+    { "type": "text", "id": "section_title", "label": "Section Title", "default": "SHOP CATEGORIES" },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Text Color", "default": "#000000" }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Category Tile",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Category Image" },
+        { "type": "text", "id": "title", "label": "Category Title", "default": "New Category" },
+        { "type": "url", "id": "link", "label": "Category Link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Collection Categories",
+      "settings": { "section_title": "SHOP CATEGORIES" },
+      "blocks": [
+        { "type": "tile", "settings": { "title": "New" } },
+        { "type": "tile", "settings": { "title": "Bestsellers" } },
+        { "type": "tile", "settings": { "title": "Accessories" } },
+        { "type": "tile", "settings": { "title": "Tees" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

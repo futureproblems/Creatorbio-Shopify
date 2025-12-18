@@ -1,0 +1,83 @@
+{%- comment -%}
+  CB Commerce V2 - Music Player Component
+  Supports Spotify and Apple Music embeds
+
+  Required variables:
+  - enable_music_player: Boolean to show/hide the player
+  - music_player_title: Optional title above the player
+  - music_player_theme: 'auto' | 'white' | 'black' (for Spotify)
+  - music_items: JSON array of music items [{url, title}]
+{%- endcomment -%}
+
+{%- if enable_music_player and music_items != blank -%}
+  <div class="cb-music-player">
+
+    {%- if music_player_title != blank -%}
+      <h3 class="cb-music-player__title">{{ music_player_title }}</h3>
+    {%- endif -%}
+
+    <div class="cb-music-player__list">
+      {%- for item in music_items -%}
+        {%- assign music_url = item.url -%}
+        {%- assign embed_url = '' -%}
+        {%- assign platform = '' -%}
+        {%- assign player_height = '150px' -%}
+
+        {%- comment -%} Detect Spotify URLs {%- endcomment -%}
+        {%- if music_url contains 'spotify.com' -%}
+          {%- assign platform = 'spotify' -%}
+          {%- assign player_height = '352px' -%}
+
+          {%- comment -%} Check if already an embed URL {%- endcomment -%}
+          {%- if music_url contains '/embed/' -%}
+            {%- assign embed_url = music_url -%}
+          {%- else -%}
+            {%- comment -%} Convert regular Spotify URL to embed {%- endcomment -%}
+            {%- comment -%} Extract type and ID from URL like open.spotify.com/track/xyz {%- endcomment -%}
+            {%- assign url_parts = music_url | split: 'spotify.com/' -%}
+            {%- if url_parts.size > 1 -%}
+              {%- assign path_part = url_parts[1] | split: '?' | first -%}
+              {%- assign embed_url = 'https://open.spotify.com/embed/' | append: path_part -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- comment -%} Add theme parameter for Spotify {%- endcomment -%}
+          {%- if embed_url != blank and music_player_theme != blank and music_player_theme != 'auto' -%}
+            {%- if embed_url contains '?' -%}
+              {%- assign embed_url = embed_url | append: '&theme=' | append: music_player_theme -%}
+            {%- else -%}
+              {%- assign embed_url = embed_url | append: '?theme=' | append: music_player_theme -%}
+            {%- endif -%}
+          {%- endif -%}
+
+        {%- comment -%} Detect Apple Music URLs {%- endcomment -%}
+        {%- elsif music_url contains 'music.apple.com' -%}
+          {%- assign platform = 'apple' -%}
+          {%- assign player_height = '175px' -%}
+
+          {%- if music_url contains 'embed.music.apple.com' -%}
+            {%- assign embed_url = music_url -%}
+          {%- else -%}
+            {%- comment -%} Convert music.apple.com to embed.music.apple.com {%- endcomment -%}
+            {%- assign embed_url = music_url | replace: 'music.apple.com', 'embed.music.apple.com' -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if embed_url != blank -%}
+          <div class="cb-music-player__item cb-music-player__item--{{ platform }}">
+            <iframe
+              src="{{ embed_url }}"
+              class="cb-music-player__iframe"
+              style="height: {{ player_height }};"
+              allow="encrypted-media; autoplay; clipboard-write"
+              allowfullscreen
+              loading="lazy"
+              title="{{ item.title | default: platform | append: ' player' }}"
+            ></iframe>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+{%- endif -%}

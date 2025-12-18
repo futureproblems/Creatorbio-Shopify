@@ -1,0 +1,25 @@
+{%- assign __creator = creator_handle | default: '' -%}
+{%- if __creator != blank -%}
+  <script>
+    (function () {
+      try {
+        var creator = {{ __creator | json }};
+        if (!creator) return;
+
+        var worker = "https://creatorbio-pricing.shopamorayou.workers.dev";
+
+        // Track page view
+        var pageKey = "viewed-creator-page-" + creator;
+        var lastPage = +sessionStorage.getItem(pageKey) || 0;
+        if (Date.now() - lastPage < 10 * 60 * 1000) return;
+        sessionStorage.setItem(pageKey, Date.now());
+
+        fetch(worker + "/track/" + encodeURIComponent(creator) + "/page", {
+          method: "POST",
+          mode: "no-cors",
+          keepalive: true
+        });
+      } catch (_) {}
+    })();
+  </script>
+{%- endif -%}

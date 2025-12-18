@@ -1,0 +1,41 @@
+{%- comment -%}
+  CB Commerce V2 - B Score Badge Component
+  Displays hexagonal avatar with B Score rating
+
+  Required variables:
+  - avatar_url: Creator avatar image URL
+  - b_score: Numeric score (0-5)
+  - b_score_reviews: Number of reviews
+  - creator_name: For alt text
+{%- endcomment -%}
+
+<!-- DEBUG: B Score component loaded, b_score={{ b_score }}, avatar_url={{ avatar_url | slice: 0, 50 }} -->
+<div class="cb-bscore">
+  {%- comment -%} Hexagonal Avatar {%- endcomment -%}
+  <div class="cb-bscore__avatar">
+    <svg class="cb-bscore__hex" viewBox="0 0 80 70" style="position: absolute; inset: 0;">
+      <polygon
+        points="20,0 60,0 80,35 60,70 20,70 0,35"
+        fill="rgba(255,255,255,0.9)"
+      />
+    </svg>
+    {%- if avatar_url != blank -%}
+      <img
+        src="{{ avatar_url }}"
+        alt="{{ creator_name | escape }}"
+        class="cb-bscore__img"
+        loading="lazy"
+      >
+    {%- else -%}
+      <div class="cb-bscore__placeholder">
+        {{ creator_name | slice: 0 | upcase | default: '?' }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Score Display {%- endcomment -%}
+  <div class="cb-bscore__info">
+    <span class="cb-bscore__label">B SCORE &reg;</span>
+    <span class="cb-bscore__value">{{ b_score | default: 0 }} ({{ b_score_reviews | default: 0 }})</span>
+  </div>
+</div>

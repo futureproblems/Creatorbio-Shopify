@@ -1,0 +1,133 @@
+<!-- ===== Featured categories only (2-up) ===== -->
+<section class="am-iwt-2up" aria-label="Featured categories">
+  <div class="am-iwt-grid">
+    <!-- Tile 1 -->
+    <a class="am-iwt-tile" href="/collections/mars-dresses" aria-label="Shop Dresses">
+      <img class="am-iwt-img am-iwt-img--dt" alt="Dresses (desktop)" decoding="async" loading="lazy"
+           src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/EXTEND_D.png?v=1758262820" />
+      <img class="am-iwt-img am-iwt-img--mb" alt="Dresses (mobile)" decoding="async" loading="lazy"
+           src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/EXTEND_D.png?v=1758262820" />
+      <div class="am-iwt-content">
+        <p class="am-iwt-title">Night Mode</p>
+        <p class="am-iwt-sub">
+          Sleek shapes for dinners, dates, and everything after.
+        </p>
+      </div>
+    </a>
+
+    <!-- Tile 2 -->
+    <a class="am-iwt-tile am-iwt-tile--right" href="/collections/mars-co-ords" aria-label="Shop Lounge">
+      <img class="am-iwt-img am-iwt-img--dt" alt="Lounge (desktop)" decoding="async" loading="lazy"
+           src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Lounge_Extended.png?v=1758261314" />
+      <img class="am-iwt-img am-iwt-img--mb" alt="Lounge (mobile)" decoding="async" loading="lazy"
+           src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Lounge_Extended.png?v=1758261314" />
+      <div class="am-iwt-content">
+        <p class="am-iwt-title">SET IT OFF</p>
+        <p class="am-iwt-sub">
+          Matching tops + bottoms that do off-duty better.
+        </p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<style>
+  /* ================== FONT DEFINITIONS ================== */
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Semibold.ttf?v=1759189630') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ================== FEATURED CATEGORIES (2-up) ================== */
+  .am-iwt-2up{
+    --container-max: 1800px;
+    --dt-aspect: 2/3;     /* desktop */
+    --mb-aspect: 2/3;     /* mobile */
+  }
+  .am-iwt-grid{
+    display:grid; grid-template-columns:1fr; gap:0; margin:0 auto; max-width:var(--container-max);
+  }
+  .am-iwt-tile{
+    position:relative; display:block; overflow:hidden; color:#fff; text-align:left;
+    aspect-ratio: var(--mb-aspect);
+  }
+  .am-iwt-img{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:center; display:block;
+  }
+  .am-iwt-img--dt{display:none;}
+  .am-iwt-img--mb{display:block;}
+
+  /* Bottom-left caption — mirrors hero styles */
+  .am-iwt-content{
+    position:absolute; left:0; right:auto; bottom:50%; top:auto; width:100%;
+    transform: translateY(50%);  /* Center vertically at halfway point */
+    padding:1.5rem; pointer-events:none;
+  }
+  .am-iwt-title{
+    margin:0 0 .35rem 0; 
+    font-family: 'Nuckle', sans-serif;
+    font-weight: 600;  /* Semibold */
+    font-size: 22px;  /* Optimized for mobile */
+    line-height: 1.6;
+    letter-spacing: 1.6px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .am-iwt-sub{
+    margin:.35rem 0 0; 
+    font-family: 'Nuckle', sans-serif;
+    font-weight: 400;  /* Regular */
+    font-size: 10px;
+    line-height: 1.6;
+    letter-spacing: 0.6px;
+    color: #fff; 
+    opacity: .92;
+    white-space: nowrap;  /* Keep text on one line */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Right-aligned tile styles */
+  .am-iwt-tile--right .am-iwt-content {
+    left: auto;
+    right: 0;
+    text-align: right;
+  }
+
+  @media (min-width:834px){
+    .am-iwt-grid{grid-template-columns:1fr 1fr;}
+    .am-iwt-tile{aspect-ratio: var(--dt-aspect);}
+    .am-iwt-img--dt{display:block;}
+    .am-iwt-img--mb{display:none;}
+
+    .am-iwt-content{
+      padding:3rem;
+      bottom:50%;
+      transform: translateY(50%);  /* Center vertically at halfway point */
+    }
+    .am-iwt-title{
+      /* Desktop maintains same font settings */
+      font-size: 32px;
+      line-height: 1.6;
+      letter-spacing: 1.6px;
+    }
+    .am-iwt-sub{
+      /* Desktop maintains same font settings */
+      font-size: 12px;
+      letter-spacing: 0.6px;
+      white-space: nowrap;  /* Keep text on one line */
+    }
+  }
+</style>

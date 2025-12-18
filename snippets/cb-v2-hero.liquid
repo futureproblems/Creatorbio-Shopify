@@ -1,0 +1,72 @@
+{%- comment -%}
+  CB Commerce V2 - Hero Banner Component
+  Full-height banner with creator info overlay
+
+  Required variables:
+  - banner_image_url: Background image URL
+  - creator_name: Display name
+  - creator_tags: Array of badge labels (e.g., ["Creator", "Designer"])
+  - bio: Short bio text
+  - avatar_url: For B Score badge
+  - b_score: Creator score
+  - b_score_reviews: Number of reviews
+  - enable_email_signup: Boolean for mailing list CTA
+{%- endcomment -%}
+
+<div class="cb-hero">
+  {%- comment -%} Background Image - &nbsp; prevents div:empty rule from hiding {%- endcomment -%}
+  <div class="cb-hero__bg" style="
+    {%- if banner_image_url != blank -%}
+      background-image: url({{ banner_image_url }});
+    {%- else -%}
+      background: linear-gradient(135deg, #8B7355 0%, #A0826D 20%, #C4A882 40%, #E8D5BE 60%, #D4B896 80%, #6B5344 100%);
+    {%- endif -%}
+  ">&nbsp;</div>
+  <div class="cb-hero__overlay">&nbsp;</div>
+  <div class="cb-hero__fade">&nbsp;</div>
+
+  {%- comment -%} B Score Badge {%- endcomment -%}
+  {%- render 'cb-v2-bscore',
+    avatar_url: avatar_url,
+    b_score: b_score,
+    b_score_reviews: b_score_reviews,
+    creator_name: creator_name
+  -%}
+
+  {%- comment -%} Mailing List CTA {%- endcomment -%}
+  {%- if enable_email_signup -%}
+    <button class="cb-hero__mailing-cta" data-action="show-mailing">
+      Join Mailing List
+    </button>
+  {%- endif -%}
+
+  {%- comment -%} Creator Info {%- endcomment -%}
+  <div class="cb-hero__content">
+    {%- comment -%} Name - split into words for styling {%- endcomment -%}
+    {%- assign name_words = creator_name | split: ' ' -%}
+    <h1 class="cb-hero__name">
+      {%- for word in name_words -%}
+        <span class="cb-hero__name-word">{{ word }}</span>
+      {%- endfor -%}
+    </h1>
+
+    {%- comment -%} Badge Pills {%- endcomment -%}
+    {%- if creator_tags != blank and creator_tags.size > 0 -%}
+      <div class="cb-hero__badges">
+        {%- for tag in creator_tags -%}
+          <span class="cb-badge">{{ tag }}</span>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      {%- comment -%} Default badges if none specified {%- endcomment -%}
+      <div class="cb-hero__badges">
+        <span class="cb-badge">Creator</span>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Bio {%- endcomment -%}
+    {%- if bio != blank -%}
+      <p class="cb-hero__bio">{{ bio }}</p>
+    {%- endif -%}
+  </div>
+</div>

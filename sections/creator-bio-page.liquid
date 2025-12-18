@@ -1,0 +1,3361 @@
+{% comment %}
+  Creator Bio Commerce Page - Laura Govan Style Design
+  Banner hero + Product cards + Links + Socials
+  UPDATED: Fixed mobile avatar cutoff, banner display, and full-width background
+{% endcomment %}
+
+{%- comment -%} Read all metafields {%- endcomment -%}
+{%- assign links_json = page.metafields.creator_bio.links_json.value -%}
+{%- assign avatar_url = page.metafields.creator_bio.avatar_url.value -%}
+{%- assign hide_avatar = page.metafields.creator_bio.hide_avatar.value -%}
+{%- assign banner_image_url = page.metafields.creator_bio.banner_image_url.value -%}
+{%- assign full_name = page.metafields.creator_bio.full_name.value -%}
+{%- assign username = page.metafields.creator_bio.username.value -%}
+{%- assign user_id = page.metafields.creator_bio.user_id.value -%}
+{%- assign bio = page.metafields.creator_bio.bio.value -%}
+{%- assign collection_handle = page.metafields.creator_bio.collection_handle.value -%}
+{%- assign videos_json = page.metafields.creator_bio.videos_json.value -%}
+{%- assign section_order_json = page.metafields.creator_bio.section_order.value -%}
+
+{%- comment -%} Parse JSON metafields {%- endcomment -%}
+{%- assign socials_json = page.metafields.creator_bio.socials_json.value -%}
+{%- if socials_json != blank -%}
+  {%- assign socials = socials_json | parse_json -%}
+  {%- assign instagram_url = socials.instagram -%}
+  {%- assign twitter_url = socials.twitter -%}
+  {%- assign facebook_url = socials.facebook -%}
+  {%- assign youtube_url = socials.youtube -%}
+  {%- assign tiktok_url = socials.tiktok -%}
+  {%- assign linkedin_url = socials.linkedin -%}
+  {%- assign email_url = socials.email -%}
+  {%- assign snapchat_url = socials.snapchat -%}
+  {%- assign amazon_url = socials.amazon -%}
+{%- endif -%}
+
+{%- assign theme_settings_json = page.metafields.creator_bio.theme_settings.value -%}
+{%- if theme_settings_json != blank -%}
+  {%- assign theme_settings = theme_settings_json | parse_json -%}
+  {%- assign theme = theme_settings.theme | default: 'default' -%}
+  {%- assign disable_theme_background = theme_settings.disable_theme_background -%}
+  {%- assign text_color = theme_settings.text_color | default: 'black' -%}
+  {%- assign button_style = theme_settings.button_style | default: 'circle' -%}
+  {%- assign button_text_color = theme_settings.button_text_color | default: 'black' -%}
+  {%- assign button_color = theme_settings.button_color | default: 'white' -%}
+  {%- assign title_rgb_glow = theme_settings.title_rgb_glow -%}
+  {%- assign title_display_style = theme_settings.title_display_style | default: 'stacked' -%}
+  {%- assign verified_creator = theme_settings.verified_creator -%}
+  {%- assign product_card_style = theme_settings.product_card_style | default: 'clean' -%}
+  {%- assign banner_fade = theme_settings.banner_fade -%}
+{%- else -%}
+  {%- assign theme = 'default' -%}
+  {%- assign text_color = 'black' -%}
+  {%- assign button_style = 'circle' -%}
+  {%- assign button_text_color = 'black' -%}
+  {%- assign button_color = 'white' -%}
+  {%- assign product_card_style = 'clean' -%}
+  {%- assign banner_fade = true -%}
+  {%- assign title_display_style = 'stacked' -%}
+{%- endif -%}
+
+{%- comment -%} Design Style Setting - Minimal Design System {%- endcomment -%}
+{%- comment -%} Variants: 'minimal' (warm), 'minimal_dark', 'minimal_light', 'minimal_aurora' {%- endcomment -%}
+{%- assign design_style = theme_settings.design_style | default: 'minimal' -%}
+
+{%- assign email_signup_settings_json = page.metafields.creator_bio.email_signup_settings.value -%}
+{%- if email_signup_settings_json != blank -%}
+  {%- assign email_signup_settings = email_signup_settings_json | parse_json -%}
+  {%- assign enable_email_signup = email_signup_settings.enabled -%}
+  {%- assign email_signup_title = email_signup_settings.title -%}
+  {%- assign email_signup_description = email_signup_settings.description -%}
+  {%- assign email_signup_button_text = email_signup_settings.button_text -%}
+{%- else -%}
+  {%- assign enable_email_signup = true -%}
+{%- endif -%}
+
+{%- comment -%} Determine creator name - handle empty strings {%- endcomment -%}
+{%- assign creator_name = '' -%}
+{%- if full_name != blank and full_name.size > 0 -%}
+  {%- assign creator_name = full_name -%}
+{%- elsif username != blank and username.size > 0 -%}
+  {%- assign creator_name = username -%}
+{%- elsif section.settings.creator_name != blank -%}
+  {%- assign creator_name = section.settings.creator_name -%}
+{%- endif -%}
+
+{%- comment -%} Parse section order or use default {%- endcomment -%}
+{%- if section_order_json != blank -%}
+  {%- assign section_order = section_order_json | parse_json -%}
+{%- else -%}
+  {%- assign section_order = "email_signup,links,videos,socials" | split: ',' -%}
+{%- endif -%}
+
+{%- comment -%} Determine text colors based on setting {%- endcomment -%}
+{%- if text_color == 'white' -%}
+  {%- assign primary_text_color = '#FFFFFF' -%}
+  {%- assign secondary_text_color = '#E0E0E0' -%}
+  {%- assign tertiary_text_color = '#CCCCCC' -%}
+  {%- assign border_color = 'rgba(255, 255, 255, 0.3)' -%}
+  {%- assign input_border_color = 'rgba(255, 255, 255, 0.4)' -%}
+{%- else -%}
+  {%- assign primary_text_color = '#000000' -%}
+  {%- assign secondary_text_color = '#666666' -%}
+  {%- assign tertiary_text_color = '#999999' -%}
+  {%- assign border_color = '#E0E0E0' -%}
+  {%- assign input_border_color = '#CCCCCC' -%}
+{%- endif -%}
+
+{%- comment -%} Determine button text color {%- endcomment -%}
+{%- if button_text_color == 'white' -%}
+  {%- assign btn_text_color = '#FFFFFF' -%}
+{%- else -%}
+  {%- assign btn_text_color = '#000000' -%}
+{%- endif -%}
+
+{%- comment -%} Determine button background color {%- endcomment -%}
+{%- if button_color == 'black' -%}
+  {%- assign btn_bg_color = '#000000' -%}
+  {%- assign btn_border_color = '#000000' -%}
+  {%- assign btn_hover_bg = '#1a1a1a' -%}
+  {%- assign btn_frosted_bg = 'rgba(0, 0, 0, 0.15)' -%}
+  {%- assign btn_frosted_border = 'rgba(0, 0, 0, 0.2)' -%}
+  {%- assign btn_frosted_hover = 'rgba(0, 0, 0, 0.25)' -%}
+{%- elsif button_color == 'gray' -%}
+  {%- assign btn_bg_color = '#f5f5f5' -%}
+  {%- assign btn_border_color = '#e0e0e0' -%}
+  {%- assign btn_hover_bg = '#eeeeee' -%}
+  {%- assign btn_frosted_bg = 'rgba(245, 245, 245, 0.15)' -%}
+  {%- assign btn_frosted_border = 'rgba(245, 245, 245, 0.2)' -%}
+  {%- assign btn_frosted_hover = 'rgba(245, 245, 245, 0.25)' -%}
+{%- elsif button_color == 'cream' -%}
+  {%- assign btn_bg_color = '#faf9f6' -%}
+  {%- assign btn_border_color = '#e8e6e1' -%}
+  {%- assign btn_hover_bg = '#f0ede8' -%}
+  {%- assign btn_frosted_bg = 'rgba(250, 249, 246, 0.15)' -%}
+  {%- assign btn_frosted_border = 'rgba(250, 249, 246, 0.2)' -%}
+  {%- assign btn_frosted_hover = 'rgba(250, 249, 246, 0.25)' -%}
+{%- elsif button_color == 'pink' -%}
+  {%- assign btn_bg_color = '#FFB6C1' -%}
+  {%- assign btn_border_color = '#FFA0B4' -%}
+  {%- assign btn_hover_bg = '#FFA0B4' -%}
+  {%- assign btn_frosted_bg = 'rgba(255, 182, 193, 0.15)' -%}
+  {%- assign btn_frosted_border = 'rgba(255, 182, 193, 0.2)' -%}
+  {%- assign btn_frosted_hover = 'rgba(255, 182, 193, 0.25)' -%}
+{%- else -%}
+  {%- assign btn_bg_color = '#FFFFFF' -%}
+  {%- assign btn_border_color = '#e0e0e0' -%}
+  {%- assign btn_hover_bg = '#f5f5f5' -%}
+  {%- assign btn_frosted_bg = 'rgba(255, 255, 255, 0.15)' -%}
+  {%- assign btn_frosted_border = 'rgba(255, 255, 255, 0.2)' -%}
+  {%- assign btn_frosted_hover = 'rgba(255, 255, 255, 0.25)' -%}
+{%- endif -%}
+
+{%- comment -%} Theme Gradients {%- endcomment -%}
+{%- assign theme_gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' -%}
+{%- if theme == 'sunset' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)' -%}
+{%- elsif theme == 'ocean' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' -%}
+{%- elsif theme == 'forest' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)' -%}
+{%- elsif theme == 'midnight' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)' -%}
+{%- elsif theme == 'rose' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' -%}
+{%- elsif theme == 'mint' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' -%}
+{%- elsif theme == 'fire' -%}
+  {%- assign theme_gradient = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' -%}
+{%- elsif theme == 'animated' -%}
+  {%- assign theme_gradient = 'linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)' -%}
+{%- elsif theme == 'animatedPurple' -%}
+  {%- assign theme_gradient = 'linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c)' -%}
+{%- endif -%}
+
+{%- comment -%} Determine page background style {%- endcomment -%}
+{%- assign page_background = '#F5F5F5' -%}
+{%- assign page_animation = '' -%}
+{%- if disable_theme_background == 'true' or disable_theme_background == true -%}
+  {%- comment -%} Theme background is disabled, use solid color {%- endcomment -%}
+  {%- assign page_background = '#F5F5F5' -%}
+{%- else -%}
+  {%- comment -%} Theme background is enabled, use gradient {%- endcomment -%}
+  {%- assign page_background = theme_gradient -%}
+  {%- if theme == 'animated' or theme == 'animatedPurple' -%}
+    {%- assign page_animation = 'gradient-animation' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign collection = null -%}
+{%- if collection_handle != blank -%}
+  {%- assign collection = collections[collection_handle] -%}
+{%- elsif section.settings.collection -%}
+  {%- assign collection = section.settings.collection -%}
+{%- endif -%}
+
+{%- comment -%} Minimal Design System - Font Loading {%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<section class="cbcom-page {% if page_animation != '' %}{{ page_animation }}{% endif %} cbcom-minimal cbcom-minimal-{{ design_style }}" style="background: {{ page_background }}; {% if page_animation != '' %}background-size: 400% 400%;{% endif %} --text-primary: {{ primary_text_color }}; --text-secondary: {{ secondary_text_color }}; --text-tertiary: {{ tertiary_text_color }}; --border-color: {{ border_color }}; --input-border: {{ input_border_color }};" data-text-color="{{ text_color }}" data-design-style="{{ design_style }}">
+
+  {%- comment -%} ============================================
+    SECTION 1: BANNER / HERO
+  ============================================ {%- endcomment -%}
+
+    {%- comment -%} Hero Section {%- endcomment -%}
+    <div class="cbcom-minimal-hero">
+      {%- comment -%} Blurred organic background {%- endcomment -%}
+      <div class="cbcom-minimal-hero-bg" style="{%- if banner_image_url != blank -%}background-image: url('{{ banner_image_url }}');{%- elsif section.settings.banner_image != blank -%}background-image: url('{{ section.settings.banner_image | image_url: width: 1600 }}');{%- else -%}background: linear-gradient(135deg, #8B7355 0%, #A0826D 20%, #C4A882 40%, #E8D5BE 60%, #D4B896 80%, #6B5344 100%);{%- endif -%}"></div>
+      <div class="cbcom-minimal-hero-overlay"></div>
+
+      <div class="cbcom-minimal-hero-content">
+        {%- comment -%} Stacked name display {%- endcomment -%}
+        {%- assign name_words = creator_name | split: ' ' -%}
+        <h1 class="cbcom-minimal-creator-name-stacked">
+          {%- for word in name_words -%}
+            <span class="cbcom-minimal-name-word">{{ word }}</span>
+          {%- endfor -%}
+        </h1>
+
+        {%- comment -%} Pill badges {%- endcomment -%}
+        <div class="cbcom-minimal-badges">
+          <span class="cbcom-minimal-badge">Creator</span>
+          <span class="cbcom-minimal-badge cbcom-minimal-badge-icon">&#10022;</span>
+          {%- if verified_creator == 'true' or verified_creator == true -%}
+            <span class="cbcom-minimal-badge">Verified</span>
+          {%- endif -%}
+        </div>
+
+        {%- if bio != blank -%}
+          <p class="cbcom-minimal-tagline">{{ bio }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} ========== MINIMAL DESIGN: Main Floating Card ========== {%- endcomment -%}
+    <div class="cbcom-minimal-main-card">
+      {%- comment -%} Profile Header {%- endcomment -%}
+      <div class="cbcom-minimal-profile-header">
+        <div class="cbcom-minimal-profile-info">
+          <p class="cbcom-minimal-welcome">Welcome to</p>
+          <h2 class="cbcom-minimal-space-name">{{ creator_name }}'s Space</h2>
+        </div>
+        {%- if avatar_url != blank and hide_avatar != 'true' -%}
+          <img src="{{ avatar_url }}" alt="{{ creator_name }}" class="cbcom-minimal-avatar-small">
+        {%- else -%}
+          <div class="cbcom-minimal-avatar-gradient"></div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Stats Row {%- endcomment -%}
+      <div class="cbcom-minimal-stats-row">
+        <div class="cbcom-minimal-stat">
+          <span class="cbcom-minimal-stat-value" data-stat="products">
+            {%- if collection != blank -%}{{ collection.products.size }}{%- else -%}0{%- endif -%}
+          </span>
+          <span class="cbcom-minimal-stat-label">PRODUCTS</span>
+        </div>
+        <div class="cbcom-minimal-stat">
+          <span class="cbcom-minimal-stat-value" data-stat="links">
+            {%- if links_json != blank -%}
+              {%- assign parsed_links_count = links_json | parse_json -%}
+              {{ parsed_links_count.size }}
+            {%- else -%}0{%- endif -%}
+          </span>
+          <span class="cbcom-minimal-stat-label">LINKS</span>
+        </div>
+      </div>
+
+      {%- comment -%} Social Icons Row (Minimal Style) {%- endcomment -%}
+      {%- assign has_social = false -%}
+      {%- if instagram_url != blank and instagram_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+      {%- if twitter_url != blank and twitter_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+      {%- if youtube_url != blank and youtube_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+      {%- if tiktok_url != blank and tiktok_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+      {%- if has_social -%}
+        <div class="cbcom-minimal-social-row">
+          {%- if instagram_url != blank and instagram_url.size > 0 -%}
+            <a href="{{ instagram_url }}" class="cbcom-minimal-social-icon" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="18" cy="6" r="1.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if twitter_url != blank and twitter_url.size > 0 -%}
+            <a href="{{ twitter_url }}" class="cbcom-minimal-social-icon" target="_blank" rel="noopener" aria-label="Twitter/X">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if youtube_url != blank and youtube_url.size > 0 -%}
+            <a href="{{ youtube_url }}" class="cbcom-minimal-social-icon" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="4" width="20" height="16" rx="4"/>
+                <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          {%- if tiktok_url != blank and tiktok_url.size > 0 -%}
+            <a href="{{ tiktok_url }}" class="cbcom-minimal-social-icon" target="_blank" rel="noopener" aria-label="TikTok">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Navigation Tabs {%- endcomment -%}
+      <div class="cbcom-minimal-tabs">
+        <button class="cbcom-minimal-tab active" data-tab="all">All</button>
+        {%- if collection != blank and collection.products.size > 0 -%}
+          <button class="cbcom-minimal-tab" data-tab="shop">Shop</button>
+        {%- endif -%}
+        {%- if links_json != blank -%}
+          <button class="cbcom-minimal-tab" data-tab="links">Links</button>
+        {%- endif -%}
+        {%- if videos_json != blank -%}
+          <button class="cbcom-minimal-tab" data-tab="videos">Videos</button>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Content Container - Products, Links, Videos render inside {%- endcomment -%}
+      <div class="cbcom-minimal-content">
+
+    {%- comment -%} ============================================
+      SECTION 2: PRODUCT CARDS
+    ============================================ {%- endcomment -%}
+    {%- if collection != blank and collection.products.size > 0 -%}
+      <div class="cbcom-section cbcom-products-section cbcom-minimal-section" data-section="shop">
+        <div class="cbcom-minimal-section-header">
+          <h3 class="cbcom-minimal-section-title">SHOP</h3>
+          <a href="/collections/{{ collection_handle }}" class="cbcom-minimal-section-link">
+            View All
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17L17 7M17 7H7M17 7V17"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="cbcom-product-grid cbcom-minimal-products-grid">
+            {%- for product in collection.products limit: 12 -%}
+              <div class="cbcom-product-card cbcom-minimal-product-card"
+                   data-product-id="{{ product.id }}"
+                   data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                   data-base-price="{{ product.price | divided_by: 100.0 }}"
+                   data-creator="{{ username }}">
+
+                <a href="{{ product.url }}?ref={{ username }}" class="cbcom-minimal-product-media">
+                  {%- if product.featured_image -%}
+                    <img src="{{ product.featured_image | image_url: width: 600 }}"
+                         alt="{{ product.title | escape }}"
+                         loading="lazy"
+                         class="cbcom-minimal-product-img">
+                  {%- else -%}
+                    <div class="cbcom-minimal-product-placeholder">{{ product.title }}</div>
+                  {%- endif -%}
+                  <span class="cbcom-creator-bonus-badge" data-commission-badge>Creator bonus</span>
+                </a>
+
+                <div class="cbcom-minimal-product-info">
+                  <p class="cbcom-minimal-product-title">{{ product.title }}</p>
+                  <p class="cbcom-pc-price cbcom-minimal-product-price" data-base-price="{{ product.price | money }}">
+                    {{ product.price | money }}
+                  </p>
+                </div>
+              </div>
+            {%- endfor -%}
+        </div>
+
+        {%- comment -%} Pagination dots for scrollable products {%- endcomment -%}
+        <div class="cbcom-products-pagination" id="productsPagination"></div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ============================================
+      DYNAMIC SECTIONS (Reorderable)
+    ============================================ {%- endcomment -%}
+    {%- for section_name in section_order -%}
+      {%- if section_name == 'email_signup' -%}
+        {%- comment -%} EMAIL SIGNUP SECTION {%- endcomment -%}
+        {%- if enable_email_signup == true or enable_email_signup == 'true' -%}
+      <div class="cbcom-minimal-email-section" data-section="email">
+        <h3 class="cbcom-minimal-email-title">{{ email_signup_title | default: 'Stay in the loop' }}</h3>
+        <p class="cbcom-minimal-email-desc">{{ email_signup_description | default: 'Get updates on new releases and exclusive content.' }}</p>
+
+        <form class="cbcom-minimal-email-form" id="emailSignupForm">
+          <div class="cbcom-minimal-email-input-row">
+            <input type="email"
+                   id="emailInput"
+                   name="email"
+                   class="cbcom-minimal-email-input"
+                   placeholder="your@email.com"
+                   required
+                   aria-label="Email address">
+            <button type="submit" class="cbcom-minimal-email-btn" id="emailSubmitBtn">
+              Join
+            </button>
+          </div>
+          <div class="cbcom-email-message" id="emailMessage"></div>
+        </form>
+      </div>
+        {%- endif -%}
+      {%- elsif section_name == 'links' -%}
+        {%- comment -%} LINKS SECTION {%- endcomment -%}
+        {%- if links_json != blank -%}
+      {% assign parsed_links = links_json | parse_json %}
+      {%- if parsed_links.size > 0 -%}
+        <div class="cbcom-minimal-section" data-section="links">
+          <div class="cbcom-minimal-section-header">
+            <h3 class="cbcom-minimal-section-title">LINKS</h3>
+          </div>
+
+          <div class="cbcom-minimal-links">
+            {%- for link in parsed_links -%}
+              {%- assign link_url = link.url -%}
+              {%- unless link_url contains 'http://' or link_url contains 'https://' -%}
+                {%- assign link_url = link_url | prepend: 'https://' -%}
+              {%- endunless -%}
+
+              <a href="{{ link_url }}"
+                 class="cbcom-minimal-link-card"
+                 target="_blank"
+                 rel="noopener"
+                 data-link-id="{{ link.id }}"
+                 data-link-click="{{ username }}|{{ link_url }}">
+                <div class="cbcom-minimal-link-content">
+                  <span class="cbcom-minimal-link-title">{{ link.title }}</span>
+                  <span class="cbcom-minimal-link-subtitle">View</span>
+                </div>
+                <svg class="cbcom-minimal-link-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                </svg>
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+        {%- endif -%}
+      {%- elsif section_name == 'videos' -%}
+        {%- comment -%} VIDEOS SECTION {%- endcomment -%}
+        {%- if videos_json != blank -%}
+      {% assign parsed_videos = videos_json | parse_json %}
+      {%- if parsed_videos.size > 0 -%}
+        {%- comment -%} Separate videos by platform using where filter {%- endcomment -%}
+        {%- assign youtube_videos = parsed_videos | where: 'platform', 'youtube' -%}
+        {%- assign shorts_videos = parsed_videos | where: 'platform', 'youtube_shorts' -%}
+        {%- assign tiktok_videos = parsed_videos | where: 'platform', 'tiktok' -%}
+
+        {%- comment -%} YOUTUBE SECTION {%- endcomment -%}
+        {%- if youtube_videos.size > 0 -%}
+          <div class="cbcom-section cbcom-youtube-section cbcom-minimal-section" data-section="videos">
+            <div class="cbcom-minimal-section-header">
+              <h3 class="cbcom-minimal-section-title">YOUTUBE</h3>
+            </div>
+            <div class="cbcom-videos-grid cbcom-videos-grid-youtube">
+              {%- for video in youtube_videos -%}
+                {%- assign video_id = video.url | split: 'v=' | last | split: '&' | first -%}
+                {%- if video_id == video.url -%}
+                  {%- assign video_id = video.url | split: 'youtu.be/' | last | split: '?' | first -%}
+                {%- endif -%}
+                <div class="cbcom-video-wrapper cbcom-video-wrapper-youtube">
+                  <iframe
+                    class="cbcom-video-embed cbcom-video-youtube"
+                    src="https://www.youtube.com/embed/{{ video_id }}"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                  </iframe>
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} YOUTUBE SHORTS SECTION {%- endcomment -%}
+        {%- if shorts_videos.size > 0 -%}
+          <div class="cbcom-section cbcom-shorts-section cbcom-minimal-section" data-section="videos">
+            <div class="cbcom-minimal-section-header">
+              <h3 class="cbcom-minimal-section-title">SHORTS</h3>
+            </div>
+            <div class="cbcom-videos-grid cbcom-videos-grid-shorts">
+              {%- for video in shorts_videos -%}
+                {%- assign video_id = video.url | split: '/shorts/' | last | split: '?' | first -%}
+                <div class="cbcom-video-wrapper cbcom-video-wrapper-shorts">
+                  <iframe
+                    class="cbcom-video-embed cbcom-video-shorts"
+                    src="https://www.youtube.com/embed/{{ video_id }}"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                  </iframe>
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} TIKTOK SECTION {%- endcomment -%}
+        {%- if tiktok_videos.size > 0 -%}
+          <div class="cbcom-section cbcom-tiktok-section cbcom-minimal-section" data-section="videos">
+            <div class="cbcom-minimal-section-header">
+              <h3 class="cbcom-minimal-section-title">TIKTOK</h3>
+            </div>
+            <div class="cbcom-videos-grid cbcom-videos-grid-tiktok{% if tiktok_videos.size <= 2 %} cbcom-videos-grid-tiktok-centered{% endif %}">
+              {%- for video in tiktok_videos -%}
+                {%- assign video_id = video.url | split: '/video/' | last | split: '?' | first -%}
+                <div class="cbcom-video-wrapper cbcom-video-wrapper-tiktok">
+                  <div class="cbcom-tiktok-inner">
+                    <blockquote
+                      class="tiktok-embed"
+                      cite="{{ video.url }}"
+                      data-video-id="{{ video_id }}">
+                      <section style="display: none;">
+                        <a target="_blank" title="TikTok" href="{{ video.url }}">View on TikTok</a>
+                      </section>
+                    </blockquote>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+        {%- endif -%}
+      {%- elsif section_name == 'socials' -%}
+        {%- comment -%} SOCIALS SECTION {%- endcomment -%}
+        {%- assign has_social = false -%}
+    {%- if instagram_url != blank and instagram_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if twitter_url != blank and twitter_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if facebook_url != blank and facebook_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if youtube_url != blank and youtube_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if tiktok_url != blank and tiktok_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if linkedin_url != blank and linkedin_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if email_url != blank and email_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if snapchat_url != blank and snapchat_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+    {%- if amazon_url != blank and amazon_url.size > 0 -%}{%- assign has_social = true -%}{%- endif -%}
+
+    {%- if has_social -%}
+      <div class="cbcom-section cbcom-socials-section">
+        <h2 class="cbcom-section-title">SOCIALS</h2>
+
+        <div class="cbcom-social-icons">
+          {%- if instagram_url != blank and instagram_url.size > 0 -%}
+            <a href="{{ instagram_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if twitter_url != blank and twitter_url.size > 0 -%}
+            <a href="{{ twitter_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="Twitter/X">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if facebook_url != blank and facebook_url.size > 0 -%}
+            <a href="{{ facebook_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if youtube_url != blank and youtube_url.size > 0 -%}
+            <a href="{{ youtube_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if tiktok_url != blank and tiktok_url.size > 0 -%}
+            <a href="{{ tiktok_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="TikTok">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if linkedin_url != blank and linkedin_url.size > 0 -%}
+            <a href="{{ linkedin_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="LinkedIn">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if email_url != blank and email_url.size > 0 -%}
+            <a href="{{ email_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="Email">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if snapchat_url != blank and snapchat_url.size > 0 -%}
+            <a href="{{ snapchat_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="Snapchat">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.029.505.015.005.033.01.05.015.557.144 1.081.298 1.544.491.732.305 1.234.777 1.234 1.493 0 .66-.418 1.205-1.21 1.583-.367.175-.748.3-1.096.407-.331.105-.61.195-.876.298a.756.756 0 0 0-.158.085c.015.074.036.17.06.284.253 1.206 1.223 1.83 2.11 2.4.263.168.524.336.757.512.524.398.854.853.854 1.448 0 .627-.474 1.068-1.355 1.252-.21.044-.404.076-.6.108-.188.031-.369.062-.553.104a1.846 1.846 0 0 0-.19.048c-.885.27-1.458.75-1.81 1.512-.428.927-1.054 1.395-1.806 1.395-.246 0-.496-.05-.753-.149-.446-.177-.908-.248-1.385-.248-.485 0-.951.071-1.388.248-.257.1-.507.149-.753.149-.752 0-1.378-.468-1.806-1.395-.352-.763-.925-1.242-1.81-1.512a1.846 1.846 0 0 0-.19-.048c-.184-.042-.365-.073-.553-.104-.196-.032-.39-.064-.6-.108-.881-.184-1.355-.625-1.355-1.252 0-.595.33-1.05.854-1.448.233-.176.494-.344.757-.512.887-.57 1.857-1.194 2.11-2.4.024-.114.045-.21.06-.284a.756.756 0 0 0-.158-.085c-.266-.103-.545-.193-.876-.298-.348-.107-.729-.232-1.096-.407-.792-.378-1.21-.923-1.21-1.583 0-.716.502-1.188 1.234-1.493.463-.193.987-.347 1.544-.491.017-.005.035-.01.05-.015-.007-.16-.017-.325-.029-.505l-.003-.06c-.104-1.628-.23-3.654.299-4.847C7.859 1.069 11.216.793 12.206.793z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+
+          {%- if amazon_url != blank and amazon_url.size > 0 -%}
+            <a href="{{ amazon_url }}" class="cbcom-social-icon" target="_blank" rel="noopener" aria-label="Amazon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726-1.53.406-3.045.61-4.516.61-2.265 0-4.482-.414-6.661-1.244-2.1-.802-3.956-1.918-5.558-3.338-.154-.14-.2-.25-.154-.364zm1.463-2.876c-.08-.096-.024-.192.12-.264l.512-.28c1.17-.683 2.328-1.24 3.473-1.668 2.137-.797 4.234-1.197 6.302-1.197 1.39 0 2.777.164 4.163.497 1.388.332 2.667.864 3.84 1.596.185.12.256.23.188.366-.068.136-.187.158-.348.054-1.67-.936-3.455-1.562-5.355-1.877-1.9-.314-3.784-.397-5.653-.25-2.395.19-4.7.743-6.907 1.66-.16.066-.24.098-.235.096zm13.568-4.53c0 .664-.133 1.288-.397 1.87-.264.583-.62 1.096-1.067 1.54-.447.445-.962.794-1.543 1.047-.582.253-1.195.38-1.838.38-.66 0-1.29-.13-1.887-.388-.598-.26-1.115-.614-1.553-1.063-.437-.45-.78-.972-1.028-1.566-.248-.594-.372-1.226-.372-1.896 0-.678.132-1.314.396-1.908.264-.594.624-1.11 1.078-1.548.455-.438.977-.782 1.566-1.032.59-.25 1.213-.375 1.87-.375.646 0 1.26.126 1.842.378.582.252 1.09.598 1.525 1.037.434.44.775.958 1.022 1.555.247.598.37 1.236.37 1.914zm-1.635-.016c0-.506-.087-.99-.26-1.453-.174-.464-.415-.87-.724-1.22-.31-.35-.677-.625-1.102-.827-.425-.2-.877-.302-1.356-.302-.466 0-.91.102-1.333.307-.423.204-.79.48-1.102.826-.31.347-.556.754-.736 1.223-.18.47-.27.963-.27 1.48 0 .498.088.973.263 1.427.176.453.417.85.723 1.19.306.34.668.607 1.084.803.417.196.86.294 1.33.294.48 0 .93-.095 1.35-.285.42-.19.785-.453 1.095-.79.31-.336.553-.73.728-1.183.176-.453.264-.932.264-1.437z"/>
+              </svg>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    </div>{%- comment -%} Close .cbcom-minimal-content {%- endcomment -%}
+    </div>{%- comment -%} Close .cbcom-minimal-main-card {%- endcomment -%}
+</section>
+
+<style>
+/* ============================================ */
+/* CREATORBIO COMMERCE - LAURA GOVAN DESIGN */
+/* UPDATED: Custom font + side margins + full-width background */
+/* ============================================ */
+
+/* Load Custom Font - Grople Regular */
+@font-face {
+  font-family: 'Grople';
+  src: url('https://cdn.shopify.com/s/files/1/0785/2199/1403/files/grople-regular.otf?v=1761777531') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Load Nuckles Font for Product Cards */
+@font-face {
+  font-family: 'Nuckles';
+  src: url('https://cdn.shopify.com/s/files/1/0785/2199/1403/files/nuckle-regular.otf?v=1738019601') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Custom Property for animation */
+@property --k {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: false;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cbcom-page {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  padding: 12px 12px 40px 12px; /* Better bottom spacing on mobile */
+  max-width: 680px; /* Max width for centered desktop view */
+  margin: 0 auto; /* Center on desktop */
+  position: relative;
+  z-index: 1;
+}
+
+/* Extend background to full viewport width on desktop */
+.cbcom-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Animated gradient for animated themes */
+.gradient-animation {
+  animation: gradient 15s ease infinite;
+}
+
+.gradient-animation::before {
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ============================================ */
+/* BANNER / HERO SECTION */
+/* ============================================ */
+
+.cbcom-banner {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 480px !important;
+  min-height: 480px !important;
+  overflow: hidden !important;
+  border-radius: 24px 24px 0 0; /* Only top corners rounded */
+  margin-bottom: 32px !important;
+}
+
+.cbcom-banner-bg {
+  position: absolute !important;
+  display: block !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  z-index: 1 !important;
+  border-radius: 24px 24px 0 0;
+}
+
+.cbcom-banner-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%) !important;
+  z-index: 2 !important;
+  border-radius: 24px 24px 0 0;
+}
+
+.cbcom-banner-bottom-fade {
+  position: absolute !important;
+  display: block !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: 150px !important;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%) !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+}
+
+.cbcom-banner-content {
+  position: absolute !important;
+  bottom: 32px !important; /* Avatar sits INSIDE banner at bottom */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 4 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  padding: 0 20px !important;
+}
+
+.cbcom-avatar {
+  width: 110px !important;
+  height: 110px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 4px solid #FFFFFF !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
+  background: #FFFFFF !important;
+  display: block !important;
+}
+
+.cbcom-creator-name-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.cbcom-creator-name {
+  font-size: clamp(20px, 6vw, 42px) !important;
+  font-weight: 400 !important; /* Grople is already bold by design */
+  color: #FFFFFF !important;
+  margin: 0 !important;
+  letter-spacing: 2px !important;
+  text-shadow: 0 3px 12px rgba(0,0,0,0) !important;
+  font-family: 'Grople', 'Helvetica Neue', Arial, sans-serif !important;
+  text-align: center !important;
+  line-height: 1.1 !important;
+  max-width: 100% !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: none !important;
+}
+
+/* One-line variant */
+.cbcom-creator-name-one-line {
+  font-size: clamp(20px, 5.5vw, 40px) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+/* Stacked variant */
+.cbcom-creator-name-stacked {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 0 !important;
+}
+
+.cbcom-creator-name-word-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.cbcom-creator-name-word {
+  font-size: clamp(24px, 7vw, 48px) !important;
+  font-weight: 400 !important;
+  color: #FFFFFF !important;
+  margin: 0 !important;
+  letter-spacing: 2px !important;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.6) !important;
+  font-family: 'Grople', 'Helvetica Neue', Arial, sans-serif !important;
+  text-align: center !important;
+  line-height: 1.2 !important;
+  padding: 2px 0 !important;
+}
+
+.cbcom-verified-badge {
+  width: clamp(10px, 2.5vw, 14px) !important;
+  height: clamp(10px, 2.5vw, 14px) !important;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  filter: drop-shadow(0 3px 12px rgba(0,0,0,0.6)) !important;
+}
+
+/* ============================================ */
+/* NO BANNER HEADER STYLES */
+/* ============================================ */
+
+.cbcom-no-banner-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 40px 20px !important;
+  margin-bottom: 32px !important;
+}
+
+.cbcom-avatar-no-banner {
+  width: 110px !important;
+  height: 110px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 3px solid rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
+  display: block !important;
+}
+
+/* Adjust border color based on text color */
+[data-text-color="white"] .cbcom-avatar-no-banner {
+  border-color: rgba(255,255,255,0.2) !important;
+}
+
+.cbcom-creator-name-wrapper-no-banner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.cbcom-creator-name-no-banner {
+  font-size: clamp(24px, 6vw, 32px) !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  margin: 0 !important;
+  letter-spacing: 0.5px !important;
+  font-family: 'Grople', 'Helvetica Neue', Arial, sans-serif !important;
+  text-align: center !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* One-line variant no banner */
+.cbcom-creator-name-no-banner.cbcom-creator-name-one-line {
+  font-size: clamp(22px, 5.5vw, 34px) !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+/* Stacked variant no banner */
+.cbcom-creator-name-stacked-no-banner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 0 !important;
+}
+
+.cbcom-creator-name-word-wrapper-no-banner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.cbcom-creator-name-word-no-banner {
+  font-size: clamp(28px, 7vw, 40px) !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  margin: 0 !important;
+  letter-spacing: 0.5px !important;
+  font-family: 'Grople', 'Helvetica Neue', Arial, sans-serif !important;
+  text-align: center !important;
+  line-height: 1.2 !important;
+  padding: 2px 0 !important;
+}
+
+.cbcom-verified-badge-no-banner {
+  width: clamp(12px, 3vw, 18px) !important;
+  height: clamp(12px, 3vw, 18px) !important;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+}
+
+/* Bio styles */
+.cbcom-bio-banner {
+  font-size: 15px !important;
+  color: rgba(255,255,255,0.95) !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
+  text-align: center !important;
+}
+
+.cbcom-bio-no-banner {
+  font-size: 14px !important;
+  color: var(--text-primary) !important;
+  opacity: 0.9 !important;
+  margin: 0 !important;
+  line-height: 1.6 !important;
+  text-align: center !important;
+  max-width: 400px !important;
+}
+
+/* RGB Glow Title Effect */
+@property --k {
+  syntax: '<number>';
+  initial-value: 0;
+  inherits: false;
+}
+
+@keyframes k {
+  to {
+    --k: 1;
+  }
+}
+
+.cbcom-creator-name-rgb {
+  background: linear-gradient(90deg,
+    hsl(calc(var(--k)*1turn), 95%, 65%),
+    hsl(calc(var(--k)*1turn + 90deg), 95%, 65%)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  font-weight: 900 !important;
+  animation: k 4s linear infinite !important;
+}
+
+/* ============================================ */
+/* CONTAINER */
+/* ============================================ */
+
+.cbcom-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.cbcom-section {
+  margin-bottom: 48px;
+}
+
+.cbcom-section:last-child {
+  margin-bottom: 24px;
+}
+
+.cbcom-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: {{ primary_text_color }};
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 24px 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ============================================ */
+/* PRODUCT GRID */
+/* ============================================ */
+
+.cbcom-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* Mobile: Single product centered */
+.cbcom-product-grid[data-count="1"] {
+  grid-template-columns: 1fr;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Mobile: 3+ products horizontal scroll */
+.cbcom-product-grid[data-count-more-than-2="true"] {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+}
+
+.cbcom-product-grid[data-count-more-than-2="true"]::-webkit-scrollbar {
+  display: none;
+}
+
+/* Products section */
+.cbcom-products-section {
+  position: relative;
+}
+
+.cbcom-product-grid[data-count-more-than-2="true"] .cbcom-product-card {
+  flex: 0 0 calc(50% - 6px);
+  min-width: calc(50% - 6px);
+  scroll-snap-align: start;
+}
+
+/* Minimal pagination dots - Gentle Monster style */
+.cbcom-products-pagination {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.cbcom-products-pagination.active {
+  display: flex;
+}
+
+.cbcom-pagination-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: {{ primary_text_color }};
+  opacity: 0.3;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.cbcom-pagination-dot:hover {
+  opacity: 0.6;
+}
+
+.cbcom-pagination-dot.active {
+  opacity: 1;
+  transform: scale(1.3);
+}
+
+/* ============================================ */
+/* PRODUCT CARD - Clean Grid Style */
+/* ============================================ */
+
+.cbcom-product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+/* Clean card style (default) */
+.cbcom-pc-clean {
+  background: #FFFFFF;
+}
+
+/* Frosted card style */
+.cbcom-pc-frosted {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Black card style */
+.cbcom-pc-black {
+  background: #000000;
+}
+
+.cbcom-pc-black .cbcom-pc-category {
+  color: #999999 !important;
+}
+
+.cbcom-pc-black .cbcom-pc-title {
+  color: #FFFFFF !important;
+}
+
+.cbcom-pc-black .cbcom-pc-price {
+  color: #FFFFFF !important;
+}
+
+.cbcom-product-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Product Media Container */
+.cbcom-pc-media {
+  position: relative;
+  width: 100%;
+  padding-top: 133%; /* 4:3 aspect ratio */
+  overflow: hidden;
+  background: #F5F5F5;
+  display: block;
+  text-decoration: none;
+}
+
+.cbcom-pc-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #999;
+  text-align: center;
+  padding: 12px;
+}
+
+.cbcom-pc-img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  transition: opacity 0.3s ease !important;
+}
+
+/* Hover swap functionality - ONLY for products with multiple images */
+.cbcom-pc-img-primary {
+  opacity: 1;
+  z-index: 1;
+}
+
+.cbcom-pc-img-secondary {
+  opacity: 0;
+  z-index: 2;
+}
+
+/* Only apply hover swap to cards with multiple images */
+.cbcom-product-card.has-multiple-images .cbcom-pc-media:hover .cbcom-pc-img-primary {
+  opacity: 0;
+}
+
+.cbcom-product-card.has-multiple-images .cbcom-pc-media:hover .cbcom-pc-img-secondary {
+  opacity: 1;
+}
+
+/* Creator Bonus Badge */
+.cbcom-creator-bonus-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #000000;
+  color: #FFFFFF;
+  font-size: 8px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: lowercase;
+  letter-spacing: 0;
+  opacity: 0;
+  z-index: 3;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.cbcom-creator-bonus-badge.show {
+  opacity: 1;
+}
+
+/* Product Info */
+.cbcom-pc-info {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cbcom-pc-category {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 8px;
+  font-weight: 500;
+  color: {{ primary_text_color }};
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0;
+}
+
+.cbcom-pc-title-link {
+  text-decoration: none;
+}
+
+.cbcom-pc-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: {{ primary_text_color }};
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cbcom-pc-price {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: {{ primary_text_color }};
+}
+
+/* ============================================ */
+/* LINKS SECTION */
+/* ============================================ */
+
+.cbcom-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Base button styles */
+.cbcom-link-button {
+  display: block;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Circle button style (original) */
+.cbcom-link-button.cbcom-btn-circle {
+  border-radius: 50px;
+}
+
+.cbcom-link-button.cbcom-btn-circle:hover {
+  background: var(--btn-hover-bg) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+/* Frosted glass button style */
+.cbcom-link-button.cbcom-btn-frosted {
+  background: var(--btn-frosted-bg) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--btn-frosted-border) !important;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cbcom-link-button.cbcom-btn-frosted:hover {
+  background: var(--btn-frosted-hover) !important;
+  border-color: var(--btn-frosted-border) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modern solid button style */
+.cbcom-link-button.cbcom-btn-modern {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cbcom-link-button.cbcom-btn-modern:hover {
+  background: var(--btn-hover-bg) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Animated shine button style */
+.cbcom-link-button.cbcom-btn-animated {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cbcom-link-button.cbcom-btn-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transition: left 0.5s;
+}
+
+.cbcom-link-button.cbcom-btn-animated:hover::before {
+  left: 100%;
+}
+
+.cbcom-link-button.cbcom-btn-animated:hover {
+  background: var(--btn-hover-bg) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================ */
+/* VIDEOS SECTION */
+/* ============================================ */
+
+/* Add padding above video section titles */
+.cbcom-youtube-section .cbcom-section-title,
+.cbcom-shorts-section .cbcom-section-title,
+.cbcom-tiktok-section .cbcom-section-title {
+  padding-top: 12px;
+}
+
+/* YouTube regular videos grid - 16:9 landscape */
+.cbcom-videos-grid-youtube {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  max-width: 100%;
+}
+
+.cbcom-video-wrapper-youtube {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cbcom-video-youtube {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: auto;
+  border: none;
+  display: block;
+}
+
+/* YouTube Shorts grid - 9:16 portrait */
+/* 1-2 shorts: grid layout */
+.cbcom-videos-grid-shorts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 100%;
+  justify-items: center;
+}
+
+/* 3+ shorts: horizontal scrollable */
+.cbcom-videos-grid-shorts[data-count-more-than-2="true"] {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 8px;
+  grid-template-columns: unset;
+  justify-items: unset;
+}
+
+.cbcom-videos-grid-shorts[data-count-more-than-2="true"]::-webkit-scrollbar {
+  display: none;
+}
+
+.cbcom-video-wrapper-shorts {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* When scrollable, make shorts fixed width */
+.cbcom-videos-grid-shorts[data-count-more-than-2="true"] .cbcom-video-wrapper-shorts {
+  flex: 0 0 300px;
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  scroll-snap-align: start;
+}
+
+.cbcom-video-shorts {
+  aspect-ratio: 9 / 16;
+  width: 100%;
+  max-height: 600px;
+  height: auto;
+  border: none;
+  display: block;
+}
+
+/* TikTok videos grid - 9:16 portrait scrollable carousel */
+.cbcom-videos-grid-tiktok {
+  display: flex;
+  gap: 16px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 8px;
+}
+
+/* Center TikTok videos when 1-2 videos (no scroll) */
+.cbcom-videos-grid-tiktok-centered {
+  justify-content: center;
+  align-items: flex-start;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  flex-wrap: nowrap;
+  scroll-snap-type: none !important;
+  padding-bottom: 0;
+}
+
+/* Force TikTok videos to stay TALL - 325x575px */
+.cbcom-video-wrapper-tiktok {
+  position: relative;
+  flex: 0 0 325px;
+  width: 325px !important;
+  min-width: 325px;
+  max-width: 325px;
+  height: 575px !important;
+  min-height: 575px !important;
+  max-height: 575px !important;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  overflow: hidden;
+}
+
+.cbcom-tiktok-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden !important;
+  background: #000;
+  position: relative;
+  display: block;
+}
+
+.cbcom-tiktok-inner * {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.tiktok-embed {
+  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  transition: opacity 0.3s ease-in !important;
+  position: relative !important;
+  top: -1px !important;
+}
+
+/* Show TikTok embed after it loads */
+.cbcom-video-wrapper-tiktok:has(iframe) .tiktok-embed {
+  opacity: 1;
+}
+
+/* Hide scrollbar for TikTok carousel */
+.cbcom-videos-grid-tiktok::-webkit-scrollbar {
+  display: none;
+}
+
+.cbcom-video-embed {
+  display: block;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .cbcom-videos-grid-youtube {
+    grid-template-columns: 1fr;
+  }
+
+  /* Mobile: 1-2 shorts show as single column */
+  .cbcom-videos-grid-shorts {
+    grid-template-columns: 1fr;
+  }
+
+  /* Mobile: 3+ shorts stay scrollable */
+  .cbcom-videos-grid-shorts[data-count-more-than-2="true"] {
+    display: flex;
+  }
+
+  .cbcom-video-shorts {
+    max-height: 500px;
+  }
+
+  /* Mobile scrollable shorts should be smaller */
+  .cbcom-videos-grid-shorts[data-count-more-than-2="true"] .cbcom-video-wrapper-shorts {
+    flex: 0 0 250px;
+    width: 250px;
+    min-width: 250px;
+    max-width: 250px;
+  }
+
+  /* Stack TikTok videos on mobile when 1-2 videos (centered) */
+  .cbcom-videos-grid-tiktok-centered {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+}
+
+/* ============================================ */
+/* SOCIALS SECTION */
+/* ============================================ */
+
+.cbcom-social-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.cbcom-social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: {{ primary_text_color }};
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.cbcom-social-icon:hover {
+  transform: scale(1.1);
+  color: #667eea;
+}
+
+/* ============================================ */
+/* EMAIL SIGNUP SECTION */
+/* ============================================ */
+
+.cbcom-email-signup-section {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+}
+
+.cbcom-email-signup-description {
+  font-size: 14px;
+  color: {{ primary_text_color }};
+  text-align: center;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.cbcom-email-signup-form {
+  width: 100%;
+}
+
+.cbcom-email-input-wrapper {
+  display: flex;
+  gap: 0;
+  margin-bottom: 12px;
+  position: relative;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  border-bottom: 2px solid {{ primary_text_color }};
+  padding-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.cbcom-email-input-wrapper:focus-within {
+  border-bottom-color: {{ primary_text_color }};
+}
+
+/* Prevent focus glow + tap highlight on inputs/buttons */
+.cbcom-email-input,
+.cbcom-email-submit-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/* Kill focus outlines/glows */
+.cbcom-email-input:focus,
+.cbcom-email-input:focus-visible,
+.cbcom-email-submit-btn:focus,
+.cbcom-email-submit-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.cbcom-email-input {
+  flex: 1;
+  padding: 12px 0;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-size: 16px;
+  font-family: inherit;
+  color: {{ primary_text_color }};
+  width: 100%;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.cbcom-email-input::placeholder {
+  color: {{ primary_text_color }};
+  font-weight: 400;
+}
+
+.cbcom-email-submit-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  color: {{ primary_text_color }};
+}
+
+.cbcom-email-submit-btn:hover {
+  transform: translateX(4px);
+}
+
+.cbcom-email-submit-btn:active {
+  transform: translateX(2px);
+}
+
+.cbcom-email-submit-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cbcom-email-submit-btn svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.cbcom-email-message {
+  text-align: center;
+  font-size: 13px;
+  padding: 8px;
+  border-radius: 8px;
+  min-height: 20px;
+}
+
+.cbcom-email-message.success {
+  color: #10b981;
+  background: #ecfdf5;
+}
+
+.cbcom-email-message.error {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+@media (max-width: 768px) {
+  .cbcom-email-input-wrapper {
+    max-width: 100%;
+  }
+
+  .cbcom-email-input {
+    font-size: 15px;
+  }
+
+  .cbcom-email-submit-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 400px) {
+  .cbcom-email-input {
+    font-size: 14px;
+  }
+
+  .cbcom-email-submit-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ============================================ */
+/* RESPONSIVE DESIGN */
+/* ============================================ */
+
+/* Desktop: larger screens get centered mobile view */
+@media (min-width: 681px) {
+  .cbcom-page {
+    padding: 20px 20px 40px 20px;
+  }
+
+  .cbcom-banner {
+    border-radius: 24px; /* All corners rounded on desktop */
+    height: 720px !important;
+    min-height: 720px !important;
+  }
+
+  .cbcom-banner-bg {
+    border-radius: 24px;
+  }
+
+  .cbcom-banner-overlay {
+    border-radius: 24px;
+  }
+
+  .cbcom-banner-bottom-fade {
+    display: block !important;
+    height: 250px !important;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%) !important;
+  }
+
+  .cbcom-banner-content {
+    bottom: 48px !important;
+    gap: 18px !important;
+  }
+
+  .cbcom-avatar {
+    width: 130px !important;
+    height: 130px !important;
+  }
+
+  /* Desktop: Dynamic grid based on product count */
+  .cbcom-product-grid {
+    gap: 16px;
+  }
+
+  /* Reset mobile scroll for desktop */
+  .cbcom-product-grid[data-count-more-than-2="true"] {
+    display: grid;
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+
+  /* 1 product: centered */
+  .cbcom-product-grid[data-count="1"] {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* 2 products: 2 columns */
+  .cbcom-product-grid[data-count="2"] {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Exactly 3 products: 3 columns */
+  .cbcom-product-grid[data-count="3"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* 4+ products: horizontal scroll */
+  .cbcom-product-grid[data-count-more-than-3="true"] {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+  }
+
+  .cbcom-product-grid[data-count-more-than-3="true"] .cbcom-product-card {
+    flex: 0 0 calc(33.333% - 11px);
+    scroll-snap-align: start;
+  }
+
+  .cbcom-pc-category {
+    font-size: 10px;
+  }
+
+  .cbcom-pc-title {
+    font-size: 14px;
+  }
+
+  .cbcom-pc-price {
+    font-size: 14px;
+  }
+
+  .cbcom-swatch {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 400px) {
+  .cbcom-banner {
+    height: 420px !important;
+    min-height: 420px !important;
+  }
+
+  .cbcom-banner-content {
+    bottom: 28px !important;
+  }
+
+  .cbcom-avatar {
+    width: 90px !important;
+    height: 90px !important;
+  }
+
+  /* Grid stays 2 columns on small mobile */
+}
+
+/* Hide default Shopify elements that might interfere */
+.cbcom-page .shopify-section {
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================ */
+/* MINIMAL DESIGN SYSTEM - Peakr Inspired */
+/* ============================================ */
+
+/* Only apply when minimal design is active */
+.cbcom-page.cbcom-minimal,
+.cbcom-page.cbcom-minimal-minimal,
+.cbcom-page.cbcom-minimal-minimal_dark,
+.cbcom-page.cbcom-minimal-minimal_aurora,
+.cbcom-page.cbcom-minimal-minimal_light {
+  --cb-bg: linear-gradient(180deg, #F8F6F3 0%, #F2EDE8 100%);
+  --cb-card-bg: rgba(255, 255, 255, 0.85);
+  --cb-card-bg-solid: #FFFFFF;
+  --cb-card-accent: #F8F6F3;
+  --cb-accent: #C4A574;
+  --cb-text-primary: #1A1A1A;
+  --cb-text-secondary: #8A8A8A;
+  --cb-text-muted: #BEBEBE;
+  --cb-border: rgba(0, 0, 0, 0.06);
+  --cb-button-bg: #1A1A1A;
+  --cb-button-text: #FFFFFF;
+
+  background: var(--cb-bg) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Dark variant */
+.cbcom-page.cbcom-minimal-minimal_dark {
+  --cb-bg: linear-gradient(180deg, #1A1816 0%, #252220 50%, #1A1816 100%);
+  --cb-card-bg: rgba(255, 255, 255, 0.05);
+  --cb-card-bg-solid: rgba(40, 36, 34, 0.95);
+  --cb-card-accent: rgba(255, 255, 255, 0.03);
+  --cb-accent: #D4A574;
+  --cb-text-primary: #FFFFFF;
+  --cb-text-secondary: #8A8580;
+  --cb-text-muted: #5A5550;
+  --cb-border: rgba(255, 255, 255, 0.08);
+  --cb-button-bg: #FFFFFF;
+  --cb-button-text: #1A1816;
+}
+
+/* Aurora variant */
+.cbcom-page.cbcom-minimal-minimal_aurora {
+  --cb-bg: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #feca57 100%);
+  --cb-card-bg: rgba(255, 255, 255, 0.15);
+  --cb-card-bg-solid: rgba(255, 255, 255, 0.25);
+  --cb-text-primary: #FFFFFF;
+  --cb-text-secondary: rgba(255,255,255,0.85);
+  --cb-text-muted: rgba(255,255,255,0.6);
+  --cb-border: rgba(255, 255, 255, 0.3);
+  --cb-accent: #FFFFFF;
+  --cb-button-bg: rgba(255,255,255,0.2);
+  --cb-button-text: #FFFFFF;
+}
+
+/* Light variant */
+.cbcom-page.cbcom-minimal-minimal_light {
+  --cb-bg: #FAFAFA;
+  --cb-card-bg: #FFFFFF;
+  --cb-card-bg-solid: #FFFFFF;
+  --cb-card-accent: #F5F5F5;
+  --cb-text-primary: #1A1A1A;
+  --cb-text-secondary: #666666;
+  --cb-text-muted: #AAAAAA;
+  --cb-border: rgba(0, 0, 0, 0.08);
+}
+
+/* ========== MINIMAL HERO ========== */
+.cbcom-minimal-hero {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+  margin-bottom: -60px;
+}
+
+@media (min-width: 481px) {
+  .cbcom-minimal-hero {
+    height: 480px;
+    margin-bottom: -80px;
+    border-radius: 0 0 24px 24px;
+  }
+}
+
+.cbcom-minimal-hero-bg {
+  position: absolute;
+  inset: -20px;
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px) saturate(1.2);
+  transform: scale(1.15);
+}
+
+.cbcom-minimal-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.5) 100%);
+  z-index: 2;
+}
+
+.cbcom-minimal-hero-content {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  padding: 0 24px;
+  z-index: 3;
+}
+
+.cbcom-minimal-creator-name-stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  margin: 0;
+}
+
+.cbcom-minimal-name-word {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(36px, 10vw, 52px);
+  font-weight: 400;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.cbcom-minimal-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cbcom-minimal-badge {
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 100px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.cbcom-minimal-badge-icon {
+  padding: 6px 10px;
+}
+
+.cbcom-minimal-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  margin: 14px 0 0 0;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+/* ========== MINIMAL MAIN CARD ========== */
+.cbcom-minimal-main-card {
+  position: relative;
+  z-index: 10;
+  background: var(--cb-card-bg-solid);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid var(--cb-border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin: 0 20px;
+  max-width: 440px;
+}
+
+@media (min-width: 481px) {
+  .cbcom-minimal-main-card {
+    margin: 0 auto;
+  }
+}
+
+/* ========== MINIMAL PROFILE HEADER ========== */
+.cbcom-minimal-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--cb-border);
+}
+
+.cbcom-minimal-welcome {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--cb-text-secondary);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.cbcom-minimal-space-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--cb-text-primary);
+  margin: 2px 0 0 0;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 481px) {
+  .cbcom-minimal-space-name {
+    font-size: 32px;
+  }
+}
+
+.cbcom-minimal-avatar-small {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--cb-border);
+}
+
+.cbcom-minimal-avatar-gradient {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cb-accent) 0%, #D4A574 100%);
+}
+
+/* ========== MINIMAL STATS ROW ========== */
+.cbcom-minimal-stats-row {
+  display: flex;
+  gap: 32px;
+  padding: 24px 24px;
+  border-bottom: 1px solid var(--cb-border);
+}
+
+.cbcom-minimal-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.cbcom-minimal-stat-value {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--cb-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.cbcom-minimal-stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--cb-text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ========== MINIMAL SOCIAL ROW ========== */
+.cbcom-minimal-social-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--cb-border);
+}
+
+.cbcom-minimal-social-icon {
+  color: var(--cb-text-secondary);
+  transition: all 0.2s ease;
+  padding: 4px;
+}
+
+.cbcom-minimal-social-icon:hover {
+  color: var(--cb-text-primary);
+  transform: scale(1.1);
+}
+
+/* ========== MINIMAL TABS ========== */
+.cbcom-minimal-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--cb-border);
+}
+
+.cbcom-minimal-tab {
+  padding: 4px 0;
+  border: none;
+  background: transparent;
+  color: var(--cb-text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.cbcom-minimal-tab:hover {
+  color: var(--cb-text-secondary);
+}
+
+.cbcom-minimal-tab.active {
+  color: var(--cb-text-primary);
+}
+
+.cbcom-minimal-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ========== MINIMAL DESKTOP OPTIMIZATIONS ========== */
+
+/* Tablet (481px+) - Keep design compact */
+@media (min-width: 481px) {
+  .cbcom-minimal-hero-content {
+    bottom: 120px;
+    padding: 0 32px;
+    max-width: 500px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+
+  .cbcom-minimal-name-word {
+    font-size: clamp(42px, 8vw, 52px);
+  }
+
+  .cbcom-minimal-tagline {
+    max-width: 320px;
+  }
+
+  .cbcom-minimal-main-card {
+    margin: 0 auto;
+    max-width: 440px;
+  }
+}
+
+/* Desktop (768px+) - Keep design compact, just center hero content */
+@media (min-width: 768px) {
+  .cbcom-minimal-hero {
+    height: 520px;
+    margin-bottom: -100px;
+    border-radius: 0 0 24px 24px;
+  }
+
+  .cbcom-minimal-hero-content {
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 500px;
+  }
+
+  .cbcom-minimal-name-word {
+    font-size: 52px;
+  }
+
+  .cbcom-minimal-main-card {
+    max-width: 440px;
+  }
+}
+
+/* ========== MINIMAL CONTENT AREA ========== */
+.cbcom-minimal-content {
+  padding: 24px;
+}
+
+/* ========== MINIMAL SECTIONS ========== */
+.cbcom-minimal-section {
+  margin-bottom: 28px;
+}
+
+.cbcom-minimal-section:last-child {
+  margin-bottom: 0;
+}
+
+.cbcom-minimal-section.hidden {
+  display: none !important;
+}
+
+.cbcom-minimal-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.cbcom-minimal-section-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cb-text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.cbcom-minimal-section-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cb-text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+}
+
+.cbcom-minimal-section-link:hover {
+  color: var(--cb-text-primary);
+}
+
+.cbcom-minimal-section-link svg {
+  transition: transform 0.2s ease;
+}
+
+.cbcom-minimal-section-link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* ========== MINIMAL PRODUCTS GRID ========== */
+.cbcom-minimal-products-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px;
+  overflow-x: visible !important;
+  scroll-snap-type: none !important;
+}
+
+/* Override horizontal scroll behavior for minimal design */
+.cbcom-minimal-products-grid[data-count-more-than-2="true"] {
+  display: grid !important;
+  overflow-x: visible !important;
+}
+
+.cbcom-minimal-product-card {
+  background: var(--cb-card-bg-solid);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--cb-border);
+  transition: all 0.3s ease;
+}
+
+.cbcom-minimal-product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.cbcom-minimal-product-media {
+  display: block;
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--cb-card-accent);
+}
+
+.cbcom-minimal-product-media img,
+.cbcom-minimal-product-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cbcom-minimal-product-card:hover .cbcom-minimal-product-media img {
+  transform: scale(1.03);
+}
+
+.cbcom-minimal-product-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--cb-card-accent, #f5f5f5);
+  color: var(--cb-text-muted, #999);
+  font-size: 11px;
+  text-align: center;
+  padding: 12px;
+}
+
+.cbcom-minimal-product-info {
+  padding: 14px 16px;
+}
+
+.cbcom-minimal-product-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cb-text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cbcom-minimal-product-price {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--cb-text-secondary);
+  margin: 3px 0 0 0;
+}
+
+/* ========== MINIMAL LINKS ========== */
+.cbcom-minimal-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cbcom-minimal-link-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: var(--cb-card-accent);
+  border-radius: 14px;
+  text-decoration: none;
+  border: 1px solid var(--cb-border);
+  transition: all 0.3s ease;
+}
+
+.cbcom-minimal-link-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.cbcom-minimal-link-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cbcom-minimal-link-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--cb-text-primary);
+}
+
+.cbcom-minimal-link-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--cb-text-secondary);
+}
+
+.cbcom-minimal-link-arrow {
+  color: var(--cb-text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cbcom-minimal-link-card:hover .cbcom-minimal-link-arrow {
+  transform: translate(2px, -2px);
+  color: var(--cb-text-secondary);
+}
+
+/* ========== MINIMAL EMAIL SECTION ========== */
+.cbcom-minimal-email-section {
+  background: var(--cb-card-accent);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 8px;
+  border: 1px solid var(--cb-border);
+}
+
+.cbcom-minimal-email-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--cb-text-primary);
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.cbcom-minimal-email-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--cb-text-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.cbcom-minimal-email-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.cbcom-minimal-email-input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 1px solid var(--cb-border);
+  border-radius: 100px;
+  background: var(--cb-card-bg-solid);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--cb-text-primary);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.cbcom-minimal-email-input::placeholder {
+  color: var(--cb-text-muted);
+}
+
+.cbcom-minimal-email-input:focus {
+  border-color: var(--cb-accent);
+}
+
+.cbcom-minimal-email-btn {
+  padding: 14px 24px;
+  border-radius: 100px;
+  border: none;
+  background: var(--cb-button-bg);
+  color: var(--cb-button-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.cbcom-minimal-email-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.cbcom-minimal-email-btn:active {
+  transform: scale(0.98);
+}
+
+/* ========== MINIMAL CONTENT DESKTOP OPTIMIZATIONS ========== */
+
+/* Tablet (768px+) - Content sections */
+@media (min-width: 768px) {
+  .cbcom-minimal-products-grid {
+    gap: 16px;
+  }
+
+  .cbcom-minimal-product-info {
+    padding: 14px 16px;
+  }
+
+  .cbcom-minimal-product-title {
+    font-size: 14px;
+  }
+
+  .cbcom-minimal-product-price {
+    font-size: 13px;
+  }
+
+  .cbcom-minimal-link-card {
+    padding: 16px 20px;
+  }
+
+  .cbcom-minimal-link-title {
+    font-size: 15px;
+  }
+
+  .cbcom-minimal-email-section {
+    padding: 24px;
+  }
+
+  .cbcom-minimal-email-title {
+    font-size: 22px;
+  }
+
+  .cbcom-minimal-email-input {
+    padding: 14px 20px;
+  }
+
+  .cbcom-minimal-email-btn {
+    padding: 14px 28px;
+    font-size: 14px;
+  }
+}
+
+/* Desktop (1024px+) - Content sections */
+@media (min-width: 1024px) {
+  .cbcom-minimal-products-grid {
+    gap: 18px;
+  }
+
+  .cbcom-minimal-product-card {
+    border-radius: 18px;
+  }
+
+  .cbcom-minimal-product-info {
+    padding: 16px 18px;
+  }
+
+  .cbcom-minimal-product-title {
+    font-size: 15px;
+  }
+
+  .cbcom-minimal-product-price {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .cbcom-minimal-link-card {
+    padding: 18px 22px;
+    border-radius: 16px;
+  }
+
+  .cbcom-minimal-link-title {
+    font-size: 16px;
+  }
+
+  .cbcom-minimal-link-subtitle {
+    font-size: 12px;
+  }
+
+  .cbcom-minimal-link-arrow {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cbcom-minimal-email-section {
+    padding: 28px;
+    border-radius: 18px;
+  }
+
+  .cbcom-minimal-email-title {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .cbcom-minimal-email-desc {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .cbcom-minimal-email-input {
+    padding: 16px 22px;
+    font-size: 15px;
+  }
+
+  .cbcom-minimal-email-btn {
+    padding: 16px 32px;
+    font-size: 14px;
+  }
+}
+
+/* ========== MINIMAL PAGE CONTAINER OVERRIDES ========== */
+.cbcom-page.cbcom-minimal {
+  max-width: 100%;
+  padding: 0 0 60px 0;
+  margin: 0;
+}
+
+/* Minimal main card needs bottom margin for spacing */
+.cbcom-minimal-main-card {
+  margin-bottom: 24px;
+}
+
+/* Powered by badge at bottom */
+.cbcom-page.cbcom-minimal::after {
+  content: 'Powered by CreatorB';
+  display: block;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--cb-text-muted, #999);
+  letter-spacing: 0.05em;
+  padding: 20px 0;
+}
+
+/* Mobile centering for minimal design */
+@media (max-width: 767px) {
+  .cbcom-minimal-hero-content {
+    padding: 0 16px;
+  }
+
+  .cbcom-minimal-main-card {
+    margin: 0 16px;
+  }
+
+  .cbcom-minimal-name-word {
+    font-size: 38px;
+  }
+
+  .cbcom-minimal-tagline {
+    font-size: 13px;
+    max-width: 280px;
+  }
+
+  .cbcom-minimal-badges {
+    margin-top: 12px;
+  }
+
+  .cbcom-minimal-badge {
+    padding: 5px 12px;
+    font-size: 10px;
+  }
+
+  .cbcom-minimal-profile-header {
+    padding: 20px 16px 16px;
+  }
+
+  .cbcom-minimal-space-name {
+    font-size: 22px;
+  }
+
+  .cbcom-minimal-avatar-small,
+  .cbcom-minimal-avatar-gradient {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cbcom-minimal-stats-row {
+    gap: 24px;
+    padding: 14px 16px;
+  }
+
+  .cbcom-minimal-stat-value {
+    font-size: 20px;
+  }
+
+  .cbcom-minimal-social-row {
+    gap: 16px;
+    padding: 12px 16px;
+  }
+
+  .cbcom-minimal-tabs {
+    gap: 16px;
+    padding: 12px 16px;
+  }
+
+  .cbcom-minimal-tab {
+    font-size: 12px;
+  }
+
+  .cbcom-minimal-content {
+    padding: 16px;
+  }
+
+  .cbcom-minimal-section {
+    margin-bottom: 20px;
+  }
+
+  .cbcom-minimal-products-grid {
+    gap: 10px;
+  }
+
+  .cbcom-minimal-product-info {
+    padding: 10px 12px;
+  }
+
+  .cbcom-minimal-product-title {
+    font-size: 12px;
+  }
+
+  .cbcom-minimal-product-price {
+    font-size: 11px;
+  }
+
+  .cbcom-minimal-link-card {
+    padding: 12px 14px;
+  }
+
+  .cbcom-minimal-link-title {
+    font-size: 13px;
+  }
+
+  .cbcom-minimal-email-section {
+    padding: 16px;
+  }
+
+  .cbcom-minimal-email-title {
+    font-size: 18px;
+  }
+
+  .cbcom-minimal-email-desc {
+    font-size: 12px;
+  }
+
+  .cbcom-minimal-email-input {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .cbcom-minimal-email-btn {
+    padding: 10px 18px;
+    font-size: 12px;
+  }
+}
+
+/* ========== MINIMAL RESPONSIVE ========== */
+@media (max-width: 680px) {
+  .cbcom-minimal-email-input-row {
+    flex-direction: column;
+  }
+
+  .cbcom-minimal-email-btn {
+    width: 100%;
+  }
+}
+
+/* ========== MINIMAL UTILITY CLASSES ========== */
+.cbcom-minimal-hidden {
+  display: none !important;
+}
+</style>
+
+<script>
+// Dynamic Pricing + Analytics for Commerce Page
+(function() {
+  const WORKER_URL = 'https://creatorbio-pricing.shopamorayou.workers.dev';
+  const ANALYTICS_URL = 'https://creatorb.io/api';
+  const creator = '{{ username }}';
+
+  // URL Parameter Theme Switching (for testing)
+  // Usage: ?design=minimal | ?design=minimal_dark | ?design=minimal_light | ?design=minimal_aurora
+  (function handleThemeParam() {
+    const params = new URLSearchParams(window.location.search);
+    const designParam = params.get('design');
+    const page = document.querySelector('.cbcom-page');
+
+    if (designParam && page) {
+      const validThemes = ['minimal', 'minimal_dark', 'minimal_light', 'minimal_aurora'];
+      if (validThemes.includes(designParam)) {
+        // Remove all theme classes
+        page.classList.remove('cbcom-minimal-minimal', 'cbcom-minimal-minimal_dark',
+                              'cbcom-minimal-minimal_light', 'cbcom-minimal-minimal_aurora');
+
+        page.classList.add('cbcom-minimal', `cbcom-minimal-${designParam}`);
+        page.dataset.designStyle = designParam;
+      }
+    }
+  })();
+
+  if (!creator) return;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setProductGridLayout();
+    setShortsGridLayout();
+    setupProductPagination();
+    initializeCreatorSession();
+    setupProductClickTracking();
+    setupProductViewTracking();
+    setupLinkClickTracking();
+    setupEmailSignupForm();
+    trackPageView();
+  });
+
+  // Set product grid layout based on count
+  function setProductGridLayout() {
+    const grid = document.querySelector('.cbcom-product-grid');
+    if (!grid) return;
+
+    const productCount = grid.querySelectorAll('.cbcom-product-card').length;
+    grid.setAttribute('data-count', productCount);
+
+    // Mobile: scroll after 2 products
+    if (productCount > 2) {
+      grid.setAttribute('data-count-more-than-2', 'true');
+    }
+
+    // Desktop: scroll after 3 products
+    if (productCount > 3) {
+      grid.setAttribute('data-count-more-than-3', 'true');
+    }
+  }
+
+  // Set YouTube shorts grid layout based on count
+  function setShortsGridLayout() {
+    const grid = document.querySelector('.cbcom-videos-grid-shorts');
+    if (!grid) return;
+
+    const shortsCount = grid.querySelectorAll('.cbcom-video-wrapper-shorts').length;
+    grid.setAttribute('data-count', shortsCount);
+
+    if (shortsCount > 2) {
+      grid.setAttribute('data-count-more-than-2', 'true');
+    }
+  }
+
+  // Setup product pagination dots
+  function setupProductPagination() {
+    const grid = document.querySelector('.cbcom-product-grid');
+    const pagination = document.getElementById('productsPagination');
+    const productsSection = document.querySelector('.cbcom-products-section');
+
+    console.log('🔍 Grid found:', !!grid);
+    console.log('🔍 Pagination found:', !!pagination);
+    console.log('🔍 Section found:', !!productsSection);
+
+    if (!grid || !pagination) {
+      console.log('❌ Missing elements for pagination');
+      return;
+    }
+
+    const productCount = grid.querySelectorAll('.cbcom-product-card').length;
+    console.log('🛒 Product count:', productCount);
+
+    // Only show pagination when scrollable
+    const isMobile = window.innerWidth < 681;
+    const isScrollable = isMobile ? productCount > 2 : productCount > 3;
+
+    console.log('Is mobile:', isMobile, 'Width:', window.innerWidth);
+    console.log('Is scrollable:', isScrollable);
+
+    if (!isScrollable) {
+      console.log('Not enough products for pagination');
+      return;
+    }
+
+    // Calculate number of pages
+    const itemsPerPage = isMobile ? 2 : 3;
+    const pages = Math.ceil(productCount / itemsPerPage);
+    console.log('📄 Creating', pages, 'pagination dots (', itemsPerPage, 'items per page)');
+
+    // Create pagination dots
+    pagination.classList.add('active');
+    pagination.innerHTML = ''; // Clear any existing dots
+
+    for (let i = 0; i < pages; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'cbcom-pagination-dot';
+      if (i === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => scrollToPage(i));
+      pagination.appendChild(dot);
+    }
+    console.log('✅ Created', pages, 'pagination dots');
+
+    // Update active dot on scroll
+    grid.addEventListener('scroll', () => {
+      updateActiveDot();
+    });
+
+    function scrollToPage(pageIndex) {
+      const card = grid.querySelector('.cbcom-product-card');
+      if (!card) return;
+      const cardWidth = card.offsetWidth;
+      const gap = isMobile ? 12 : 16;
+      const scrollPosition = (cardWidth + gap) * pageIndex * itemsPerPage;
+      grid.scrollTo({ left: scrollPosition, behavior: 'smooth' });
+    }
+
+    function updateActiveDot() {
+      const card = grid.querySelector('.cbcom-product-card');
+      if (!card) return;
+      const scrollLeft = grid.scrollLeft;
+      const cardWidth = card.offsetWidth;
+      const gap = isMobile ? 12 : 16;
+      const currentPage = Math.round(scrollLeft / ((cardWidth + gap) * itemsPerPage));
+
+      const dots = pagination.querySelectorAll('.cbcom-pagination-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentPage);
+      });
+    }
+  }
+
+  // Track page view
+  function trackPageView() {
+    // Track to Worker (for dynamic pricing)
+    fetch(`${WORKER_URL}/track/${creator}/page`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }).catch(err => console.log('Page track failed:', err));
+
+    // Track to CreatorB analytics
+    trackEvent('page_view');
+  }
+
+  // Initialize creator session and fetch pricing
+  async function initializeCreatorSession() {
+    try {
+      const [metricsData, productsData] = await Promise.all([
+        fetch(`${WORKER_URL}/metrics/${creator}`).then(r => r.json()),
+        fetch(`${WORKER_URL}/creator-products/${creator}`).then(r => r.json())
+      ]);
+
+      const delta = parseFloat(metricsData.suggested_delta) / 100 || 0;
+      const creatorProducts = productsData.products || [];
+
+      // Store in sessionStorage
+      sessionStorage.setItem('creator_ref', creator);
+      sessionStorage.setItem('pricing_delta', delta.toString());
+      sessionStorage.setItem('creator_products', JSON.stringify(creatorProducts));
+      sessionStorage.setItem('pricing_timestamp', Date.now().toString());
+
+      // Apply pricing to page
+      applyDynamicPricing(delta, creatorProducts);
+
+    } catch (err) {
+      console.log('Session init failed:', err);
+    }
+  }
+
+  // Apply dynamic pricing to product cards
+  function applyDynamicPricing(delta, creatorProducts) {
+    const productCards = document.querySelectorAll('.cbcom-product-card');
+
+    productCards.forEach(card => {
+      const productId = card.dataset.productId;
+      const variantId = card.dataset.variantId;
+      const basePrice = parseFloat(card.dataset.basePrice);
+      const priceElement = card.querySelector('.cbcom-pc-price');
+      const badge = card.querySelector('.cbcom-creator-bonus-badge');
+
+      if (!priceElement || !basePrice || isNaN(basePrice)) {
+        return;
+      }
+
+      // Check if this product has creator commission
+      const hasCommission = creatorProducts.some(p =>
+        p.product_id === productId || p.variant_id === variantId
+      );
+
+      // Apply pricing delta
+      if (delta > 0) {
+        const newPrice = basePrice * (1 + delta / 100);
+        priceElement.textContent = `$${newPrice.toFixed(2)}`;
+      }
+
+      // Show "New Launch!" badge if commission exists
+      if (hasCommission && badge) {
+        badge.classList.add('show');
+      }
+    });
+  }
+
+  // Setup product click tracking
+  function setupProductClickTracking() {
+    const productLinks = document.querySelectorAll('.cbcom-pc-media, .cbcom-pc-title-link');
+
+    productLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        const productCard = this.closest('.cbcom-product-card');
+        if (!productCard) return;
+
+        const productId = productCard.dataset.productId;
+        if (productId) {
+          // Track to CreatorB pricing worker
+          fetch(`${WORKER_URL}/track/${creator}/product`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId })
+          }).catch(err => console.log('Product track failed:', err));
+
+          // Track to CreatorB analytics
+          trackEvent('product_click', { product_id: productId });
+        }
+      });
+    });
+  }
+
+  // Setup product view tracking with Intersection Observer
+  function setupProductViewTracking() {
+    const productCards = document.querySelectorAll('.cbcom-product-card');
+    if (!productCards.length) return;
+
+    // Track which products have been viewed to avoid duplicates
+    const viewedProducts = new Set();
+
+    // Create intersection observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const productCard = entry.target;
+          const productId = productCard.dataset.productId;
+
+          // Only track if we haven't tracked this product yet
+          if (productId && !viewedProducts.has(productId)) {
+            viewedProducts.add(productId);
+
+            // Track to CreatorB analytics
+            trackEvent('product_view', { product_id: productId });
+          }
+        }
+      });
+    }, {
+      threshold: 0.5, // Trigger when 50% of the product is visible
+      rootMargin: '0px'
+    });
+
+    // Observe all product cards
+    productCards.forEach(card => {
+      observer.observe(card);
+    });
+  }
+
+  // Setup link click tracking
+  function setupLinkClickTracking() {
+    const linkButtons = document.querySelectorAll('.cbcom-link-button');
+    linkButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const linkUrl = this.getAttribute('href');
+        const linkId = this.getAttribute('data-link-id');
+        trackLinkClick(creator, linkUrl);
+
+        // Track with link_id if available (for user_links)
+        const metadata = { url: linkUrl };
+        if (linkId) {
+          metadata.link_id = linkId;
+        }
+        trackEvent('link_click', metadata);
+      });
+    });
+
+    const socialIcons = document.querySelectorAll('.cbcom-social-icon');
+    socialIcons.forEach(icon => {
+      icon.addEventListener('click', function() {
+        const linkUrl = this.getAttribute('href');
+        trackLinkClick(creator, linkUrl);
+        trackEvent('link_click', { url: linkUrl });
+      });
+    });
+  }
+
+  // Setup email signup form
+  function setupEmailSignupForm() {
+    const form = document.getElementById('emailSignupForm');
+    if (!form) return;
+
+    const emailInput = document.getElementById('emailInput');
+    const submitBtn = document.getElementById('emailSubmitBtn');
+    const message = document.getElementById('emailMessage');
+
+    // Fix iOS keyboard causing layout issues
+    emailInput.addEventListener('blur', function() {
+      // Trigger viewport reset by scrolling slightly
+      setTimeout(() => {
+        window.scrollBy(0, 1);
+        window.scrollBy(0, -1);
+      }, 100);
+    });
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      // Disable form during submission
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Subscribing...';
+      message.textContent = '';
+      message.className = 'cbcom-email-message';
+
+      try {
+        const response = await fetch('https://creatorb.io/api/email-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, username: creator })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          message.textContent = data.message || 'Successfully subscribed!';
+          message.classList.add('success');
+          emailInput.value = '';
+          trackEvent('email_signup', { email });
+        } else {
+          message.textContent = data.error || 'Something went wrong. Please try again.';
+          message.classList.add('error');
+        }
+      } catch (error) {
+        message.textContent = 'Network error. Please try again.';
+        message.classList.add('error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // Track link clicks to CreatorB
+  function trackLinkClick(username, linkUrl) {
+    fetch(`${ANALYTICS_URL}/track-link-click`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, linkUrl }),
+      keepalive: true
+    }).catch(err => console.log('Link track failed:', err));
+  }
+
+  // Generic event tracking
+  function trackEvent(eventType, metadata = {}) {
+    // Get or create session ID
+    let sessionId = sessionStorage.getItem('cbio_session');
+    if (!sessionId) {
+      sessionId = 'cbcom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('cbio_session', sessionId);
+    }
+
+    // Detect device info
+    const ua = navigator.userAgent;
+    const deviceType = /Mobile|Android|iPhone|iPad|iPod/i.test(ua) ? 'mobile' : 'desktop';
+    const browser = /Chrome/i.test(ua) ? 'Chrome' : /Firefox/i.test(ua) ? 'Firefox' : /Safari/i.test(ua) ? 'Safari' : 'Other';
+    const os = /Win/i.test(ua) ? 'Windows' : /Mac/i.test(ua) ? 'MacOS' : /Linux/i.test(ua) ? 'Linux' : /Android/i.test(ua) ? 'Android' : /iOS/i.test(ua) ? 'iOS' : 'Other';
+
+    // Extract special fields that should be top-level (not in metadata)
+    const event = {
+      event_type: eventType,
+      creator_id: creator,
+      session_id: sessionId,
+      referrer: document.referrer || '',
+      device_type: deviceType,
+      browser: browser,
+      os: os,
+      metadata: {}
+    };
+
+    // Move special fields to top-level
+    if (metadata.link_id) {
+      event.link_id = metadata.link_id;
+    }
+    if (metadata.product_id) {
+      event.product_id = metadata.product_id;
+    }
+
+    // Keep remaining metadata
+    Object.keys(metadata).forEach(key => {
+      if (key !== 'link_id' && key !== 'product_id') {
+        event.metadata[key] = metadata[key];
+      }
+    });
+
+    // Remove metadata if empty
+    if (Object.keys(event.metadata).length === 0) {
+      delete event.metadata;
+    }
+
+    fetch(`${ANALYTICS_URL}/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        events: [event]
+      }),
+      keepalive: true
+    }).catch(err => console.log('Event track failed:', err));
+  }
+
+  // Load TikTok embed script if TikTok videos exist
+  if (document.querySelector('.tiktok-embed')) {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.tiktok.com/embed.js';
+    document.head.appendChild(script);
+
+    // Style TikTok iframes after they load (matching Bio page behavior)
+    const styleTikTokIframes = () => {
+      const embedContainers = document.querySelectorAll('[data-video-id]');
+      embedContainers.forEach(container => {
+        const iframe = container.querySelector('iframe');
+        if (iframe && !iframe.dataset.styled) {
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.style.borderRadius = '12px';
+          iframe.dataset.styled = 'true';
+        }
+      });
+    };
+
+    // Check periodically for iframes
+    const checkInterval = setInterval(styleTikTokIframes, 100);
+
+    // Stop checking after 10 seconds
+    setTimeout(() => clearInterval(checkInterval), 10000);
+  }
+
+  // ============================================
+  // MINIMAL DESIGN TAB NAVIGATION
+  // ============================================
+  function initMinimalTabs() {
+    const page = document.querySelector('.cbcom-minimal');
+    if (!page) return; // Only run for minimal design
+
+    const tabs = document.querySelectorAll('.cbcom-minimal-tab');
+    const sections = {
+      shop: document.querySelector('[data-section="shop"]'),
+      links: document.querySelector('[data-section="links"]'),
+      videos: document.querySelectorAll('[data-section="videos"]'),
+      email: document.querySelector('[data-section="email"]')
+    };
+
+    // Helper to show/hide elements
+    const setVisible = (el, visible) => {
+      if (!el) return;
+      if (visible) {
+        el.classList.remove('cbcom-minimal-hidden');
+      } else {
+        el.classList.add('cbcom-minimal-hidden');
+      }
+    };
+
+    // Handle NodeList for videos (multiple sections)
+    const setVideosVisible = (visible) => {
+      if (sections.videos && sections.videos.length > 0) {
+        sections.videos.forEach(el => setVisible(el, visible));
+      }
+    };
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Update active state
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filter = tab.dataset.tab;
+
+        if (filter === 'all') {
+          // Show all sections
+          setVisible(sections.shop, true);
+          setVisible(sections.links, true);
+          setVideosVisible(true);
+          setVisible(sections.email, true);
+        } else if (filter === 'shop') {
+          setVisible(sections.shop, true);
+          setVisible(sections.links, false);
+          setVideosVisible(false);
+          setVisible(sections.email, false);
+        } else if (filter === 'links') {
+          setVisible(sections.shop, false);
+          setVisible(sections.links, true);
+          setVideosVisible(false);
+          setVisible(sections.email, true); // Keep email with links
+        } else if (filter === 'videos') {
+          setVisible(sections.shop, false);
+          setVisible(sections.links, false);
+          setVideosVisible(true);
+          setVisible(sections.email, false);
+        }
+      });
+    });
+  }
+
+  // Initialize minimal tabs if present
+  initMinimalTabs();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Creator Bio Commerce",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner Image (Fallback)",
+      "info": "Used if metafield banner_image_url is not set"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Product Collection (Fallback)",
+      "info": "Used if metafield collection is not set"
+    },
+    {
+      "type": "text",
+      "id": "creator_name",
+      "label": "Creator Name (Fallback)",
+      "info": "Used if metafield name is not set"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Creator Bio Commerce"
+    }
+  ]
+}
+{% endschema %}

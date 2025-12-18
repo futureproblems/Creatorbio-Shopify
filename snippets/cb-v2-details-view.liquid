@@ -1,0 +1,85 @@
+{%- comment -%}
+  CB Commerce V2 - Details View Component
+  Product details with accordions for description and size/fit
+  Content is populated by JavaScript
+
+  This is a template that JavaScript fills in dynamically
+{%- endcomment -%}
+
+<div class="cb-view cb-view--details" data-view-content="details" style="display: none;">
+
+  {%- comment -%} Product Info + Size Selector (duplicated for this view) {%- endcomment -%}
+  <div class="cb-details-view__header">
+    <div class="cb-details-view__info">
+      <p class="cb-details-view__title" id="detailsViewTitle">Product Name</p>
+      <p class="cb-details-view__price" id="detailsViewPrice">$0.00</p>
+    </div>
+    <div class="cb-size-selector" id="detailsSizeSelector">
+      {%- comment -%} Size buttons injected by JS {%- endcomment -%}
+    </div>
+  </div>
+
+  {%- comment -%} Back Link {%- endcomment -%}
+  <button class="cb-back-btn cb-back-btn--small" data-action="back-to-product">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    BACK TO PRODUCT
+  </button>
+
+  {%- comment -%} Accordions {%- endcomment -%}
+  <div class="cb-accordions">
+    {%- comment -%} Description Accordion {%- endcomment -%}
+    <div class="cb-accordion open" data-accordion="description">
+      <button class="cb-accordion__header" data-action="toggle-accordion">
+        <span>Description</span>
+        <span class="cb-accordion__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </span>
+      </button>
+      <div class="cb-accordion__content" id="accordionDescription">
+        <p>No description available.</p>
+      </div>
+    </div>
+
+    {%- comment -%} Size & Fit Accordion {%- endcomment -%}
+    <div class="cb-accordion" data-accordion="size-fit">
+      <button class="cb-accordion__header" data-action="toggle-accordion">
+        <span>Size & Fit</span>
+        <span class="cb-accordion__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </span>
+      </button>
+      <div class="cb-accordion__content" id="accordionSizeFit">
+        <p>Size information not available.</p>
+      </div>
+    </div>
+
+    {%- comment -%} Shipping & Returns Accordion {%- endcomment -%}
+    <div class="cb-accordion" data-accordion="shipping">
+      <button class="cb-accordion__header" data-action="toggle-accordion">
+        <span>Shipping & Returns</span>
+        <span class="cb-accordion__icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        </span>
+      </button>
+      <div class="cb-accordion__content" id="accordionShipping">
+        <p>Free shipping on orders over $50. Returns accepted within 30 days.</p>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Add to Cart Button {%- endcomment -%}
+  <div class="cb-details-view__actions">
+    <button class="cb-add-to-cart-btn" id="detailsAddToCartBtn" disabled data-action="add-to-cart">
+      Select a size
+    </button>
+  </div>
+
+</div>

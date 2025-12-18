@@ -1,0 +1,102 @@
+{%- comment -%}
+  CB Commerce V2 - Cart View Component
+  Shopping cart with item list and checkout button
+  Content is populated by JavaScript from localStorage
+
+  Required variables:
+  - username: Creator username for cart items display
+{%- endcomment -%}
+
+<div class="cb-view cb-view--cart" data-view-content="cart" style="display: none;">
+
+  {%- comment -%} Header {%- endcomment -%}
+  <div class="cb-cart__header">
+    <button class="cb-back-btn" data-action="back-to-browse">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      BACK
+    </button>
+    <h2 class="cb-cart__title">CART</h2>
+    <div class="cb-cart__icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 6h15l-1.5 9h-12z"/>
+        <circle cx="9" cy="20" r="1" fill="currentColor"/>
+        <circle cx="18" cy="20" r="1" fill="currentColor"/>
+        <path d="M6 6L5 3H2"/>
+      </svg>
+    </div>
+  </div>
+
+  {%- comment -%} Cart Items - Populated by JavaScript {%- endcomment -%}
+  <div class="cb-cart__items" id="cartItems">
+    <div class="cb-cart__empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <path d="M6 6h15l-1.5 9h-12z"/>
+        <circle cx="9" cy="20" r="1"/>
+        <circle cx="18" cy="20" r="1"/>
+        <path d="M6 6L5 3H2"/>
+      </svg>
+      <p>Your cart is empty</p>
+      <button class="cb-cart__browse-btn" data-action="back-to-browse">
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+
+  {%- comment -%} Cart Summary {%- endcomment -%}
+  <div class="cb-cart__summary" id="cartSummary" style="display: none;">
+    <div class="cb-cart__summary-row">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">$0.00</span>
+    </div>
+    <div class="cb-cart__summary-row cb-cart__summary-row--small">
+      <span>Shipping</span>
+      <span>Calculated at checkout</span>
+    </div>
+  </div>
+
+  {%- comment -%} Checkout Button {%- endcomment -%}
+  <div class="cb-cart__actions">
+    <button class="cb-checkout-btn" id="checkoutBtn" disabled data-action="checkout">
+      Checkout — $0.00
+    </button>
+    <p class="cb-cart__secure">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2"/>
+        <path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+      Secure checkout powered by Shopify
+    </p>
+  </div>
+
+</div>
+
+{%- comment -%} Cart Item Template (used by JavaScript) {%- endcomment -%}
+<template id="cartItemTemplate">
+  <div class="cb-cart-item" data-cart-item>
+    <div class="cb-cart-item__image">
+      <img src="" alt="" data-cart-item-image>
+    </div>
+    <div class="cb-cart-item__info">
+      <p class="cb-cart-item__title" data-cart-item-title></p>
+      <p class="cb-cart-item__price" data-cart-item-price></p>
+      <p class="cb-cart-item__meta">
+        <span data-cart-item-creator>Creator</span> · Size <span data-cart-item-size></span>
+      </p>
+    </div>
+    <div class="cb-cart-item__quantity">
+      <button class="cb-qty-btn" data-action="update-quantity" data-delta="-1" aria-label="Decrease quantity">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14"/>
+        </svg>
+      </button>
+      <span class="cb-qty-value" data-cart-item-qty>1</span>
+      <button class="cb-qty-btn" data-action="update-quantity" data-delta="1" aria-label="Increase quantity">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</template>

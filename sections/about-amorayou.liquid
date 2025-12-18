@@ -1,0 +1,151 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* === KHY-style About Layout === */
+  .about-khy--{{ section.id }} {
+    --title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --title-size-desktop: {{ section.settings.title_size_desktop }}px;
+    --title-line-height: {{ section.settings.title_line_height }};
+    --col-gap: {{ section.settings.column_gap }}px;
+    --max-text: {{ section.settings.text_max_width }}px;
+    position: relative;
+  }
+
+  .about-khy--{{ section.id }} .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-khy--{{ section.id }} .about-grid {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: start;
+      column-gap: var(--col-gap);
+    }
+  }
+
+  .about-khy--{{ section.id }} .about-title {
+    margin: 0;
+    letter-spacing: {{ section.settings.title_letter_spacing }}em;
+    line-height: var(--title-line-height);
+    font-weight: {{ section.settings.title_weight }};
+    text-transform: {{ section.settings.title_transform }};
+    font-size: clamp(var(--title-size-mobile), 6vw, var(--title-size-desktop));
+  }
+
+  .about-khy--{{ section.id }} .about-title span.block {
+    display: block;
+  }
+
+  .about-khy--{{ section.id }} .about-copy {
+    max-width: var(--max-text);
+    color: rgb(var(--color-foreground, 18,18,18));
+    opacity: .9;
+    font-size: {{ section.settings.copy_size }}px;
+    line-height: {{ section.settings.copy_line_height }};
+  }
+
+  /* Optional hairline divider */
+  .about-khy--{{ section.id }} .hairline {
+    margin-top: {{ section.settings.divider_spacing_top }}px;
+    border-top: 1px solid rgba(0,0,0,.08);
+  }
+
+  /* Spacing helper to mimic generous whitespace seen on KHY */
+  .about-khy--{{ section.id }} .intro-wrap {
+    padding-top: {{ section.settings.intro_spacing_top_mobile }}px;
+  }
+  @media screen and (min-width: 990px){
+    .about-khy--{{ section.id }} .intro-wrap {
+      padding-top: {{ section.settings.intro_spacing_top_desktop }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }}-padding about-khy--{{ section.id }}">
+  <div class="page-width{% if section.settings.narrow_width %} page-width--narrow{% endif %}">
+    <div class="about-grid">
+      <!-- Left: Giant Title -->
+      <div>
+        <h1 class="about-title{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+          <span class="block">{{ section.settings.heading_line_1 | escape }}</span>
+          <span class="block">{{ section.settings.heading_line_2 | escape }}</span>
+        </h1>
+      </div>
+
+      <!-- Right: Intro Copy (RTE) -->
+      <div class="intro-wrap">
+        <div class="about-copy rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          {{ section.settings.intro_richtext }}
+        </div>
+      </div>
+    </div>
+
+    {% if section.settings.show_divider %}
+      <div class="hairline"></div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About — Amorayou",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "narrow_width", "label": "Use narrow page width", "default": false },
+    { "type": "range", "id": "column_gap", "min": 16, "max": 140, "step": 2, "unit": "px", "label": "Desktop column gap", "default": 72 },
+    { "type": "range", "id": "text_max_width", "min": 360, "max": 820, "step": 10, "unit": "px", "label": "Max width of copy", "default": 560 },
+
+    { "type": "header", "content": "Title" },
+    { "type": "text", "id": "heading_line_1", "label": "Heading line 1", "default": "ABOUT" },
+    { "type": "text", "id": "heading_line_2", "label": "Heading line 2", "default": "US" },
+    { "type": "range", "id": "title_size_mobile", "min": 28, "max": 72, "step": 1, "unit": "px", "label": "Title size (mobile)", "default": 48 },
+    { "type": "range", "id": "title_size_desktop", "min": 72, "max": 160, "step": 1, "unit": "px", "label": "Title size (desktop)", "default": 120 },
+    { "type": "select", "id": "title_weight", "label": "Title weight", "default": "400", "options": [
+      { "value": "300", "label": "Light" },
+      { "value": "400", "label": "Regular" },
+      { "value": "500", "label": "Medium" },
+      { "value": "600", "label": "Semibold" },
+      { "value": "700", "label": "Bold" }
+    ]},
+    { "type": "text", "id": "title_line_height", "label": "Title line-height (e.g. 0.9, 1.0)", "default": "0.95" },
+    { "type": "text", "id": "title_letter_spacing", "label": "Title letter-spacing (em)", "default": "0" },
+    { "type": "select", "id": "title_transform", "label": "Title transform", "default": "uppercase", "options": [
+      { "value": "none", "label": "None" },
+      { "value": "uppercase", "label": "Uppercase" }
+    ]},
+
+    { "type": "header", "content": "Intro copy" },
+    { "type": "richtext", "id": "intro_richtext", "label": "Intro text", "default": "<p>We aim to redefine the modern wardrobe with edited collections that blend luxury with everyday style. By collaborating with iconic brands and global designers, we deliver access to incredible fashion for everyone.</p>" },
+    { "type": "range", "id": "copy_size", "min": 12, "max": 20, "step": 1, "unit": "px", "label": "Copy size", "default": 14 },
+    { "type": "text", "id": "copy_line_height", "label": "Copy line-height (e.g. 1.6)", "default": "1.6" },
+    { "type": "range", "id": "intro_spacing_top_mobile", "min": 0, "max": 80, "step": 2, "unit": "px", "label": "Top spacing above copy (mobile)", "default": 8 },
+    { "type": "range", "id": "intro_spacing_top_desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top spacing above copy (desktop)", "default": 24 },
+
+    { "type": "header", "content": "Divider" },
+    { "type": "checkbox", "id": "show_divider", "label": "Show hairline divider", "default": true },
+    { "type": "range", "id": "divider_spacing_top", "min": 8, "max": 120, "step": 4, "unit": "px", "label": "Spacing before divider", "default": 56 },
+
+    { "type": "header", "content": "Section padding" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Padding top", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Padding bottom", "default": 80 }
+  ],
+  "presets": [
+    { "name": "About — KHY style" }
+  ]
+}
+{% endschema %}

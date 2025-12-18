@@ -1,0 +1,390 @@
+{% comment %}
+  Product Gallery + Minimal Fullscreen Lightbox (like reference)
+  - Mobile: horizontal slider with swipe
+  - Desktop: 2×2 grid (unchanged)
+  - Dots: centered frosted dots on mobile, hidden on desktop
+  - Click any media -> fullscreen LIGHTBOX with vertical scroll
+      • Clean minimal design matching reference images
+      • Left thumbnail rail (compact, vertical)
+      • Vertical scrolling through images
+      • Minimal X close button (top-right)
+      • Light/neutral background (not dark)
+{% endcomment %}
+
+{%- assign gallery_id = 'productGallery-' | append: section.id -%}
+{%- assign total = product.media | size -%}
+{%- if total > 0 -%}
+
+<style>
+/* ===== Base ===== */
+#{{ gallery_id }}{ position:relative; width:100%; margin:0; padding:0; }
+
+/* Clean minimal styling - no borders or backgrounds */
+#{{ gallery_id }} .horizontal-slider__item{ 
+  background:transparent!important; cursor:zoom-in; opacity:1!important; 
+  border:none!important; padding:0!important; margin:0!important;
+}
+#{{ gallery_id }} .product__media-hover,
+#{{ gallery_id }} .product__media-badge,
+#{{ gallery_id }} .deferred-media__poster-button,
+#{{ gallery_id }} .media--transparent .deferred-media__poster-button,
+#{{ gallery_id }} .media .zoom,
+#{{ gallery_id }} .play-button,
+#{{ gallery_id }} .thumbnail,
+#{{ gallery_id }} .slider-buttons .slider-button{ display:none!important; }
+
+#{{ gallery_id }} svg,#{{ gallery_id }} .icon,#{{ gallery_id }} .icon svg{ color:#1c1b1b!important; fill:currentColor!important; stroke:currentColor!important; }
+#{{ gallery_id }} a:focus,#{{ gallery_id }} button:focus,#{{ gallery_id }} img:focus{ outline:0!important; box-shadow:none!important; }
+
+/* Image wrapper - no backgrounds, borders, or shadows */
+#{{ gallery_id }} .lazyload-image-wrapper{ 
+  position:relative; display:block; overflow:hidden; width:100%; padding-bottom:150%; 
+  background:transparent!important; border:none!important; box-shadow:none!important;
+}
+#{{ gallery_id }} .lazyload-image-wrapper>*{ 
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;
+  border:none!important; box-shadow:none!important;
+}
+
+/* ===== Mobile slider ===== */
+@media (max-width:767px){
+  #{{ gallery_id }}{ width:100vw; margin-left:calc(-50vw + 50%); }
+  #{{ gallery_id }}[data-mode="mobile"] .horizontal-slider__slider{ display:flex; overflow-x:scroll; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  #{{ gallery_id }}[data-mode="mobile"] .horizontal-slider__slider::-webkit-scrollbar{ display:none; }
+  #{{ gallery_id }}[data-mode="mobile"] .horizontal-slider__item{ flex:0 0 100vw; scroll-snap-align:start; width:100vw; }
+
+  /* Centered FROSTED dots (each dot) */
+  #{{ gallery_id }} .slider-buttons{ position:absolute; left:50%; bottom:12px; transform:translateX(-50%); display:flex; align-items:center; justify-content:center; gap:0; z-index:3; background:transparent!important; }
+  #{{ gallery_id }} .slider-dot-button{ background:transparent; border:none; cursor:pointer; width:1.6rem; height:2.2rem; display:flex; align-items:center; justify-content:center; position:relative; }
+  #{{ gallery_id }} .slider-dot-button::after{
+    content:""; position:absolute; left:50%; top:50%; width:.48rem; height:.48rem; transform:translate(-50%,-50%);
+    border-radius:50%; background:rgba(255,255,255,.18);
+    -webkit-backdrop-filter:blur(7px) saturate(140%); backdrop-filter:blur(7px) saturate(140%);
+    border:1px solid rgba(255,255,255,.28); box-shadow:0 0 0 1px rgba(0,0,0,.08), 0 2px 10px rgba(0,0,0,.08);
+  }
+  #{{ gallery_id }} .slider-dot-button.is-active::after{ background:#2b2a2a; border-color:rgba(0,0,0,.35); -webkit-backdrop-filter:none; backdrop-filter:none; box-shadow:0 0 0 1px rgba(0,0,0,.18); }
+}
+
+/* ===== Desktop grid ===== */
+@media (min-width:768px){
+  #{{ gallery_id }}[data-mode="desktop"] .horizontal-slider__slider{ display:grid; grid-template-columns:1fr 1fr; gap:3px; width:100%; }
+  #{{ gallery_id }} .horizontal-slider__item{ width:100%; }
+  #{{ gallery_id }} .slider-dot-buttons{ display:none!important; }
+}
+
+/* ===== PDP layout (desktop) ===== */
+#MainProduct-{{ section.id }}{ --pdp-info-w:380px; --pdp-gap:16px; }
+@media (min-width:768px){
+  #MainProduct-{{ section.id }} .page-width{ max-width:none!important; padding-left:0!important; padding-right:12px!important; margin:0!important; }
+  #MainProduct-{{ section.id }} .grid,#MainProduct-{{ section.id }} .product,#MainProduct-{{ section.id }} .product__outer{
+    display:grid!important; grid-template-columns:1fr var(--pdp-info-w)!important; gap:var(--pdp-gap)!important; align-items:start; max-width:100vw!important;
+  }
+  #MainProduct-{{ section.id }} .product__media-wrapper{ grid-column:1/2!important; width:100%!important; max-width:none!important; padding:0!important; margin:0!important; }
+  #MainProduct-{{ section.id }} .product__info-wrapper{ grid-column:2/3!important; max-width:var(--pdp-info-w)!important; }
+  #MainProduct-{{ section.id }} media-gallery,
+  #MainProduct-{{ section.id }} .product__media-list.slider,
+  #MainProduct-{{ section.id }} .thumbnail-list,
+  #MainProduct-{{ section.id }} .slider-buttons:not(.slider-dot-buttons){ display:none!important; }
+}
+
+/* ===== MINIMAL FULLSCREEN LIGHTBOX (matching reference) ===== */
+#{{ gallery_id }}-lightbox{ 
+  position:fixed; inset:0; display:none; z-index:99999; 
+  background:#f5f3f0; /* Light neutral background like reference */
+}
+#{{ gallery_id }}-lightbox.is-open{ display:block; }
+#{{ gallery_id }}-lightbox .lb-wrap{ position:absolute; inset:0; display:flex; }
+
+/* Compact thumbnail rail (left side, desktop only) */
+#{{ gallery_id }}-lightbox .lb-thumbs{ display:none; }
+@media (min-width:768px){
+  #{{ gallery_id }}-lightbox .lb-thumbs{
+    display:flex; flex-direction:column; gap:6px; width:72px; padding:20px 12px; 
+    overflow:auto; scrollbar-width:none; background:transparent;
+  }
+  #{{ gallery_id }}-lightbox .lb-thumbs::-webkit-scrollbar{ display:none; }
+  #{{ gallery_id }}-lightbox .lb-thumb{
+    width:48px; height:72px; border-radius:4px; overflow:hidden; position:relative; 
+    border:1.5px solid rgba(0,0,0,.12); background:#fff; cursor:pointer;
+    transition:all .2s ease;
+  }
+  #{{ gallery_id }}-lightbox .lb-thumb:hover{ border-color:rgba(0,0,0,.3); }
+  #{{ gallery_id }}-lightbox .lb-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  #{{ gallery_id }}-lightbox .lb-thumb.is-active{ 
+    border:2px solid rgba(0, 0, 0, 0.2); 
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+}
+
+/* Scrollable image container */
+#{{ gallery_id }}-lightbox .lb-scroller{
+  flex:1; overflow-y:auto; 
+  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+#{{ gallery_id }}-lightbox .lb-scroller::-webkit-scrollbar{ display:none; }
+
+#{{ gallery_id }}-lightbox .lb-slide{
+  display:flex; align-items:center; 
+  justify-content:center; padding:0;
+}
+@media (max-width:767px){ 
+  #{{ gallery_id }}-lightbox{ background:#f8f8f8; }
+  #{{ gallery_id }}-lightbox .lb-slide{ min-height:auto; }
+}
+@media (min-width:768px){
+  #{{ gallery_id }}-lightbox .lb-slide{ min-height:100vh; }
+}
+
+#{{ gallery_id }}-lightbox .lb-slide img,
+#{{ gallery_id }}-lightbox .lb-slide video,
+#{{ gallery_id }}-lightbox .lb-slide iframe,
+#{{ gallery_id }}-lightbox .lb-slide model-viewer{
+  width:100%; object-fit:contain; 
+  background:transparent; display:block; border:none!important;
+}
+@media (max-width:767px){
+  #{{ gallery_id }}-lightbox .lb-slide img{ height:auto; max-height:none; }
+}
+@media (min-width:768px){
+  #{{ gallery_id }}-lightbox .lb-slide img{ height:100vh; }
+}
+
+/* Modern minimal close button */
+#{{ gallery_id }}-lightbox .lb-close{
+  position:fixed; top:20px; right:20px; width:40px; height:40px; 
+  border:none; background:transparent; 
+  color:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center;
+  font-size:28px; line-height:1; z-index:100000; cursor:pointer; 
+  font-weight:200; transition:all .2s ease; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+#{{ gallery_id }}-lightbox .lb-close:hover{ 
+  color:rgba(0,0,0,1); 
+  transform:scale(1.1);
+}
+@media (max-width:767px){
+  #{{ gallery_id }}-lightbox .lb-close{ 
+    top:16px; right:16px; width:36px; height:36px; font-size:26px; font-weight:200;
+  }
+}
+</style>
+
+<div class="horizontal-slider" id="{{ gallery_id }}" data-mode="mobile">
+  <div class="horizontal-slider__slider">
+    {%- for media in product.media -%}
+      <div class="horizontal-slider__item" data-image-index="{{ forloop.index0 }}">
+        <div class="lazyload-image-wrapper" data-index="{{ forloop.index0 }}">
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              <img
+                src="{{ media | image_url: width: 1200 }}"
+                srcset="{{ media | image_url: width: 400 }} 400w,
+                        {{ media | image_url: width: 800 }} 800w,
+                        {{ media | image_url: width: 1200 }} 1200w"
+                sizes="(max-width: 767px) 100vw, 50vw"
+                alt="{{ media.alt | default: product.title | escape }}"
+                loading="{{ forloop.first | if: 'eager', 'lazy' }}" />
+            {%- when 'video' -%}
+              {{ media | video_tag: controls: false, muted: true, playsinline: true }}
+            {%- when 'external_video' -%}
+              {{ media | external_video_tag }}
+            {%- when 'model' -%}
+              {{ media | model_viewer_tag }}
+          {%- endcase -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <!-- Mobile frosted dots (hidden desktop) -->
+  <div data-media-gallery-dots class="slider-buttons slider-dot-buttons no-js-hidden quick-add-hidden">
+    <button type="button" class="slider-button slider-button--prev hidden" name="previous" aria-label="Slide left" disabled></button>
+    {%- for _m in product.media -%}
+      <button type="button" class="slider-dot-button{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"><span class="visually-hidden">{{ forloop.index }}</span></button>
+    {%- endfor -%}
+    <button type="button" class="slider-button slider-button--next hidden" name="next" aria-label="Slide right" disabled></button>
+  </div>
+</div>
+
+<!-- MINIMAL FULLSCREEN LIGHTBOX (matching reference) -->
+<div id="{{ gallery_id }}-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="lb-close" type="button" aria-label="Close">×</button>
+  <div class="lb-wrap">
+    <!-- Compact thumbnail rail (desktop only, left side) -->
+    <aside class="lb-thumbs">
+      {%- for media in product.media -%}
+        <button class="lb-thumb{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" type="button" aria-label="View image {{ forloop.index }}">
+          {%- if media.preview_image -%}
+            <img src="{{ media.preview_image | image_url: width: 120 }}" alt="" loading="lazy">
+          {%- elsif media.media_type == 'image' -%}
+            <img src="{{ media | image_url: width: 120 }}" alt="" loading="lazy">
+          {%- else -%}
+            <img src="{{ media | image_url: width: 120 }}" alt="" loading="lazy">
+          {%- endif -%}
+        </button>
+      {%- endfor -%}
+    </aside>
+
+    <!-- Vertical scroll container with all images -->
+    <div class="lb-scroller">
+      {%- for media in product.media -%}
+        <section class="lb-slide" data-index="{{ forloop.index0 }}">
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              <img src="{{ media | image_url: width: 2400 }}" alt="{{ media.alt | escape }}">
+            {%- when 'video' -%}
+              {{ media | video_tag: controls: true, playsinline: true }}
+            {%- when 'external_video' -%}
+              {{ media | external_video_tag }}
+            {%- when 'model' -%}
+              {{ media | model_viewer_tag }}
+          {%- endcase -%}
+        </section>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('{{ gallery_id }}');
+  if (!root) return;
+
+  var slider = root.querySelector('.horizontal-slider__slider');
+  var items = Array.prototype.slice.call(root.querySelectorAll('.horizontal-slider__item'));
+  var dots = Array.prototype.slice.call(root.querySelectorAll('.slider-dot-button'));
+
+  function setMode(){ root.dataset.mode = window.matchMedia('(max-width: 767px)').matches ? 'mobile' : 'desktop'; }
+  setMode(); window.addEventListener('resize', setMode);
+
+  /* --- Mobile dots --- */
+  function activeIndexMobile(){
+    var w = items[0] ? items[0].offsetWidth : 1;
+    return Math.round((slider.scrollLeft || 0) / w);
+  }
+  function updateDots(){
+    var idx = activeIndexMobile();
+    dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); });
+  }
+  dots.forEach(function(dot){
+    dot.addEventListener('click', function(){
+      var idx = parseInt(dot.getAttribute('data-index'), 10) || 0;
+      items[idx]?.scrollIntoView({ behavior:'smooth', inline:'start', block:'nearest' });
+      dots.forEach(function(d){ d.classList.remove('is-active'); }); 
+      dot.classList.add('is-active');
+    });
+  });
+  slider.addEventListener('scroll', function(){ 
+    if (root.dataset.mode==='mobile') updateDots(); 
+  }, { passive:true });
+
+  /* --- Lightbox --- */
+  var lb = document.getElementById('{{ gallery_id }}-lightbox');
+  var lbClose = lb.querySelector('.lb-close');
+  var lbScroller = lb.querySelector('.lb-scroller');
+  var lbSlides = Array.prototype.slice.call(lb.querySelectorAll('.lb-slide'));
+  var lbThumbs = Array.prototype.slice.call(lb.querySelectorAll('.lb-thumb'));
+
+  function lockBody(lock){
+    if (lock){ 
+      document.documentElement.style.overflow='hidden'; 
+      document.body.style.overflow='hidden'; 
+    } else { 
+      document.documentElement.style.overflow=''; 
+      document.body.style.overflow=''; 
+    }
+  }
+
+  function openLightbox(startIndex){
+    lb.classList.add('is-open');
+    lb.setAttribute('aria-hidden','false');
+    lockBody(true);
+    var target = lbSlides[startIndex];
+    if (target){
+      // Force instant jump - no smooth scrolling
+      lbScroller.scrollTop = target.offsetTop;
+      setActiveThumb(startIndex);
+    }
+  }
+
+  function closeLightbox(){
+    lb.classList.remove('is-open');
+    lb.setAttribute('aria-hidden','true');
+    lockBody(false);
+  }
+
+  function setActiveThumb(idx){
+    lbThumbs.forEach(function(t,i){ t.classList.toggle('is-active', i===idx); });
+  }
+
+  // Click tiles -> open lightbox
+  items.forEach(function(item){
+    item.addEventListener('click', function(){
+      var idx = parseInt(item.querySelector('.lazyload-image-wrapper')?.getAttribute('data-index'), 10) || 0;
+      openLightbox(idx);
+    });
+  });
+
+  // Close button
+  lbClose.addEventListener('click', closeLightbox);
+
+  // Click outside closes
+  lb.addEventListener('click', function(e){
+    if (e.target === lb) closeLightbox();
+  });
+
+  // ESC closes; Arrow keys navigate
+  document.addEventListener('keydown', function(e){
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'Escape'){ 
+      e.preventDefault(); 
+      closeLightbox(); 
+      return; 
+    }
+    if (e.key === 'ArrowDown' || e.key === 'PageDown'){
+      e.preventDefault();
+      stepSlide(1);
+    }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp'){
+      e.preventDefault();
+      stepSlide(-1);
+    }
+  });
+
+  function visibleIndex(){
+    var mid = lbScroller.scrollTop + lbScroller.clientHeight/2;
+    var best = 0, dist = Infinity;
+    for (var i=0; i<lbSlides.length; i++){
+      var s = lbSlides[i];
+      var center = s.offsetTop + s.offsetHeight/2;
+      var d = Math.abs(center - mid);
+      if (d < dist){ dist = d; best = i; }
+    }
+    return best;
+  }
+
+  function stepSlide(dir){
+    var idx = visibleIndex() + dir;
+    idx = Math.max(0, Math.min(lbSlides.length-1, idx));
+    lbSlides[idx].scrollIntoView({ behavior:'smooth', block:'start' });
+    setActiveThumb(idx);
+  }
+
+  // Sync active thumbnail while scrolling
+  var syncTO;
+  lbScroller.addEventListener('scroll', function(){
+    clearTimeout(syncTO);
+    syncTO = setTimeout(function(){ setActiveThumb(visibleIndex()); }, 50);
+  }, { passive:true });
+
+  // Thumbnail click -> scroll to that slide
+  lbThumbs.forEach(function(thumb){
+    thumb.addEventListener('click', function(){
+      var idx = parseInt(thumb.getAttribute('data-index'), 10) || 0;
+      lbSlides[idx].scrollIntoView({ behavior:'smooth', block:'start' });
+      setActiveThumb(idx);
+    });
+  });
+})();
+</script>
+
+{%- endif -%}

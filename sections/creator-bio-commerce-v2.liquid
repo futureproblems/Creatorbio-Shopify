@@ -1,0 +1,286 @@
+{%- comment -%}
+  Creator Bio Commerce V2 - Main Section
+  Component-based architecture with view state management
+  States: browse → product → details → cart
+{%- endcomment -%}
+
+{%- comment -%} ========================================
+  METAFIELD PARSING - Existing Fields
+======================================== {%- endcomment -%}
+
+{%- assign links_json = page.metafields.creator_bio.links_json.value -%}
+{%- assign avatar_url = page.metafields.creator_bio.avatar_url.value -%}
+{%- assign hide_avatar = page.metafields.creator_bio.hide_avatar.value -%}
+{%- assign banner_image_url = page.metafields.creator_bio.banner_image_url.value -%}
+<!-- DEBUG SECTION: banner_image_url metafield = '{{ page.metafields.creator_bio.banner_image_url.value }}' -->
+<!-- DEBUG SECTION: banner_image_url variable = '{{ banner_image_url }}' -->
+{%- assign full_name = page.metafields.creator_bio.full_name.value -%}
+{%- assign username = page.metafields.creator_bio.username.value -%}
+{%- assign user_id = page.metafields.creator_bio.user_id.value -%}
+{%- assign bio = page.metafields.creator_bio.bio.value -%}
+{%- assign collection_handle = page.metafields.creator_bio.collection_handle.value -%}
+{%- assign videos_json = page.metafields.creator_bio.videos_json.value -%}
+
+{%- comment -%} Parse socials JSON {%- endcomment -%}
+{%- assign socials_json = page.metafields.creator_bio.socials_json.value -%}
+{%- if socials_json != blank -%}
+  {%- assign socials = socials_json | parse_json -%}
+  {%- assign instagram_url = socials.instagram -%}
+  {%- assign twitter_url = socials.twitter -%}
+  {%- assign facebook_url = socials.facebook -%}
+  {%- assign youtube_url = socials.youtube -%}
+  {%- assign tiktok_url = socials.tiktok -%}
+  {%- assign linkedin_url = socials.linkedin -%}
+  {%- assign email_url = socials.email -%}
+  {%- assign snapchat_url = socials.snapchat -%}
+  {%- assign amazon_url = socials.amazon -%}
+{%- endif -%}
+
+{%- comment -%} Email signup settings {%- endcomment -%}
+{%- assign email_signup_settings_json = page.metafields.creator_bio.email_signup_settings.value -%}
+{%- if email_signup_settings_json != blank -%}
+  {%- assign email_signup_settings = email_signup_settings_json | parse_json -%}
+  {%- assign enable_email_signup = email_signup_settings.enabled -%}
+  {%- assign email_signup_title = email_signup_settings.title -%}
+  {%- assign email_signup_description = email_signup_settings.description -%}
+{%- else -%}
+  {%- assign enable_email_signup = true -%}
+{%- endif -%}
+
+{%- comment -%} Music player settings {%- endcomment -%}
+{%- assign enable_music_player = page.metafields.creator_bio.enable_music_player.value -%}
+{%- assign music_player_title = page.metafields.creator_bio.music_player_title.value -%}
+{%- assign music_player_theme = page.metafields.creator_bio.music_player_theme.value | default: 'auto' -%}
+{%- assign music_items_json = page.metafields.creator_bio.music_items.value -%}
+{%- if music_items_json != blank -%}
+  {%- assign music_items = music_items_json | parse_json -%}
+{%- else -%}
+  {%- assign music_items = nil -%}
+{%- endif -%}
+
+{%- comment -%} ========================================
+  NEW V2 METAFIELDS
+======================================== {%- endcomment -%}
+
+{%- assign b_score = page.metafields.creator_bio.b_score.value | default: 0 -%}
+{%- assign b_score_reviews = page.metafields.creator_bio.b_score_reviews.value | default: 0 -%}
+{%- assign creator_tags_json = page.metafields.creator_bio.creator_tags.value -%}
+{%- assign social_stats_json = page.metafields.creator_bio.social_stats.value -%}
+
+{%- comment -%} Parse creator tags {%- endcomment -%}
+{%- if creator_tags_json != blank -%}
+  {%- assign creator_tags = creator_tags_json | parse_json -%}
+{%- else -%}
+  {%- assign creator_tags = nil -%}
+{%- endif -%}
+
+{%- comment -%} Parse social stats {%- endcomment -%}
+{%- if social_stats_json != blank -%}
+  {%- assign social_stats = social_stats_json | parse_json -%}
+{%- else -%}
+  {%- assign social_stats = nil -%}
+{%- endif -%}
+
+{%- comment -%} Parse social proof cards (video embeds) {%- endcomment -%}
+{%- assign social_proof_cards_json = page.metafields.creator_bio.social_proof_cards.value -%}
+{%- if social_proof_cards_json != blank -%}
+  {%- assign social_proof_cards = social_proof_cards_json | parse_json -%}
+{%- else -%}
+  {%- assign social_proof_cards = nil -%}
+{%- endif -%}
+
+{%- comment -%} ========================================
+  DERIVED VALUES
+======================================== {%- endcomment -%}
+
+{%- comment -%} Determine creator name {%- endcomment -%}
+{%- assign creator_name = '' -%}
+{%- if full_name != blank and full_name.size > 0 -%}
+  {%- assign creator_name = full_name -%}
+{%- elsif username != blank and username.size > 0 -%}
+  {%- assign creator_name = username -%}
+{%- elsif section.settings.creator_name != blank -%}
+  {%- assign creator_name = section.settings.creator_name -%}
+{%- endif -%}
+
+{%- comment -%} Get collection {%- endcomment -%}
+{%- assign collection = nil -%}
+{%- if collection_handle != blank -%}
+  {%- assign collection = collections[collection_handle] -%}
+{%- elsif section.settings.collection -%}
+  {%- assign collection = section.settings.collection -%}
+{%- endif -%}
+
+{%- comment -%} Extract unique product categories from collection {%- endcomment -%}
+{%- assign product_categories = "" -%}
+{%- if collection != blank -%}
+  {%- for product in collection.products -%}
+    {%- if product.type != blank -%}
+      {%- unless product_categories contains product.type -%}
+        {%- if product_categories == "" -%}
+          {%- assign product_categories = product.type -%}
+        {%- else -%}
+          {%- assign product_categories = product_categories | append: "|||" | append: product.type -%}
+        {%- endif -%}
+      {%- endunless -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign categories_array = product_categories | split: "|||" -%}
+
+{%- comment -%} ========================================
+  FONT LOADING
+======================================== {%- endcomment -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+{%- comment -%} ========================================
+  MAIN PAGE CONTAINER
+======================================== {%- endcomment -%}
+
+<section
+  class="cb-commerce-page"
+  data-view="browse"
+  data-creator="{{ username }}"
+  data-user-id="{{ user_id }}"
+  data-collection="{{ collection_handle }}"
+  style="
+    --cb-bg-primary: #D4C4A8;
+    --cb-bg-secondary: #C9B896;
+    --cb-text-dark: #3C3226;
+    --cb-text-medium: #5C4D3C;
+    --cb-text-light: #8B7D6B;
+    --cb-text-muted: #A99B8A;
+    --cb-card-bg: rgba(255,255,255,0.7);
+    --cb-border: rgba(92,77,60,0.15);
+    --cb-accent: #1A1A1A;
+  "
+>
+
+  {%- comment -%} ========== HERO BANNER ========== {%- endcomment -%}
+  {%- render 'cb-v2-hero',
+    banner_image_url: banner_image_url,
+    creator_name: creator_name,
+    creator_tags: creator_tags,
+    bio: bio,
+    avatar_url: avatar_url,
+    b_score: b_score,
+    b_score_reviews: b_score_reviews,
+    enable_email_signup: enable_email_signup
+  -%}
+
+  {%- comment -%} ========== CONTENT AREA ========== {%- endcomment -%}
+  <div class="cb-content-area">
+    {%- render 'cb-v2-browse-view',
+      creator_name: creator_name,
+      username: username,
+      collection: collection,
+      categories_array: categories_array,
+      links_json: links_json,
+      social_stats: social_stats,
+      social_proof_cards: social_proof_cards,
+      instagram_url: instagram_url,
+      tiktok_url: tiktok_url,
+      youtube_url: youtube_url,
+      twitter_url: twitter_url,
+      enable_music_player: enable_music_player,
+      music_player_title: music_player_title,
+      music_player_theme: music_player_theme,
+      music_items: music_items
+    -%}
+  </div>
+
+  {%- comment -%} ========== EMAIL SIGNUP MODAL ========== {%- endcomment -%}
+  {%- if enable_email_signup -%}
+    <div class="cb-modal" id="emailModal" style="display: none;">
+      <div class="cb-modal__backdrop" data-action="close-modal"></div>
+      <div class="cb-modal__content">
+        <button class="cb-modal__close" data-action="close-modal" aria-label="Close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+        <h3 class="cb-modal__title">{{ email_signup_title | default: 'Stay Updated' }}</h3>
+        <p class="cb-modal__desc">{{ email_signup_description | default: 'Get updates on new products and exclusive offers.' }}</p>
+        <form class="cb-email-form" id="emailSignupForm">
+          <input
+            type="email"
+            id="emailInput"
+            name="email"
+            class="cb-email-input"
+            placeholder="your@email.com"
+            required
+            aria-label="Email address"
+          >
+          <button type="submit" class="cb-email-btn" id="emailSubmitBtn">
+            Subscribe
+          </button>
+        </form>
+        <div class="cb-email-message" id="emailMessage"></div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ========== POWERED BY FOOTER ========== {%- endcomment -%}
+  <div class="cb-footer">
+    <a href="https://creatorb.io" target="_blank" rel="noopener" class="cb-footer__link">
+      Powered by <strong>CreatorB</strong>
+    </a>
+  </div>
+
+</section>
+
+{%- comment -%} ========================================
+  INLINE STYLES (can be moved to external CSS)
+======================================== {%- endcomment -%}
+
+{{ 'cb-commerce-v2.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} ========================================
+  JAVASCRIPT CONTROLLER
+======================================== {%- endcomment -%}
+
+<script src="{{ 'cb-commerce-v2.js' | asset_url }}" defer></script>
+
+<script>
+  // Initialize with server-side data
+  window.CB_CONFIG = {
+    creator: {{ username | json }},
+    userId: {{ user_id | json }},
+    collectionHandle: {{ collection_handle | json }},
+    workerUrl: 'https://creatorbio-pricing.shopamorayou.workers.dev',
+    analyticsUrl: 'https://creatorb.io/api'
+  };
+</script>
+
+{%- comment -%} ========================================
+  SCHEMA
+======================================== {%- endcomment -%}
+
+{% schema %}
+{
+  "name": "Creator Bio Commerce V2",
+  "tag": "section",
+  "class": "cb-commerce-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "creator_name",
+      "label": "Creator Name (fallback)",
+      "default": "Creator"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Product Collection (fallback)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Creator Bio Commerce V2"
+    }
+  ]
+}
+{% endschema %}

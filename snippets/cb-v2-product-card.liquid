@@ -1,0 +1,78 @@
+{%- comment -%}
+  CB Commerce V2 - Product Card Component
+  Individual product card with quick-add button
+
+  Required variables:
+  - product: Shopify product object
+  - username: Creator username for tracking
+{%- endcomment -%}
+
+<div
+  class="cb-product-card"
+  data-product-id="{{ product.id }}"
+  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-category="{{ product.type | handleize }}"
+  data-base-price="{{ product.price | divided_by: 100.0 }}"
+  data-creator="{{ username }}"
+>
+  {%- comment -%} White Card Container with Image {%- endcomment -%}
+  <div class="cb-product-card__card">
+    <div class="cb-product-card__media" data-action="select-product">
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.title | escape }}"
+          class="cb-product-card__img"
+          loading="lazy"
+          width="300"
+          height="400"
+        >
+      {%- else -%}
+        <div class="cb-product-card__placeholder">
+          {{ product.title | truncate: 20 }}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Creator Bonus Badge (shown via JS if product has commission) {%- endcomment -%}
+      <span class="cb-product-card__badge" data-commission-badge>Creator Bonus</span>
+    </div>
+  </div>
+
+  {%- comment -%} Product Info - OUTSIDE the white card {%- endcomment -%}
+  <div class="cb-product-card__info">
+    <p class="cb-product-card__title">{{ product.title }}</p>
+    <p class="cb-product-card__price" data-base-price="{{ product.price | money }}">
+      {{ product.price | money }}
+    </p>
+  </div>
+
+  {%- comment -%} Hidden data for JS {%- endcomment -%}
+  <script type="application/json" class="cb-product-data">
+    {
+      "id": {{ product.id | json }},
+      "handle": {{ product.handle | json }},
+      "title": {{ product.title | json }},
+      "price": {{ product.price | divided_by: 100.0 }},
+      "description": {{ product.description | strip_html | truncate: 500 | json }},
+      "images": [
+        {%- for image in product.images limit: 5 -%}
+          {{ image | image_url: width: 800 | json }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+      "variants": [
+        {%- for variant in product.variants -%}
+          {
+            "id": {{ variant.id }},
+            "title": {{ variant.title | json }},
+            "option1": {{ variant.option1 | json }},
+            "option2": {{ variant.option2 | json }},
+            "price": {{ variant.price | divided_by: 100.0 }},
+            "available": {{ variant.available }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+      "options": {{ product.options_with_values | json }}
+    }
+  </script>
+</div>

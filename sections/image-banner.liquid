@@ -1,0 +1,377 @@
+<!-- ===== HERO: match khy.com (desktop) + keep current mobile — with CTA button ===== -->
+<style>
+  /* ================= CUSTOM NUCKLE FONTS ================= */
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Semibold.ttf?v=1759189630') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Medium.ttf?v=1759189630') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+  }
+
+  /* ================= HERO BASE ================= */
+  #AmorayouHero{
+    --hero-desktop-pb:56.25%;     /* desktop 16:9 base (we shorten below) */
+    --pad-mobile:1.5rem;          /* 24px */
+    --pad-desktop:3rem;           /* 48px */
+    --copy:#fff;
+    position:relative;margin:0;padding:0;
+  }
+
+  /* aspect-ratio frame */
+  #AmorayouHero .am-hero__viewport{position:relative;height:0}
+  @media (min-width:750px){#AmorayouHero .am-hero__viewport{padding-bottom:var(--hero-desktop-pb)}}
+
+  /* track & slide */
+  #AmorayouHero .am-hero__track{position:absolute;inset:0;overflow:hidden}
+  #AmorayouHero .am-hero__slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease}
+  #AmorayouHero .am-hero__slide.is-active{opacity:1}
+
+  /* full clickable layer (DISABLED below so image can't be clicked) */
+  #AmorayouHero .am-hero__hit{position:absolute;inset:0;z-index:1;display:block}
+
+  /* media */
+  #AmorayouHero .am-hero__media{position:absolute;inset:0}
+  #AmorayouHero .am-hero__media img,
+  #AmorayouHero .am-hero__media video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;object-position:center;display:block
+  }
+
+  /* content (bottom-left) */
+  #AmorayouHero .am-hero__content{
+    position:absolute;left:0;right:auto;bottom:15%;top:auto;width:100%;
+    color:var(--copy);padding:var(--pad-mobile);pointer-events:none;z-index:100;
+    overflow:visible;
+  }
+  @media (min-width:750px){
+    #AmorayouHero .am-hero__content{padding:var(--pad-desktop);bottom:20%}
+  }
+
+  #AmorayouHero .am-hero__content-inner{
+    pointer-events:auto;
+    max-width:min(42rem,50vw);
+  }
+
+  @media (min-width:750px){
+    #AmorayouHero .am-hero__content-inner{
+      max-width:60vw;
+    }
+  }
+
+  /* Allow button to overflow on mobile */
+  @media (max-width:749px){
+    #AmorayouHero .am-hero__content-inner{
+      max-width:100%;
+      overflow:visible;
+    }
+  }
+
+  /* Headline & paragraph */
+  #AmorayouHero .am-hero__title{
+    margin:0 0 .5rem 0; 
+    line-height:1.2; 
+    letter-spacing:0.05em;
+    font-family: 'Nuckle', sans-serif;
+    font-weight:600; 
+    color:#fff!important;
+    font-size:32px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  #AmorayouHero .am-hero__text{
+    margin:0 0 1.25rem; 
+    color:#fff!important; 
+    opacity:.92;
+    font-family: 'Nuckle', sans-serif;
+    font-weight:400;
+    font-size:12px; 
+    letter-spacing:0.05em;
+    max-width:38rem;
+    line-height:1.5;
+    white-space: nowrap;
+  }
+
+  /* CTA Button Base */
+  #AmorayouHero .am-hero__cta{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding-right:2rem;
+    width:100%;
+    max-width:950px;
+    height:56px;
+    border:1px solid #fff;
+    border-radius:28px;
+    color:#fff;
+    background:transparent;
+    font-family: 'Nuckle', sans-serif;
+    font-weight:500;
+    font-size:18px;
+    text-decoration:none;
+    pointer-events:auto;
+    letter-spacing:0.02em;
+    transition:all .4s ease;
+    mix-blend-mode:normal;
+    position:relative;
+    backdrop-filter:blur(0px);
+    overflow:hidden;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  #AmorayouHero .am-hero__cta:hover{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(20px);
+    border-color:rgba(255,255,255,0.3);
+    box-shadow:0 8px 32px rgba(255,255,255,0.1),
+               inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  #AmorayouHero .am-hero__cta-wrap{
+    display:flex;
+    justify-content:flex-start;
+    width:100%;
+    overflow:visible;
+  }
+
+  /* Typewriter Animation Styles */
+  #AmorayouHero .am-hero__cta-text{
+    position:relative;
+    width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    border-right:2px solid rgba(255,255,255,.75);
+    animation: typewriter 1.5s steps(8) 0.5s 1 normal both,
+               blinkTextCursor 500ms steps(8) infinite normal;
+  }
+
+  @keyframes typewriter{
+    from{width:0;}
+    to{width:4.5em;} /* Adjusted for "shop now" width */
+  }
+
+  @keyframes blinkTextCursor{
+    from{border-right-color:rgba(255,255,255,.75);}
+    to{border-right-color:transparent;}
+  }
+
+  /* Remove cursor after animation */
+  #AmorayouHero .am-hero__cta-text.typed{
+    animation: none;
+    border-right:none;
+    width:auto;
+  }
+
+  /* Allow wrap to extend on mobile */
+  @media (max-width:749px){
+    #AmorayouHero .am-hero__cta-wrap{
+      width:calc(100% - 0px);
+      margin-left:0;
+    }
+  }
+
+  /* ----- DESKTOP: match khy scale/spacing ----- */
+  @media (min-width:750px){
+    #AmorayouHero{ --hero-desktop-pb: 52%; } /* slightly shorter than 16:9 */
+
+    #AmorayouHero .am-hero__title{
+      font-size:32px;
+      margin-bottom:.5rem;
+    }
+    #AmorayouHero .am-hero__text{
+      font-size:12px;
+      letter-spacing:0.05em;
+      line-height:1.6;
+      max-width:28rem;
+      margin-bottom:1.25rem;
+    }
+  }
+
+  /* Mobile optimizations - keep text on one line */
+  @media (max-width:749px){
+    #AmorayouHero .am-hero__title{
+      font-size:clamp(16px,4.5vw,24px);
+      white-space:nowrap;
+      max-width:100%;
+    }
+    #AmorayouHero .am-hero__text{
+      font-size:clamp(8px,2.2vw,10px);
+      white-space:nowrap;
+      max-width:100%;
+      margin-bottom:1rem;
+    }
+    #AmorayouHero .am-hero__cta{
+      max-width:92%;
+      height:46px;
+      border-radius:23px;
+      font-size:14px;
+      padding-right:1rem;
+    }
+    #AmorayouHero .am-hero__cta-text{
+      font-size:14px;
+    }
+    @keyframes typewriter{
+      from{width:0;}
+      to{width:5em;} /* Adjusted for mobile */
+    }
+    #AmorayouHero .am-hero__content{
+      bottom:10%;
+    }
+  }
+
+  /* Very small phones */
+  @media (max-width:380px){
+    #AmorayouHero .am-hero__cta{
+      max-width:94%;
+      height:44px;
+      font-size:13px;
+    }
+    #AmorayouHero .am-hero__cta-text{
+      font-size:13px;
+    }
+  }
+
+  /* subtle baseline like khy */
+  #AmorayouHero .am-hero__viewport::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(255,255,255,.25)
+  }
+
+  /* dots (only if >1 slide) */
+  #AmorayouHero .am-hero__dots{
+    position:absolute;left:0;right:0;bottom:10px;display:none;justify-content:center;gap:8px;z-index:10
+  }
+  #AmorayouHero .am-hero__dot{
+    width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:opacity .3s,background .3s
+  }
+  #AmorayouHero .am-hero__dot.is-active{background:#fff;opacity:1}
+
+  /* play/pause (only if >1 slide) */
+  #AmorayouHero .am-hero__toggle{
+    position:absolute;right:15px;bottom:15px;width:20px;height:20px;color:#fff;display:none;z-index:10
+  }
+  #AmorayouHero .am-hero__toggle svg{width:20px;height:20px;display:block}
+
+  /* Fixed mobile height to keep your current look */
+  @media (max-width:749px){
+    #AmorayouHero .am-hero__viewport{height:650px !important;padding-bottom:0 !important}
+  }
+
+  /* ==== OVERRIDES: Disable clicks on hero image (overlay) ==== */
+  #AmorayouHero .am-hero__hit{
+    pointer-events: none !important;
+    cursor: default !important;
+  }
+</style>
+
+<section id="AmorayouHero" class="home-hero">
+  <div class="am-hero__viewport">
+    <div class="am-hero__track">
+
+      <!-- Slide (single) -->
+      <article class="am-hero__slide is-active" data-slide="0">
+        <a class="am-hero__hit" href="/collections/new-arrivals" aria-label="Shop New Essentials"></a>
+
+        <div class="am-hero__media">
+          <picture>
+            <!-- desktop image -->
+            <source media="(min-width: 750px)" srcset="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/FALL_BANNER_2025_DESKTOP_-_OCT_SHOOT_c2edab30-41db-4797-b537-9c07dd404949.jpg?v=1759382318">
+            <!-- mobile image -->
+            <img
+              src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_banner.jpg?v=1759367670"
+              alt="NOW LIVE: The Fall Edit"
+              loading="eager" fetchpriority="high" width="1080" height="1920">
+          </picture>
+        </div>
+
+        <!-- Bottom-left copy -->
+        <div class="am-hero__content">
+          <div class="am-hero__content-inner">
+            <h2 class="am-hero__title">FALL FORWARD</h2>
+            <p class="am-hero__text">
+              Layered knits, clean lines, built for cooler days.
+            </p>
+            <div class="am-hero__cta-wrap">
+              <a href="/collections/new-arrivals" class="am-hero__cta">
+                <span class="am-hero__cta-text">shop now</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="am-hero__dots" aria-label="Hero pagination"></div>
+    <button class="am-hero__toggle" type="button" aria-label="Play/Pause" title="Play/Pause"></button>
+  </div>
+</section>
+
+<script>
+(function(){
+  const root   = document.getElementById('AmorayouHero');
+  if(!root) return;
+  const slides = Array.from(root.querySelectorAll('.am-hero__slide'));
+  const dots   = root.querySelector('.am-hero__dots');
+  const toggle = root.querySelector('.am-hero__toggle');
+
+  let i = 0, timer = null, playing = true, INTERVAL = 5000;
+
+  function setActive(n){
+    slides.forEach((s, idx)=>s.classList.toggle('is-active', idx===n));
+    dots.querySelectorAll('.am-hero__dot').forEach((d, idx)=>d.classList.toggle('is-active', idx===n));
+    i = n;
+  }
+  function next(){ setActive((i+1) % slides.length); }
+  function play(){
+    if(timer || slides.length<2) return;
+    timer = setInterval(next, INTERVAL);
+    playing = true;
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+  }
+  function pause(){
+    clearInterval(timer); timer = null;
+    playing = false;
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd"/></svg>';
+  }
+  function initDots(){
+    if(slides.length < 2) return; /* single slide: keep dots/toggle hidden */
+    dots.style.display = 'flex';
+    toggle.style.display = 'block';
+    dots.innerHTML = slides.map((_, idx)=>`<button class="am-hero__dot${idx===0?' is-active':''}" aria-label="Go to slide ${idx+1}"></button>`).join('');
+    dots.addEventListener('click', (e)=>{
+      const items = Array.from(dots.children);
+      const idx = items.indexOf(e.target);
+      if(idx>-1){ setActive(idx); if(playing){ pause(); play(); } }
+    });
+  }
+
+  initDots();
+  if(slides.length > 1){ play(); }
+
+  // Remove cursor after typewriter animation completes
+  setTimeout(function(){
+    const textEl = document.querySelector('#AmorayouHero .am-hero__cta-text');
+    if(textEl){
+      textEl.classList.add('typed');
+    }
+  }, 2200); // 500ms delay + 1500ms animation + 200ms buffer
+
+  // Explicitly disable hero image click (overlay)
+  const overlay = root.querySelector('.am-hero__hit');
+  if (overlay) {
+    overlay.addEventListener('click', (e)=> e.preventDefault());
+    overlay.setAttribute('aria-disabled', 'true');
+    overlay.setAttribute('tabindex', '-1'); // not focusable
+  }
+})();
+</script>

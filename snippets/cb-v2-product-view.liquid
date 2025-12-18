@@ -1,0 +1,58 @@
+{%- comment -%}
+  CB Commerce V2 - Product View Component
+  Product detail view with image carousel, size selector, and add to cart
+  Content is populated by JavaScript when a product is selected
+
+  This is a template that JavaScript fills in dynamically
+{%- endcomment -%}
+
+<div class="cb-view cb-view--product" data-view-content="product" style="display: none;">
+
+  {%- comment -%} Header {%- endcomment -%}
+  <div class="cb-product-view__header">
+    <button class="cb-back-btn" data-action="back-to-browse">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      BACK TO ALL
+    </button>
+    <button class="cb-details-toggle" data-action="show-details">
+      +details
+    </button>
+  </div>
+
+  {%- comment -%} Product Carousel - Images injected by JS {%- endcomment -%}
+  <div class="cb-product-carousel" id="productCarousel">
+    <div class="cb-carousel-placeholder">
+      <div class="cb-carousel-placeholder__icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Carousel Dots {%- endcomment -%}
+  <div class="cb-carousel-dots" id="carouselDots"></div>
+
+  {%- comment -%} Product Info + Size Selector {%- endcomment -%}
+  <div class="cb-product-view__info">
+    <div class="cb-product-view__details">
+      <p class="cb-product-view__title" id="productViewTitle">Product Name</p>
+      <p class="cb-product-view__price" id="productViewPrice">$0.00</p>
+    </div>
+    <div class="cb-size-selector" id="sizeSelector">
+      {%- comment -%} Size buttons injected by JS {%- endcomment -%}
+    </div>
+  </div>
+
+  {%- comment -%} Add to Cart Button {%- endcomment -%}
+  <div class="cb-product-view__actions">
+    <button class="cb-add-to-cart-btn" id="addToCartBtn" disabled data-action="add-to-cart">
+      Select a size
+    </button>
+  </div>
+
+</div>

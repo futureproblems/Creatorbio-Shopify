@@ -1,0 +1,143 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  /* === Nuckle font faces (using your CDN files) === */
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0785/2199/1403/files/Nuckle-Regular.ttf?v=1759275502') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Nuckle';
+    src: url('https://cdn.shopify.com/s/files/1/0785/2199/1403/files/Nuckle-Semibold.ttf?v=1759275502') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* ===== KHY-style About layout ===== */
+  .about-{{ section.id }} .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  @media screen and (min-width: 990px) {
+    .about-{{ section.id }} .about-grid {
+      grid-template-columns: 1.1fr 1fr; /* Title left, copy right */
+      column-gap: 72px;
+      align-items: start;
+    }
+  }
+
+  /* Left column sticky on desktop */
+  @media screen and (min-width: 990px) {
+    .about-{{ section.id }} .title-col {
+      position: sticky;
+      top: 96px; /* adjust to your header height */
+      align-self: start;
+    }
+  }
+
+  /* Headline — Nuckle Semibold */
+  .about-{{ section.id }} .page-title {
+    margin: 0;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: 0;
+    font-size: clamp(32px, 7.5vw, 96px);
+    font-family: 'Nuckle', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 600; /* Semibold */
+    word-break: break-word;
+  }
+
+  /* Copy — Nuckle Regular */
+  .about-{{ section.id }} .about-copy,
+  .about-{{ section.id }} .about-copy p,
+  .about-{{ section.id }} .about-copy li {
+    max-width: 600px;
+    opacity: 0.9;
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Nuckle', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 400; /* Regular */
+  }
+
+  .about-{{ section.id }} .intro-wrap { padding-top: 6px; }
+  @media screen and (min-width: 990px) {
+    .about-{{ section.id }} .intro-wrap { padding-top: 20px; }
+  }
+
+  .about-{{ section.id }} .hairline {
+    margin-top: 56px;
+    border-top: 1px solid rgba(0,0,0,.08);
+  }
+{%- endstyle -%}
+
+<section class="about-{{ section.id }} section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="about-grid">
+      <!-- Left: giant title (sticky on desktop) -->
+      <div class="title-col">
+        <h1 class="main-page-title page-title h0{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+          {{ page.title | escape }}
+        </h1>
+      </div>
+
+      <!-- Right: intro/copy -->
+      <div class="intro-wrap">
+        <div class="about-copy rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          {{ page.content }}
+        </div>
+      </div>
+    </div>
+
+    <div class="hairline"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

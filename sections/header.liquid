@@ -1,0 +1,1454 @@
+{%- comment -%}
+AMORAYOU – Header with Mobile Image Slider
+{%- endcomment -%}
+
+{%- assign is_creator_page = false -%}
+{%- if template.name == 'creator-bio' or template.suffix == 'creator-bio' -%}
+  {%- assign is_creator_page = true -%}
+{%- endif -%}
+
+{%- unless is_creator_page -%}
+<style>
+  /* =========================
+     FONTS
+  ========================== */
+  @font-face {
+    font-family: 'Nuckle';
+    font-weight: 300;
+    font-style: normal;
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Nuckle';
+    font-weight: 400;
+    font-style: normal;
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Nuckle';
+    font-weight: 600;
+    font-style: normal;
+    src: url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Semibold.ttf?v=1759189630') format('truetype');
+    font-display: swap;
+  }
+
+  /* =========================
+     GLOBAL TOKENS
+  ========================== */
+  html{ --ann-h:0px; }
+
+  :root{
+    --amy-h:60px;
+    --amy-max:1800px;
+    --amy-pad-x:15px;
+    --amy-fg-trans:#fff;
+    --amy-fg:#111;
+    --amy-border:rgba(0,0,0,.08);
+    --amy-shadow:0 4px 12px rgba(0,0,0,.06);
+    --amy-link-size:12px;
+    --amy-link-track:1.5px;
+    --badge-bg:#efe7dc;
+    --badge-fg:#000;
+    --glass-blur:12px;
+    --glass-sat:120%;
+    --glass-tint:rgba(255,255,255,.55);
+    --glass-top-tint:rgba(255,255,255,0);
+    --mega-gap-x: 12px;
+    --mega-gap-y: 20px;
+    --mega-pad: 24px;
+    --mega-top-gap: 8px;
+  }
+
+  /* =========================
+     ANNOUNCEMENT BAR
+  ========================== */
+  html.has-announcement{ --ann-h: {{ section.settings.announcement_height | default: 32 }}px; }
+
+  .amy-announcement{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:var(--ann-h);
+    display:grid;
+    place-items:center;
+    z-index:2147483647;
+    padding:0 12px;
+    background:#111;
+    color:#fff;
+    border-bottom:1px solid rgba(0,0,0,.08);
+  }
+  .amy-announcement__text{
+    margin:0;
+    font-family:'Nuckle', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight:300;
+    font-size:8px;
+    letter-spacing:1.6px;
+    text-transform:uppercase;
+    line-height:1;
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .amy-announcement__link{ color:inherit; text-decoration:none; }
+
+  /* =========================
+     UTIL + RESPONSIVE
+  ========================== */
+  .only-desktop{display:none!important;}
+  @media (min-width:1024px){ .only-desktop{display:inline-flex!important;} }
+  .only-mobile{display:none!important;}
+  @media (max-width:1023px){ .only-mobile{display:inline-flex!important;} }
+  #amyMobilePanel[hidden]{ display:none !important; }
+  @media (max-width:1023px){ .mega-portal{ display:none !important; } }
+
+  /* =========================
+     HEADER
+  ========================== */
+  #AmorayouHeader{
+    position:fixed;
+    top:var(--ann-h);
+    left:0; right:0;
+    height:var(--amy-h);
+    background:transparent;
+    transition:
+      transform .22s ease,
+      background .25s, box-shadow .25s, border-color .25s,
+      -webkit-backdrop-filter .25s, backdrop-filter .25s;
+    border-bottom:0 solid transparent;
+    overflow:visible;
+    z-index:2147483646;
+    -webkit-transform:translateZ(0);
+    transform:translateZ(0);
+    backface-visibility:hidden;
+    will-change:transform;
+  }
+  #AmorayouHeader, #AmorayouHeader *{ pointer-events:auto!important; }
+
+  #AmorayouHeader.is-hidden{ transform:translateY(-110%); pointer-events:none; }
+
+  #AmorayouHeader.is-sticky{
+    background:var(--glass-tint);
+    -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));
+    backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat));
+  }
+
+  {%- if template.name == 'index' -%}
+  #AmorayouHeader{
+    background: rgba(255,255,255, var(--glass-a, 0));
+    -webkit-backdrop-filter: blur(var(--glass-blur-now, 0px)) saturate(var(--glass-sat));
+    backdrop-filter: blur(var(--glass-blur-now, 0px)) saturate(var(--glass-sat));
+  }
+  {%- endif -%}
+
+  .amy-bar{
+    height:var(--amy-h);
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    max-width:var(--amy-max);
+    padding:0 var(--amy-pad-x);
+    margin:0 auto;
+  }
+
+  .amy, .amy a, .amy button{color:var(--amy-fg-trans);}
+  #AmorayouHeader.is-sticky .amy,
+  #AmorayouHeader.is-sticky .amy a,
+  #AmorayouHeader.is-sticky .amy button{color:var(--amy-fg);}
+  #AmorayouHeader.is-sticky .amy-nav a,
+  #AmorayouHeader.is-sticky .amy-nav button{ color:#111!important; }
+
+  .amy-logo{justify-self:center; display:inline-block; line-height:0; font-size:0; position:relative; z-index:1;}
+  .amy-logo img{ display:block; width:150px; height:auto; object-fit:contain; max-width:none; }
+  .amy-logo .logo-light{display:block;}
+  .amy-logo .logo-dark{display:none;}
+  #AmorayouHeader.is-sticky .amy-logo .logo-light{display:none;}
+  #AmorayouHeader.is-sticky .amy-logo .logo-dark{display:block;}
+
+  /* ===== desktop nav + portal mega ===== */
+  .amy-nav{display:none;}
+  @media (min-width:1024px){
+    .amy-nav{display:block; position:relative;}
+    .amy-nav > ul{ display:inline-flex; margin:0; padding:0; list-style:none; align-items:center; }
+    .amy-nav > ul > li{ position:relative; }
+    .amy-nav > ul > li > a,
+    .amy-nav > ul > li > button{
+      appearance:none; background:transparent; border:0; cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:5px 24px; text-decoration:none; text-transform:uppercase;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif; 
+      font-weight:400;
+      font-size:var(--amy-link-size); letter-spacing:2.0px; line-height:1.2;
+      height:var(--amy-h);
+    }
+    @media (min-width:1025px) and (max-width:1336px){
+      .amy-nav > ul > li > a, .amy-nav > ul > li > button{padding:5px 12px;}
+    }
+
+    .mega-portal{
+      position:fixed!important;
+      left:calc(var(--mega-left, 0px))!important;
+      top:calc(var(--mega-top, var(--amy-h)) + var(--mega-top-gap))!important;
+      z-index:2147483647!important;
+      border:0; border-radius:12px; overflow:hidden;
+      background:var(--glass-top-tint);
+      -webkit-backdrop-filter:none; backdrop-filter:none;
+      opacity:0; visibility:hidden; pointer-events:none;
+      transition:opacity .18s, visibility .18s,
+                 background .18s ease, border-color .18s ease,
+                 -webkit-backdrop-filter .18s ease, backdrop-filter .18s ease;
+      transform:translateZ(0);
+    }
+    .mega-portal[data-open]{ opacity:1; visibility:visible; pointer-events:auto; }
+
+    .mega--wide{
+      display:grid!important;
+      grid-template-columns: 220px 600px;
+      gap:var(--mega-gap-y) var(--mega-gap-x);
+      width:max-content;
+      min-width:auto; max-width:none;
+      padding:var(--mega-pad);
+      align-items:start;
+      background:transparent!important; border:0!important; box-shadow:none!important;
+      transform:translateY(12px); transition:transform .18s ease;
+      overflow:hidden;
+      box-sizing:border-box;
+    }
+    .mega-card{ display:none !important; }
+
+    @media (min-width:1024px) and (max-width:1200px){
+      .mega--wide{
+        grid-template-columns: 200px 200px;
+        gap:var(--mega-gap-y) 10px;
+        padding:20px;
+      }
+    }
+
+    .mega-portal, .mega-portal *{
+      text-transform:none; letter-spacing:0;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif!important;
+      box-sizing:border-box;
+    }
+
+    .mega-list{ list-style:none; margin:0; padding:0; overflow:hidden; }
+    .mega-list > li{ display:block; }
+    .mega-col{min-width:0; overflow:hidden;}
+    .mega-h{ 
+      margin:0 0 40px; 
+      font-size:16px; 
+      font-weight:400;
+      letter-spacing:2.0px;
+      line-height:1.2; 
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .mega-link{ 
+      display:block; 
+      padding:6px 0; 
+      font-size:12px; 
+      font-weight:300; 
+      letter-spacing:1.0px;
+      text-decoration:none; 
+      line-height:1.35;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .mega-link:hover{ color:#000!important; }
+
+    /* ===== DESKTOP TRENDING MARQUEE ===== */
+    .mega-col--slider .mega-h{ text-align:center; margin-bottom:12px; letter-spacing:2.0px; }
+    .amy-d-slider-wrapper{
+      margin:0; overflow:hidden; width:100%; display:flex; align-items:center;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+    .amy-d-slider{ position:relative; width:100%; overflow:hidden; }
+    .amy-d-slider-track{ display:flex; gap:8px; will-change:transform; }
+    .amy-d-slider-item{ flex:0 0 auto; width:150px; height:350px; position:relative; }
+    .amy-d-slider-item img{ width:100%; height:100%; object-fit:contain; display:block; -webkit-user-drag:none; user-select:none; touch-action:pan-x pinch-zoom; }
+  }
+
+  .amy-actions{ justify-self:end; display:inline-flex; align-items:center; gap:12px; padding-right:8px; }
+  .icon-btn{ position:relative; line-height:0; width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; background:transparent; border:0; text-decoration:none; cursor:pointer; }
+  .icon-btn img{width:17px; height:17px; display:block;}
+  .badge{ position:absolute; top:-8px; right:-10px; min-width:17px; height:17px; padding:0 4px; display:inline-flex; align-items:center; justify-content:center; background:var(--badge-bg); color:var(--badge-fg); font-size:10px; line-height:17px; border-radius:999px; box-shadow:1px 1px 3px rgba(0,0,0,.3); }
+  .badge[hidden]{ display:none!important; }
+
+  #AmorayouHeader:not(.is-sticky) .amy-actions .icon-btn img{ filter:invert(1) brightness(1.9) contrast(1.1)!important; }
+  #AmorayouHeader.is-sticky .amy-actions .icon-btn img{ filter:none!important; }
+
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))){
+    body.amy-sticky .mega-portal{ background:rgba(255,255,255,.75); }
+  }
+
+  body:not(.amy-sticky) .mega-portal, body:not(.amy-sticky) .mega-portal *{ color:#fff!important; }
+  body.amy-sticky .mega-portal, body.amy-sticky .mega-portal *{ color:#111!important; }
+
+  .mega-portal a:link,
+  .mega-portal a:visited,
+  .mega-portal .mega-link{ color:inherit!important; text-decoration:none; }
+
+  body:not(.amy-sticky) .mega-portal .mega-link:hover{ color:#ccc!important; opacity:.9; }
+  body.amy-sticky .mega-portal .mega-link:hover{ color:#ccc!important; }
+
+  body.nav-open #AmorayouHeader{ box-shadow:none!important; border-bottom:0!important; }
+
+  #AmorayouHeader{ z-index:2147483646!important; }
+  .mega-portal{ z-index:2147483647!important; pointer-events:auto; }
+  #AmorayouHero{ position:relative; z-index:1; }
+  body.nav-open #AmorayouHero, body.nav-open #AmorayouHero *{ pointer-events:none!important; }
+
+  .mega-link{
+    display:block; padding:6px 0;
+    font-size:var(--amy-link-size);
+    font-weight:400;
+    text-transform:uppercase;
+    letter-spacing:var(--amy-link-track);
+    text-decoration:none;
+    line-height:1.35;
+  }
+
+  /* =========================
+     MOBILE MENU LAYOUT + SEARCH
+  ========================== */
+  @media (max-width:1023px){
+    .amy-bar{ grid-template-columns:1fr auto 1fr; }
+    .amy-logo{ margin-top:16px; }
+    .amy-burger{ margin-top:0; }
+    .amy-actions{ margin-top:0; }
+
+    .amy-burger{
+      position:relative;
+      width:34px; height:34px;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:transparent; border:0; padding:0; border-radius:0;
+      color:#fff; cursor:pointer;
+    }
+    #AmorayouHeader.is-sticky .amy-burger{ color:#111!important; }
+
+    .amy-burger__icon{ display:none!important; }
+    .amy-burger__label{ display:none!important; }
+
+    .amy-burger::before,
+    .amy-burger::after{
+      content:"";
+      position:absolute;
+      width:15px; height:1px;
+      background:currentColor; border-radius:1px;
+      left:9px;
+      transition:transform .28s ease, top .28s ease;
+      transform-origin:50% 50%;
+    }
+    .amy-burger::before{ top:11px; }
+    .amy-burger::after{  top:21px; }
+    .amy-burger[aria-expanded="true"]::before{ top:16px; transform:rotate(45deg); }
+    .amy-burger[aria-expanded="true"]::after{  top:16px; transform:rotate(-45deg); }
+
+    #amyMobilePanel{
+      position:fixed; left:16px; right:16px; top:calc(var(--ann-h) + var(--amy-h) + 8px);
+      border-radius:22px;
+      background:var(--glass-tint);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+      backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+      box-shadow:0 14px 36px rgba(0,0,0,.22);
+      color:#111;
+      overflow:hidden;
+      overscroll-behavior:contain;
+      height:0; opacity:0; visibility:hidden;
+      transition:height .34s cubic-bezier(0.4, 0, 0.2, 1), 
+                  opacity .22s ease, 
+                  visibility .22s ease;
+      z-index:2147483645;
+      max-height: calc(100dvh - var(--ann-h) - var(--amy-h) - 24px);
+      -webkit-overflow-scrolling: touch;
+    }
+    #amyMobilePanel[data-open]{ opacity:1; visibility:visible; }
+
+    .amy-m-panel__inner{
+      padding:20px 22px 80px;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif;
+      min-height: 100%;
+    }
+
+    .amy-m-grid{ 
+      display:grid; 
+      grid-template-columns: 1fr 1.5fr;
+      gap:18px; 
+      margin-bottom:0;
+      justify-items:start;
+      align-items:start;
+    }
+    .amy-m-col h4{ 
+      font-size:16px; 
+      line-height:1.2; 
+      font-weight:300; 
+      letter-spacing:2.0px;
+      margin:0 0 12px; 
+      color:#111;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .amy-m-list{ list-style:none; margin:0; padding:0 0 0 8px; }
+    .amy-m-list li a{ 
+      display:block; 
+      padding:6px 0; 
+      font-size:12px; 
+      line-height:1.25; 
+      color:#111; 
+      text-decoration:none;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight:300;
+      letter-spacing:1.0px;
+    }
+
+    .amy-m-col--slider{
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .amy-m-col--slider h4{
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .amy-m-section{ margin-top:18px; padding-bottom:40px; }
+    .amy-m-section h5{ margin:12px 0 8px; font-size:16px; line-height:1.2; font-weight:600; color:#111; font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    .amy-m-photos{ display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+    .amy-m-photos a{ display:block; }
+    .amy-m-photos img{ width:100%; aspect-ratio:2/3; object-fit:cover; border-radius:12px; display:block; }
+
+    .amy-m-searchbar{ margin-bottom:20px; padding-bottom:16px; }
+    .amy-m-searchbar form{ display:block; }
+    .amy-m-input{
+      width:100%; padding:12px 2px 12px;
+      background:transparent; border:0; border-bottom:1px solid rgba(0,0,0,.25);
+      font-size:18px; line-height:1.2; color:#111; outline:none; border-radius:0;
+      -webkit-appearance:none; appearance:none;
+      box-shadow:none!important;
+      background-clip:padding-box;
+      font-family: 'Nuckle', "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight:400;
+    }
+    .amy-m-input::placeholder{ color:rgba(0,0,0,.38); }
+    .amy-m-input:focus,
+    .amy-m-input:focus-visible{ outline:none!important; box-shadow:none!important; border-bottom-color:#111; background:transparent; }
+    .amy-m-input::-webkit-search-*{ display:none; }
+
+    /* TRUE scroll lock while mobile menu open (prevents snap) */
+    body.nav-open{ overflow: hidden; height: 100dvh; position: fixed; width: 100%; }
+
+    .amy-m-section#amyCreators { display: none !important; }
+  }
+
+  .amy-m-section{ margin-top:32px; padding-bottom:36px; }
+
+  :root{ --m-kid-nudge-x:-5px; }
+  @media (max-width:1023px){
+    #amyMobilePanel .amy-m-list li > a{ margin-left: var(--m-kid-nudge-x); }
+  }
+
+  /* =========================
+     MOBILE IMAGE SLIDER - TICKER ANIMATION
+     (Keyframes left as fallback; JS will take over. We disable animation here.)
+  ========================== */
+  @media (max-width:1023px){
+    .amy-m-slider-wrapper{
+      margin: 0;
+      overflow: hidden;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .amy-m-slider{
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .amy-m-slider-track{
+      display: flex;
+      gap: 6px;
+      will-change: transform;  /* JS-driven marquee */
+      animation: none !important;
+    }
+
+    @keyframes ticker-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(-232px * 6)); }
+    }
+
+    .amy-m-slider-item{
+      position: relative;
+      flex: 0 0 auto;
+      width: 220px;
+      height: 280px;
+    }
+
+    .amy-m-slider-item img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 0;
+      display: block;
+      -webkit-user-drag: none;
+      user-select: none;
+      touch-action: pan-x pinch-zoom;
+    }
+
+    .amy-m-slider-title{ display: none; }
+
+    @media (max-width: 374px){
+      .amy-m-slider-item{
+        width: 61px;
+        height: 200px;
+      }
+      @keyframes ticker-scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-172px * 6)); }
+      }
+    }
+
+    @media (min-width: 414px){
+      .amy-m-slider-item{
+        width: 150px;
+        height: 300px;
+      }
+      @keyframes ticker-scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-252px * 6)); }
+      }
+    }
+  }
+
+  .amy-m-slider-wrapper{
+  margin: 0;
+  overflow: hidden;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  /* Add fade edges */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 60%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 20%, black 70%, transparent 100%);
+}
+
+  /* =========================
+     NON-HOME: solid surface + padding
+  ========================== */
+  {%- unless template.name == 'index' -%}
+    body{ padding-top: calc(var(--ann-h) + var(--amy-h)); }
+    #AmorayouHeader{ background:#fff; border-bottom:1px solid var(--amy-border); -webkit-backdrop-filter:none; backdrop-filter:none; }
+    #AmorayouHeader.is-sticky{ background:#fff; }
+    .amy, .amy a, .amy button{ color:#111 !important; }
+    .amy-logo .logo-light{ display:none !important; }
+    .amy-logo .logo-dark { display:block !important; }
+    #AmorayouHeader:not(.is-sticky) .amy-actions .icon-btn img{ filter:none !important; }
+    .amy-burger{ color:#111 !important; }
+    body:not(.amy-sticky) .mega-portal,
+    body:not(.amy-sticky) .mega-portal *{ color:#111 !important; }
+    .mega-portal { background:#fff !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  {%- endunless -%}
+
+  /* === Mobile: make menu/cart icons + logo smaller === */
+  @media (max-width:1023px){
+    :root{ --amy-h:54px; }
+
+    .amy-logo img{
+      width:120px;
+      height:auto;
+    }
+
+    .amy-burger{
+      width:30px;
+      height:30px;
+    }
+    .amy-burger::before,
+    .amy-burger::after{
+      width:13px;
+      left:8.5px;
+    }
+    .amy-burger::before{ top:9px; }
+    .amy-burger::after{  top:19px; }
+    .amy-burger[aria-expanded="true"]::before{ top:14px; transform:rotate(45deg); }
+    .amy-burger[aria-expanded="true"]::after{  top:14px; transform:rotate(-45deg); }
+
+    .amy-actions .icon-btn{
+      width:30px;
+      height:30px;
+    }
+    .amy-actions .icon-btn img{
+      width:15px;
+      height:15px;
+    }
+
+    #amyMobilePanel{
+      top:calc(var(--ann-h) + var(--amy-h));
+      max-height: calc(100dvh - var(--ann-h) - var(--amy-h) - 16px);
+      transform: translateY(4px);
+      transition: height .28s cubic-bezier(0.4, 0, 0.2, 1), 
+                  opacity .22s ease, 
+                  visibility .22s ease,
+                  transform .28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #amyMobilePanel[data-open]{ transform: translateY(8px); }
+  }
+
+  @media (max-width:374px){
+    .amy-m-grid{ 
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:12px;
+    }
+    .amy-m-col h4{ 
+      font-size:14px;
+      word-break:break-word;
+      hyphens:auto;
+    }
+    .amy-m-list{ padding:0 0 0 4px; }
+    .amy-m-list li a{ font-size:12px; }
+  }
+
+  @media (min-width:375px) and (max-width:413px){
+    .amy-m-grid{ gap:14px; }
+    .amy-m-col h4{ font-size:15px; }
+  }
+
+  .amy-m-col h4{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+  }
+
+  @media (max-width:374px){
+    .amy-m-list li a{ 
+      font-size:11px !important;
+      padding:5px 0;
+    }
+  }
+
+  @media (min-width:375px) and (max-width:390px){
+    .amy-m-list li a{ 
+      font-size:12px !important;
+      padding:5px 0;
+    }
+  }
+
+  @media (min-width:391px) and (max-width:413px){
+    .amy-m-list li a{ 
+      font-size:13px !important;
+    }
+  }
+
+  .amy-m-list li a{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+
+  /* ===== Fix: center DESKTOP "TRENDING" over its container ===== */
+@media (min-width:1024px){
+  .mega-col--slider{
+    display: flex;
+    flex-direction: column;
+    align-items: center;          /* center the whole block */
+  }
+  .mega-col--slider .mega-h{
+    width: 100%;
+    text-align: center;           /* center the text itself */
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .mega-col--slider .amy-d-slider-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;      /* center the slider under the title */
+  }
+}
+
+<style>
+  
+@media (max-width:1023px){
+  /* promote to GPU and isolate layout so transforms don't jank */
+  .amy-m-slider,
+  .amy-m-slider-track{
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+    contain: layout paint style;
+    -webkit-font-smoothing: antialiased;
+  }
+
+</style>
+
+
+{%- if section.settings.enable_announcement -%}
+  {%- assign threshold_cents = section.settings.free_shipping_threshold | default: 100 | times: 100 -%}
+  {%- assign remaining_cents = threshold_cents | minus: cart.total_price -%}
+  <div id="AmyAnnouncement" class="amy-announcement" role="region" aria-label="Announcement">
+    {%- if section.settings.announcement_free_shipping_calc -%}
+      <p class="amy-announcement__text" data-ann-text>
+        {%- if remaining_cents > 0 -%}
+          You are {{ remaining_cents | money_without_trailing_zeros }} away from free shipping
+        {%- else -%}
+          You've unlocked free shipping
+        {%- endif -%}
+      </p>
+    {%- else -%}
+      {%- if section.settings.announcement_link != blank -%}
+        <a class="amy-announcement__link" href="{{ section.settings.announcement_link }}">
+          <p class="amy-announcement__text">{{ section.settings.announcement_text | default: 'WELCOME TO OUR STORE' }}</p>
+        </a>
+      {%- else -%}
+        <p class="amy-announcement__text">{{ section.settings.announcement_text | default: 'WELCOME TO OUR STORE' }}</p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+  <script>document.documentElement.classList.add('has-announcement');</script>
+{%- endif -%}
+
+<!-- HEADER -->
+<div id="AmorayouHeader" class="amy">
+  <div class="amy-bar">
+    <button class="amy-burger only-mobile" type="button" aria-controls="amyMobilePanel" aria-expanded="false">
+      <img class="amy-burger__icon" src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/hamburger_menu.svg?v=1758558455" alt="" aria-hidden="true">
+      <span class="amy-burger__label">Menu</span>
+    </button>
+
+    <nav class="amy-nav" aria-label="Primary">
+      <ul>
+        {%- assign _menu = linklists[section.settings.desktop_menu] | default: linklists['header-menu-1'] -%}
+        {%- if _menu and _menu.links.size > 0 -%}
+          {%- for link in _menu.links -%}
+            {%- if link.links and link.links.size > 0 -%}
+              <li>
+                <button type="button" aria-haspopup="true" aria-expanded="false">{{ link.title }}</button>
+                <div class="mega" role="menu" aria-label="{{ link.title }}">
+                  <div class="mega--wide">
+                    <div class="mega-col">
+                      {%- assign first_child = link.links | first -%}
+                      <h4 class="mega-h">{{ first_child.title | default: link.title }}</h4>
+                      <ul class="mega-list">
+                        {%- if first_child and first_child.links and first_child.links.size > 0 -%}
+                          {%- for gc in first_child.links -%}
+                            <li><a class="mega-link" href="{{ gc.url }}">{{ gc.title }}</a></li>
+                          {%- endfor -%}
+                        {%- endif -%}
+                      </ul>
+                    </div>
+
+                    <!-- Desktop column 2 replaced with image marquee -->
+                    <div class="mega-col mega-col--slider only-desktop">
+                      <h4 class="mega-h">TRENDING</h4>
+                      <div class="amy-d-slider-wrapper">
+                        <div class="amy-d-slider">
+                          <div class="amy-d-slider-track">
+                            <a href="/collections/dresses" class="amy-d-slider-item">
+                              <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0000_1.png?v=1759723998" alt="Dresses">
+                            </a>
+                            <a href="/collections/sets" class="amy-d-slider-item">
+                              <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0001_2.png?v=1759724853" alt="Sets">
+                            </a>
+                            <a href="/collections/tops" class="amy-d-slider-item">
+                              <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0002_3.png?v=1759724853" alt="Tops">
+                            </a>
+                            <a href="/collections/bottoms" class="amy-d-slider-item">
+                              <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0003_4.png?v=1759724853" alt="Bottoms">
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /Desktop marquee -->
+                  </div>
+                </div>
+              </li>
+            {%- else -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+    </nav>
+
+    <a class="amy-logo" href="{{ routes.root_url }}">
+      <img class="logo-light" src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/logo.svg?v=1756604287" alt="Amorayou">
+      <img class="logo-dark"  src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Amorayou_Logo_Black.svg?v=1756586874" alt="" aria-hidden="true">
+    </a>
+
+    <div class="amy-actions">
+      {% if shop.customer_accounts_enabled %}
+        <a class="icon-btn only-desktop" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" aria-label="Account">
+          <img src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Profile_a3202eb4-01e5-4952-b416-da1f62438b64.svg?v=1758411002" alt="">
+        </a>
+      {% endif %}
+      <a class="icon-btn only-desktop" href="/search/?view=wishlist" aria-label="Wishlist">
+        <img src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Likes_e7628f92-db00-4dd5-a4fe-c6fdb0b4d6f8.svg?v=1758411002" alt="">
+        <span class="badge" data-wishlist-count hidden>0</span>
+      </a>
+      <a class="icon-btn cart-link" href="{{ routes.cart_url }}" aria-label="Cart" data-cart-drawer-trigger>
+        <img src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Cart_aab2ae37-4c77-498f-9fad-9f3cea2a1831.svg?v=1758411006" alt="">
+        <span class="badge" data-cart-count hidden>0</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE PANEL -->
+<div id="amyMobilePanel" class="only-mobile" hidden>
+  <div class="amy-m-panel__inner">
+    <div class="amy-m-searchbar">
+      <form action="/search" method="get" role="search">
+        <input class="amy-m-input" type="search" name="q" placeholder="Search products..." aria-label="Search products">
+      </form>
+    </div>
+    
+    {%- assign _mobile_menu = linklists[section.settings.mobile_menu] | default: linklists['header-menu-1'] -%}
+    {%- if _mobile_menu and _mobile_menu.links.size > 0 -%}
+      {%- assign first_parent = _mobile_menu.links | first -%}
+      {%- if first_parent and first_parent.links and first_parent.links.size > 0 -%}
+        <div class="amy-m-grid">
+          {%- for child_link in first_parent.links limit: 1 -%}
+            <div class="amy-m-col">
+              <h4>{{ child_link.title }}</h4>
+              {%- if child_link.links and child_link.links.size > 0 -%}
+                <ul class="amy-m-list">
+                  {%- for grandchild_link in child_link.links -%}
+                    <li><a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+
+          <div class="amy-m-col amy-m-col--slider">
+            <h4>TRENDING</h4>
+            <div class="amy-m-slider-wrapper">
+              <div class="amy-m-slider">
+                <div class="amy-m-slider-track">
+                  <a href="/collections/dresses" class="amy-m-slider-item">
+                    <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0000_1.png?v=1759723998" alt="Dresses">
+                  </a>
+                  <a href="/collections/sets" class="amy-m-slider-item">
+                    <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0001_2.png?v=1759724853" alt="Sets">
+                  </a>
+                  <a href="/collections/tops" class="amy-m-slider-item">
+                    <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0002_3.png?v=1759724853" alt="Tops">
+                  </a>
+                  <a href="/collections/bottoms" class="amy-m-slider-item">
+                    <img src="https://cdn.shopify.com/s/files/1/0785/2199/1403/files/New_0003_4.png?v=1759724853" alt="Bottoms">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {%- endif -%}
+    {%- endif -%}
+
+    <div class="amy-m-section" id="amyCreators">
+      <h5>Shop Creators</h5>
+      <div class="amy-m-photos">
+        <a href="/collections/shop-creators"><img src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/IMG_6967_upscaled_8k.png?v=1758507280" alt=""></a>
+        <a href="/collections/shop-creators"><img src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/gown_upscaled_8k.png?v=1758260253" alt=""></a>
+        <a href="/collections/shop-creators"><img src="https://cdn.shopify.com/s/files/1/0668/6434/9270/files/IMG_6967_upscaled_8k.png?v=1758507280" alt=""></a>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+
+<script>
+(() => {
+  const wrap = document.getElementById('AmorayouHeader');
+  if(!wrap) return;
+
+  const isCreatorPage = {{ is_creator_page | json }};
+
+  /* ===== sticky & fade ===== */
+  const STICKY_Y = 60;
+  const FADE_SPAN = 120;
+
+  const getHeroBottom = () => {
+    const hero = document.getElementById('AmorayouHero');
+    if (!hero) return STICKY_Y;
+    const rect = hero.getBoundingClientRect();
+    return Math.max(0, (window.scrollY || 0) + rect.bottom);
+  };
+
+  const getFadeBounds = () => {
+    const end = getHeroBottom() - 8;
+    const start = Math.max(0, end - FADE_SPAN);
+    return { start, end };
+  };
+
+  const getFadeProgress = () => {
+    const y = window.scrollY || 0;
+    const { start, end } = getFadeBounds();
+    if (y <= start) return 0;
+    if (y >= end)   return 1;
+    return (y - start) / (end - start);
+  };
+
+  const applyGlass = () => {
+    const p = getFadeProgress();
+    const alpha = 0.55 * p;
+    const blur  = 12   * p;
+    wrap.style.setProperty('--glass-a', alpha.toFixed(3));
+    wrap.style.setProperty('--glass-blur-now', blur.toFixed(2) + 'px');
+  };
+
+  const syncSticky = () => {
+    applyGlass();
+    const y = window.scrollY || 0;
+    const { end } = getFadeBounds();
+    const sticky = y >= end;
+    wrap.classList.toggle('is-sticky', sticky);
+    document.body.classList.toggle('amy-sticky', sticky);
+  };
+
+  /* ===== WAIT-UNTIL-STOP hide/show ===== */
+  let lastY = window.scrollY || 0;
+  let lastDir = 0;
+  let scrollEndTimer = null;
+  let hideHeaderTimer = null;
+  const SCROLL_END_DELAY = 160;
+
+  const getPanel = () => document.getElementById('amyMobilePanel');
+
+  const onScroll = () => {
+    const y = Math.max(0, window.scrollY || 0);
+    lastDir = y > lastY ? 1 : (y < lastY ? -1 : lastDir);
+    lastY = y;
+
+    wrap.classList.remove('is-hidden');
+    
+    if (hideHeaderTimer) {
+      clearTimeout(hideHeaderTimer);
+      hideHeaderTimer = null;
+    }
+    
+    syncSticky();
+
+    if (scrollEndTimer) clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(onScrollStop, SCROLL_END_DELAY);
+  };
+
+  const onScrollStop = () => {
+    const y = Math.max(0, window.scrollY || 0);
+    const panel = getPanel();
+    const mobileOpen = !!panel && panel.hasAttribute('data-open');
+    const navOpen = document.body.classList.contains('nav-open');
+    const { start } = getFadeBounds();
+
+    if (hideHeaderTimer) {
+      clearTimeout(hideHeaderTimer);
+      hideHeaderTimer = null;
+    }
+
+    if (mobileOpen || navOpen || y <= start){
+      wrap.classList.remove('is-hidden');
+      return;
+    }
+    
+    if (lastDir === 1) {
+      hideHeaderTimer = setTimeout(() => {
+        wrap.classList.add('is-hidden');
+      }, 1000);
+    } else {
+      wrap.classList.remove('is-hidden');
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', () => { syncSticky(); }, {passive:true});
+  syncSticky(); onScrollStop();
+
+  /* ===== CART PULSE ===== */
+  const cartBadge = document.querySelector('#AmorayouHeader [data-cart-count]');
+  const annEl = document.querySelector('#AmyAnnouncement [data-ann-text]');
+  const FREE_SHIP_THRESHOLD = ({{ section.settings.free_shipping_threshold | default: 100 }} * 100);
+
+  function setCartBadge(n){
+    if(!cartBadge) return;
+    const count = Math.max(0, Number(n || 0));
+    cartBadge.textContent = count > 99 ? '99' : String(count);
+    cartBadge.hidden = count <= 0;
+  }
+
+  function formatMoneyCents(cents){
+    if (typeof Shopify !== 'undefined' && Shopify.formatMoney){
+      return Shopify.formatMoney(cents, "{{ shop.money_format | escape }}");
+    }
+    try{
+      return (cents/100).toLocaleString(undefined, { style: 'currency', currency: "{{ shop.currency }}" });
+    }catch(e){
+      return '$' + (cents/100).toFixed(2);
+    }
+  }
+
+  let PULSE_LOCK = false;
+  let PULSE_TIMER = null;
+  let LAST_PULSE_AT = 0;
+  let SKIP_CART_HOOK = 0;
+
+  async function readCartSafe(){
+    SKIP_CART_HOOK++;
+    try{
+      const r = await fetch('/cart.js', { headers:{ 'Accept':'application/json' }, cache:'no-store' });
+      return await r.json();
+    }finally{
+      SKIP_CART_HOOK--;
+    }
+  }
+
+  async function runPulse(){
+    if (PULSE_LOCK) return;
+    PULSE_LOCK = true;
+    clearTimeout(PULSE_TIMER); PULSE_TIMER = null;
+    try{
+      const cart = await readCartSafe();
+      setCartBadge(cart.item_count);
+      if (annEl && {{ section.settings.announcement_free_shipping_calc | json }}) {
+        const remain = Math.max(0, FREE_SHIP_THRESHOLD - (cart.total_price || 0));
+        annEl.textContent = remain > 0
+          ? `You are ${formatMoneyCents(remain)} away from free shipping`
+          : `You've unlocked free shipping`;
+      }
+      LAST_PULSE_AT = Date.now();
+    }catch(e){}finally{
+      PULSE_LOCK = false;
+    }
+  }
+
+  function schedulePulse(delay=80){
+    if (PULSE_LOCK && delay < 250) delay = 250;
+    clearTimeout(PULSE_TIMER);
+    PULSE_TIMER = setTimeout(runPulse, delay);
+  }
+
+  schedulePulse(0);
+
+  [
+    'cart:refresh','cart:updated','cart:change','cart:requestComplete',
+    'ajaxCart:afterUpdate','product:added','ajaxProduct:added',
+    'line:change','line:remove','cart:remove','cart-drawer:updated'
+  ].forEach(evt => document.addEventListener(evt, () => schedulePulse(50)));
+
+  document.addEventListener('submit', (e)=>{
+    if (e.target.closest('form[action*="/cart/add"]')) schedulePulse(250);
+  });
+  document.addEventListener('click', (e)=>{
+    if (
+      e.target.closest('[name="add"], .product-form__submit, button.add-to-cart') ||
+      e.target.closest('[data-cart-remove], .cart-remove, [href*="/cart/change"]')
+    ){
+      schedulePulse(150);
+    }
+  });
+
+  if (!window.__amyCartWatchInstalled){
+    window.__amyCartWatchInstalled = true;
+
+    const KEY = 'amyCartPing';
+    const ping = () => { try{ localStorage.setItem(KEY, Date.now().toString()); }catch(e){} };
+
+    const _fetch = window.fetch;
+    window.fetch = function(...args){
+      const url = (args[0] && (args[0].url || args[0])) + '';
+      const isCart = /\/cart(\/|\.|$)/.test(url);
+      const p = _fetch.apply(this, args);
+      if (isCart && !SKIP_CART_HOOK) { p.then(()=>{ schedulePulse(0); ping(); }).catch(()=>{}); }
+      return p;
+    };
+
+    const _open = XMLHttpRequest.prototype.open;
+    const _send = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function(method, url, ...rest){
+      this.__amyURL = url;
+      return _open.call(this, method, url, ...rest);
+    };
+    XMLHttpRequest.prototype.send = function(...rest){
+      this.addEventListener('loadend', ()=>{
+        try{
+          if (this.__amyURL && /\/cart(\/|\.|$)/.test(this.__amyURL) && !SKIP_CART_HOOK){
+            schedulePulse(0); ping();
+          }
+        }catch(e){}
+      });
+      return _send.apply(this, rest);
+    };
+
+    window.addEventListener('storage', (e)=>{ if (e.key === KEY) schedulePulse(0); });
+
+    setInterval(()=>{
+      const drawerOpen =
+        document.querySelector('cart-drawer[open], .cart-drawer.is-open, [id*="CartDrawer"].is-open') ||
+        document.body.classList.contains('overflow-hidden');
+      if (drawerOpen && Date.now() - LAST_PULSE_AT > 2500) schedulePulse(0);
+    }, 4000);
+  }
+
+  /* ===== cart drawer trigger ===== */
+  const cartLink = document.querySelector('.cart-link');
+  if (cartLink) {
+    cartLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.body.classList.add('overflow-hidden');
+      document.dispatchEvent(new CustomEvent('theme:cart:open'));
+      const drawerButton = document.querySelector('[data-cart-drawer-toggle]') || 
+                           document.querySelector('cart-drawer-toggle') ||
+                           document.querySelector('.cart-drawer-toggle') ||
+                           document.querySelector('[aria-controls*="cart"]');
+      if (drawerButton && drawerButton !== cartLink) { drawerButton.click(); return; }
+      const drawer = document.querySelector('cart-drawer') || 
+                     document.querySelector('[id*="CartDrawer"]') ||
+                     document.querySelector('.cart-drawer');
+      if (drawer) { drawer.classList.add('active', 'is-open'); drawer.setAttribute('open', ''); return; }
+      window.location.href = cartLink.href;
+    });
+  }
+
+  if (isCreatorPage) return;
+
+  /* ===== MOBILE TOGGLE ===== */
+  const burger = wrap.querySelector('.amy-burger');
+  const panel  = document.getElementById('amyMobilePanel');
+
+  const computeContentHeight = () => {
+    const inner = panel?.querySelector('.amy-m-panel__inner');
+    const innerH = inner ? inner.scrollHeight : 0;
+    return Math.min(innerH + 20, window.innerHeight - 100);
+  };
+
+  const sizeToContent = () => {
+    if (!panel?.hasAttribute('data-open')) return;
+    const h = computeContentHeight();
+    panel.style.height = h + 'px';
+    panel.style.maxHeight = h + 'px';
+  };
+
+  let __LOCK_Y = 0; // store scroll Y while menu open
+
+  const openMobile = () => {
+    if (!panel) return;
+
+    // Capture current scroll and lock without jump
+    __LOCK_Y = window.scrollY || window.pageYOffset || 0;
+    document.body.style.top = `-${__LOCK_Y}px`;
+    document.body.classList.add('nav-open');
+
+    panel.removeAttribute('hidden');
+    panel.setAttribute('data-open','');
+    burger?.setAttribute('aria-expanded','true');
+    wrap.classList.remove('is-hidden');
+    
+    if (hideHeaderTimer) {
+      clearTimeout(hideHeaderTimer);
+      hideHeaderTimer = null;
+    }
+
+    panel.style.height = '0px';
+    panel.style.maxHeight = '';
+    panel.style.transform = 'translateY(4px)';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const h = computeContentHeight();
+        panel.style.height = h + 'px';
+        panel.style.maxHeight = h + 'px';
+        panel.style.transform = 'translateY(8px)';
+      });
+    });
+
+  };
+
+  /* ===== CHANGED: guard so we only close (and restore scroll) if actually open ===== */
+  const closeMobile = () => {
+    if (!panel || !panel.hasAttribute('data-open')) return; /* <-- guard */
+
+    panel.style.height = panel.scrollHeight + 'px';
+    panel.style.transform = 'translateY(8px)';
+    panel.removeAttribute('data-open');
+    burger?.setAttribute('aria-expanded','false');
+    wrap.classList.remove('is-hidden');
+
+    panel.offsetHeight;
+    requestAnimationFrame(() => { 
+      panel.style.height = '0px';
+      panel.style.transform = 'translateY(4px)';
+    });
+
+    const tidy = () => {
+      if (!panel.hasAttribute('data-open')) {
+        panel.setAttribute('hidden','');
+
+        // prevent jump-to-top: restore position instantly
+        const root = document.documentElement;
+        const prev = root.style.scrollBehavior;
+        root.style.scrollBehavior = 'auto';
+
+        document.body.classList.remove('nav-open');
+        panel.style.maxHeight = '';
+        document.body.style.top = '';
+        window.scrollTo(0, __LOCK_Y || 0);
+
+        // restore original behavior
+        root.style.scrollBehavior = prev || '';
+      }
+      panel.removeEventListener('transitionend', tidy);
+    };
+    panel.addEventListener('transitionend', tidy);
+    setTimeout(tidy, 450);
+  };
+
+  const toggleMobile = () => {
+    const open = burger?.getAttribute('aria-expanded') === 'true';
+    if (open) closeMobile(); else { killDesktopMegas(); openMobile(); }
+  };
+
+  const killDesktopMegas = () => {
+    document.querySelectorAll('.mega-portal').forEach(m => m.removeAttribute('data-open'));
+    document.querySelectorAll('.amy-nav > ul > li.open').forEach(li => li.classList.remove('open'));
+    document.body.classList.remove('nav-open');
+  };
+
+  if (burger && panel){
+    burger.addEventListener('click', toggleMobile);
+    document.addEventListener('pointerdown', (e) => {
+      if (!panel.hasAttribute('data-open')) return;
+      if (e.target.closest('#amyMobilePanel') || e.target.closest('.amy-burger')) return;
+      closeMobile();
+    });
+    /* ===== CHANGED: only call closeMobile on resize if the panel is actually open ===== */
+    window.addEventListener('resize', () => {
+      wrap.classList.remove('is-hidden');
+      const isOpen = panel?.hasAttribute('data-open');
+      if (window.innerWidth >= 1024) {
+        if (isOpen) closeMobile(); /* <-- no-op if not open */
+      } else {
+        if (isOpen) {
+          document.body.classList.add('nav-open');
+          requestAnimationFrame(sizeToContent);
+        }
+      }
+    }, { passive: true });
+  }
+
+  /* ===== MARQUEE (buttery mobile) ===== */
+(() => {
+  if (window.innerWidth >= 1024) return;
+
+  const slider = document.querySelector('.amy-m-slider');
+  const track  = slider?.querySelector('.amy-m-slider-track');
+  if (!slider || !track) return;
+
+  track.style.animation = 'none';
+
+  if (!track.dataset.duped) {
+    const kids = Array.from(track.children);
+    kids.forEach(n => track.appendChild(n.cloneNode(true)));
+    track.dataset.duped = '1';
+  }
+
+  let speed = 50, x = 0, running = true, last = performance.now(), HALF = 1;
+
+  const apply = () => { track.style.transform = `translate3d(${x}px,0,0)`; };
+  const calcHalf = () => { HALF = Math.max(1, Math.round(track.scrollWidth / 2)); x = ((x%HALF)+HALF)%HALF - HALF; apply(); };
+
+  const loop = (now) => { const dt=(now-last)/1000; last=now; if(running){ x-=speed*dt; if(x<=-HALF) x+=HALF; apply(); } requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+
+  let drag={on:false,id:null,startX:0,startPos:0}, rafDrag=false;
+  const norm = v => ((v%HALF)+HALF)%HALF - HALF;
+
+  slider.addEventListener('pointerdown', e=>{ drag.on=true; drag.id=e.pointerId; slider.setPointerCapture?.(drag.id); drag.startX=e.clientX; drag.startPos=x; running=false; }, {passive:true});
+  slider.addEventListener('pointermove', e=>{ if(!drag.on) return; const next=norm(drag.startPos+(e.clientX-drag.startX)); if(rafDrag){x=next;return;} rafDrag=true; requestAnimationFrame(()=>{ x=next; apply(); rafDrag=false; }); }, {passive:true});
+  const end=()=>{ if(!drag.on) return; drag.on=false; try{slider.releasePointerCapture?.(drag.id);}catch(_){} setTimeout(()=>{running=true;},180); };
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>slider.addEventListener(ev,end,{passive:true}));
+
+  const ro=new ResizeObserver(calcHalf); ro.observe(track);
+  window.addEventListener('load', calcHalf, {once:true}); setTimeout(calcHalf,0);
+  document.addEventListener('visibilitychange', ()=>{ running=document.visibilityState==='visible'; last=performance.now(); });
+})();
+
+
+  /* ===== DESKTOP PORTAL MEGAS ===== */
+  const desktopNav = wrap.querySelector('.amy-nav');
+  if (desktopNav){
+    const items = desktopNav.querySelectorAll(':scope > ul > li');
+    items.forEach((li,i) => { if (!li.id) li.id = 'amy-nav-item-' + (i+1); });
+
+    const portalOpeners = [];
+    const syncMegaGlass = (portals=[]) => {
+      const sticky = document.body.classList.contains('amy-sticky');
+      const cs = getComputedStyle(wrap);
+      const topTint = getComputedStyle(document.documentElement).getPropertyValue('--glass-top-tint') || 'transparent';
+      portals.forEach(m => {
+        if (sticky){
+          const bg = cs.backgroundColor || cs.background;
+          const bf = cs.backdropFilter || cs.getPropertyValue('-webkit-backdrop-filter') || '';
+          m.style.background = bg;
+          m.style.backdropFilter = bf;
+          m.style.webkitBackdropFilter = bf;
+        }else{
+          m.style.background = topTint.trim();
+          m.style.backdropFilter = 'none';
+          m.style.webkitBackdropFilter = 'none';
+        }
+      });
+    };
+
+    items.forEach(li => {
+      const m = li.querySelector(':scope > .mega');
+      if (!m) return;
+      m.dataset.owner = li.id;
+      m.classList.add('mega-portal');
+      document.body.appendChild(m);
+      portalOpeners.push(m);
+      m.addEventListener('mouseenter', () => { if (window.innerWidth >= 1024) openByOwner(li.id); });
+      m.addEventListener('mouseleave', () => { if (window.innerWidth >= 1024) closeAll(); });
+    });
+
+    const anyOpen = () => portalOpeners.some(m => m.hasAttribute('data-open'));
+    const syncBodyOpen = () => document.body.classList.toggle('nav-open', anyOpen());
+
+    const placeMega = (li, mega) => {
+      const liRect   = document.getElementById(li.id).getBoundingClientRect();
+      const headRect = wrap.getBoundingClientRect();
+      const vw = document.documentElement.clientWidth;
+      const margin = 12;
+
+      const prevOpen = mega.hasAttribute('data-open');
+      mega.setAttribute('data-open',''); mega.style.visibility = 'hidden'; mega.style.opacity = '0';
+      const w = mega.getBoundingClientRect().width || 500;
+      let left = Math.round(liRect.left);
+      if (left + w + margin > vw) left = Math.max(margin, vw - w - margin);
+
+      mega.style.setProperty('--mega-left', `${left}px`);
+      mega.style.setProperty('--mega-top',  `${Math.round(headRect.bottom)}px`);
+
+      mega.style.visibility = ''; mega.style.opacity = '';
+      if (!prevOpen) mega.removeAttribute('data-open');
+    };
+
+    const closeAll = () => {
+      portalOpeners.forEach(m => m.removeAttribute('data-open'));
+      items.forEach(li => li.classList.remove('open'));
+      syncBodyOpen();
+    };
+
+    const openByOwner = (ownerId) => {
+      if (window.innerWidth < 1024) return;
+      closeAll();
+      const li = document.getElementById(ownerId);
+      if (!li) return;
+      const mega = portalOpeners.find(m => m.dataset.owner === ownerId);
+      if (!mega) return;
+      li.classList.add('open');
+      placeMega(li, mega);
+      mega.setAttribute('data-open','');
+      syncBodyOpen();
+      syncMegaGlass(portalOpeners);
+      initDesktopSlider(mega); // init marquee in the opened mega
+    };
+
+    items.forEach(li => {
+      const triggerBtn = li.querySelector(':scope > button');
+      const ownerId = li.id;
+      li.addEventListener('mouseenter', () => openByOwner(ownerId));
+      li.addEventListener('mouseleave', () => closeAll());
+      triggerBtn?.addEventListener('click', (e) => {
+        if (window.innerWidth < 1024) return;
+        e.preventDefault();
+        const mega = portalOpeners.find(m => m.dataset.owner === ownerId);
+        if (mega?.hasAttribute('data-open')) closeAll(); else openByOwner(ownerId);
+      });
+    });
+
+    const reposition = () => {
+      if (window.innerWidth < 1024) return;
+      const open = portalOpeners.find(m => m.hasAttribute('data-open'));
+      if (!open) return;
+      const li = document.getElementById(open.dataset.owner);
+      if (li) placeMega(li, open);
+      syncMegaGlass(portalOpeners);
+    };
+    window.addEventListener('resize', () => { syncSticky(); reposition(); }, {passive:true});
+    window.addEventListener('scroll',  () => { syncSticky(); reposition(); }, {passive:true});
+
+    /* ===== Desktop marquee: init when a mega opens ===== */
+    function initDesktopSlider(scope){
+      if (window.innerWidth < 1024) return;
+      const sliders = (scope || document).querySelectorAll('.amy-d-slider');
+      sliders.forEach(slider=>{
+        const track = slider.querySelector('.amy-d-slider-track');
+        if (!track || track.dataset.amyInit === '1') return;
+        track.dataset.amyInit = '1';
+
+        // duplicate once for seamless loop
+        if (!track.dataset.duped){
+          Array.from(track.children).forEach(n => track.appendChild(n.cloneNode(true)));
+          track.dataset.duped = '1';
+        }
+
+        let speed=60, x=0, running=true, last=performance.now(), HALF=1;
+        const apply=()=>{ track.style.transform=`translate3d(${x}px,0,0)`; };
+        const calcHalf=()=>{ HALF=Math.max(1, Math.round(track.scrollWidth/2)); x=((x%HALF)+HALF)%HALF - HALF; apply(); };
+
+        const loop=(now)=>{ const dt=(now-last)/1000; last=now; if(running){ x-=speed*dt; if(x<=-HALF) x+=HALF; apply(); } requestAnimationFrame(loop); };
+        requestAnimationFrame(loop);
+
+        let drag={on:false,id:null,startX:0,startPos:0}, rafDrag=false;
+        const norm = v => ((v%HALF)+HALF)%HALF - HALF;
+
+        slider.addEventListener('pointerdown', e=>{ drag.on=true; drag.id=e.pointerId; slider.setPointerCapture?.(drag.id); drag.startX=e.clientX; drag.startPos=x; running=false; }, {passive:true});
+        slider.addEventListener('pointermove', e=>{ if(!drag.on) return; const next=norm(drag.startPos+(e.clientX-drag.startX)); if(rafDrag){x=next;return;} rafDrag=true; requestAnimationFrame(()=>{ x=next; apply(); rafDrag=false; }); }, {passive:true});
+        const end=()=>{ if(!drag.on) return; drag.on=false; try{slider.releasePointerCapture?.(drag.id);}catch(_){} setTimeout(()=>{running=true;},180); };
+        ['pointerup','pointercancel','pointerleave'].forEach(ev=>slider.addEventListener(ev,end,{passive:true}));
+
+        const ro=new ResizeObserver(calcHalf); ro.observe(track);
+        window.addEventListener('load', calcHalf, {once:true}); setTimeout(calcHalf,0);
+        document.addEventListener('visibilitychange', ()=>{ running=document.visibilityState==='visible'; last=performance.now(); });
+      });
+    }
+
+    // also init if a mega is already open for any reason
+    const mo = new MutationObserver(muts => {
+      muts.forEach(m=>{
+        if (m.type==='attributes' && m.attributeName==='data-open' && m.target.matches('.mega-portal[data-open]')) {
+          initDesktopSlider(m.target);
+        }
+      });
+    });
+    mo.observe(document.body, {subtree:true, attributes:true, attributeFilter:['data-open']});
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "desktop_menu", "label": "Desktop Menu", "default": "main-menu" },
+    { "type": "link_list", "id": "mobile_menu", "label": "Mobile Menu", "default": "main-menu" },
+    { "type": "header", "content": "Announcement Bar" },
+    { "type": "checkbox", "id": "enable_announcement", "label": "Enable announcement bar", "default": true },
+    { "type": "checkbox", "id": "announcement_free_shipping_calc", "label": "Show free-shipping progress", "default": true },
+    { "type": "range", "id": "free_shipping_threshold", "label": "Free shipping threshold ($)", "min": 25, "max": 300, "step": 5, "default": 100 },
+    { "type": "text", "id": "announcement_text", "label": "Fallback text (used when progress is off)", "default": "WELCOME TO OUR STORE" },
+    { "type": "url", "id": "announcement_link", "label": "Optional link (used when progress is off)" },
+    { "type": "range", "id": "announcement_height", "label": "Bar height (px)", "min": 24, "max": 48, "step": 1, "default": 32 }
+  ]
+}
+{% endschema %}

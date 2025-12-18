@@ -1,0 +1,687 @@
+{% comment %}
+  New Arrivals — 8 Item Max with View More Card
+  Includes:
+  - Limited to 8 items maximum (7 products + view more card)
+  - Elegant "View More Styles" card when more than 8 products exist
+  - Mobile quick-cart perfected (tap = open tray on tapped card + center; second tap = navigate)
+  - No hesitation (suppresses dismiss during programmatic centering)
+  - Readable quick-cart button hover/tap
+  - "shop collection" hover shows white text
+  - Image hover swap restored
+  - Fonts set to "Nuckles"
+{% endcomment %}
+
+<section class="na-section" id="new-arrivals">
+  <div class="na-container">
+    <div class="na-header">
+      <h2 class="na-title"></h2>
+    </div>
+
+    <div class="na-carousel">
+      <div class="na-track" role="list">
+        {%- assign coll = section.settings.collection -%}
+        {%- if coll != blank -%}
+          {%- assign items = coll.products -%}
+          {%- assign total_count = items.size -%}
+          {%- assign show_view_more = false -%}
+          {%- assign max_display = 7 -%}
+          
+          {%- if total_count > 8 -%}
+            {%- assign show_view_more = true -%}
+            {%- assign remaining_count = total_count | minus: 7 -%}
+          {%- else -%}
+            {%- assign max_display = 8 -%}
+          {%- endif -%}
+
+          {%- for product in items limit: max_display -%}
+            {%- assign main_image  = product.featured_image -%}
+            {%- assign hover_image = product.images[1] | default: product.featured_image -%}
+
+            {%- assign color_index = -1 -%}
+            {%- assign size_index  = -1 -%}
+            {%- for opt in product.options_with_values -%}
+              {%- assign opt_name = opt.name | downcase -%}
+              {%- if opt_name == 'color' or opt_name == 'colour' -%}{%- assign color_index = forloop.index0 -%}{%- endif -%}
+              {%- if opt_name == 'size' -%}{%- assign size_index = forloop.index0 -%}{%- endif -%}
+            {%- endfor -%}
+
+            <div class="na-slide">
+              <article class="product-card" role="listitem" data-product-id="{{ product.id }}">
+                <a class="pc-media" href="{{ product.url }}">
+                  <img class="pc-img" alt="{{ product.title | escape }}" loading="lazy"
+                       src="{{ main_image | image_url: width: 1600 }}">
+                  <img class="pc-img pc-img--hover" alt="" loading="lazy"
+                       src="{{ hover_image | image_url: width: 1600 }}">
+
+                  <div class="pc-quick">
+                    <p class="pc-quick__title"></p>
+                    <div class="pc-sizes">
+                      {%- if product.has_only_default_variant -%}
+                        <button class="pc-single"
+                                data-variant="{{ product.first_available_variant.id }}"
+                                {%- unless product.first_available_variant.available -%}disabled{%- endunless -%}>
+                          Add to cart
+                        </button>
+                      {%- else -%}
+                        {%- assign seen_sizes = '' -%}
+                        {%- for v in product.variants -%}
+                          {%- assign label = v.title -%}
+                          {%- if size_index != -1 -%}{%- assign label = v.options[size_index] -%}{%- endif -%}
+                          {%- unless seen_sizes contains label -%}
+                            {%- assign seen_sizes = seen_sizes | append: label | append: ',' -%}
+                            <button data-variant="{{ v.id }}" {%- unless v.available -%}disabled{%- endunless -%}>{{ label }}</button>
+                          {%- endunless -%}
+                        {%- endfor -%}
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </a>
+
+                <div class="pc-body">
+                  <h3 class="pc-title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+                  <div class="pc-price">{{ product.price | money_without_trailing_zeros }}</div>
+                </div>
+              </article>
+            </div>
+          {%- endfor -%}
+
+          {%- if show_view_more -%}
+            <div class="na-slide">
+              <article class="view-more-card" role="listitem">
+                <a class="vm-link" href="{{ coll.url }}">
+                  <div class="vm-content">
+                    <div class="vm-text">
+                      <span class="vm-label">View More</span>
+                      <span class="vm-count">+{{ remaining_count }} styles</span>
+                    </div>
+                    <svg class="vm-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </a>
+              </article>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+
+      <div class="na-dots" aria-label="carousel pagination" role="tablist"></div>
+
+      {%- if coll != blank -%}
+        <div class="na-cta">
+          <a class="na-button" href="{{ coll.url }}">shop collection</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+/* ===== Fonts: Nuckles ===== */
+@font-face{
+  font-family:'Nuckles';
+  src:url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Regular.ttf?v=1759189630') format('truetype');
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'Nuckles';
+  src:url('https://cdn.shopify.com/s/files/1/0668/6434/9270/files/Nuckle-Semibold.ttf?v=1759189630') format('truetype');
+  font-weight:600; font-style:normal; font-display:swap;
+}
+:root{ --font-nuckles: "Nuckles","Nuckle","Helvetica Neue","HelveticaNeue",Helvetica,Arial,sans-serif; }
+
+/* ===== Section layout ===== */
+.na-section{
+  padding:0px 0;
+  background:#fff;
+  font-family:var(--font-nuckles);
+  -webkit-text-size-adjust:100%; text-size-adjust:100%;
+}
+@media (min-width:900px){ .na-section{ padding:10px 0; } }
+
+.na-container{
+  width:100%; max-width:1800px; margin:0 auto;
+  padding:0 clamp(16px, 2vw, 32px);
+  position:relative;
+}
+
+#new-arrivals .na-header{ margin-bottom: 2rem; }
+@media (max-width: 899.98px) { #new-arrivals .na-header { padding-left: 16px; } }
+
+/* Headline */
+#new-arrivals .na-title{
+  font-family:var(--font-nuckles);
+  font-weight:600; font-size:19px; color:#000; margin:0 0 0 -8px;
+  text-align:left; text-transform:uppercase; letter-spacing:2px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+@media (max-width: 899.98px){ #new-arrivals .na-title{ margin-left:0; } }
+
+/* Vars */
+#new-arrivals{ --gap: clamp(16px, 2.5vw, 40px); --pad: clamp(16px, 2vw, 32px); }
+@media (max-width: 899.98px){
+  #new-arrivals{ --gap: 2px; --pad: 0; }
+  #new-arrivals .na-container{ padding-left:0; padding-right:0; max-width:100%; }
+}
+
+/* Track */
+.na-carousel{ position:relative; }
+.na-track{
+  display:flex; gap:var(--gap);
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory; scroll-padding-inline:var(--pad);
+  -webkit-overflow-scrolling:touch;
+  padding-inline:var(--pad);
+}
+@media (max-width: 899.98px){
+  .na-track{ padding-left:0; padding-right:0; scroll-padding-inline:0; justify-content:flex-start; }
+}
+@media (min-width:900px){
+  .na-track{ scrollbar-width:none; }
+  .na-track::-webkit-scrollbar{ display:none; }
+}
+
+/* Slides */
+.na-slide{
+  scroll-snap-align:center; scroll-snap-stop:always;
+  flex:0 0 calc((100% - (var(--gap) * .5)) / 1.5);
+  display:flex;
+}
+@media (max-width: 899.98px){ .na-slide{ flex:0 0 calc((100% - 2px) / 2); scroll-snap-align:start; } }
+@media (min-width:800px){ .na-slide{ flex:0 0 calc((100% - (3 * var(--gap))) / 3); scroll-snap-align:start; } }
+
+/* Dots */
+.na-dots{ display:flex; justify-content:center; gap:1.5rem; padding-top:3rem; padding-bottom:2rem; }
+@media (min-width:768px){ .na-dots{ padding-top:4rem; padding-bottom:2.5rem; } }
+.na-dot{ width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,.2); margin:0; }
+.na-dot.is-active{ background:#000; opacity:1; }
+
+/* Product cards */
+.product-card{ background:#fff; display:flex; flex-direction:column; position:relative; width:100%; }
+.pc-media{ position:relative; display:block; aspect-ratio:2/3; overflow:hidden; width:100%; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+.pc-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .3s ease; }
+.pc-img--hover{ opacity:0; }
+/* Restore hover swap */
+#new-arrivals .pc-media:hover .pc-img--hover{ opacity:1 !important; }
+@media (hover:hover){ .pc-media:hover .pc-img--hover{ opacity:1; } }
+
+/* Quick Add tray */
+.pc-quick{
+  position:absolute; left:50%; bottom:14px;
+  transform:translateX(-50%) translateY(100%);
+  transition:transform .2s ease, opacity .2s ease;
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  background:rgba(248,248,248,.8);
+  padding:clamp(6px,1.6vw,10px) clamp(12px,3vw,16px);
+  z-index:2; display:flex; align-items:center; gap:8px;
+  border-radius:18px; border:1px solid rgba(0,0,0,.06); opacity:0;
+  pointer-events:none; /* let hover/tap reach the image */
+}
+.product-card.in-view .pc-quick{ transform:translateX(-50%) translateY(0); opacity:1; }
+@media (min-width:900px){ .product-card:hover .pc-quick{ transform:translateX(-50%) translateY(0); opacity:1; } }
+.pc-quick__title{ display:none; }
+
+.pc-sizes{
+  display:flex; flex-wrap:nowrap; gap:8px; justify-content:center;
+  overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.pc-sizes::-webkit-scrollbar{ display:none; }
+
+.pc-sizes button, .pc-sizes .pc-single{
+  appearance:none; border:0; padding:clamp(4px,1.2vw,6px) clamp(8px,2.4vw,12px);
+  border-radius:6px; background:#fff;
+  font-family:var(--font-nuckles);
+  font-weight:500; font-size:clamp(10px,2.6vw,12px);
+  line-height:1; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; white-space:nowrap;
+  pointer-events:auto; /* clickable even though parent is none */
+}
+/* Readable hover/active */
+#new-arrivals .pc-sizes button:hover:not(:disabled),
+#new-arrivals .pc-sizes button:focus:not(:disabled),
+#new-arrivals .pc-sizes button:active:not(:disabled),
+#new-arrivals .pc-sizes .pc-single:hover:not(:disabled),
+#new-arrivals .pc-sizes .pc-single:focus:not(:disabled),
+#new-arrivals .pc-sizes .pc-single:active:not(:disabled){
+  background:#f3f3f3 !important; color:#111 !important; -webkit-text-fill-color:#111 !important;
+}
+#new-arrivals .pc-sizes button:disabled{ background:#e9e9e9; color:#9aa1a9; cursor:not-allowed; }
+
+/* Content */
+.pc-body{ padding:10px 8px 0; display:flex; flex-direction:column; gap:4px; }
+.pc-title{
+  font-family:var(--font-nuckles); font-weight:400;
+  font-size:clamp(10px,3vw,12px); line-height:1.35; letter-spacing:1.2px; margin:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pc-title a{ color:#28282A; text-decoration:none; display:block; }
+.pc-price{
+  font-family:var(--font-nuckles); font-weight:400;
+  font-size:clamp(10px,2.8vw,12px); line-height:1.35; letter-spacing:1.2px; color:#28282A;
+}
+
+/* View More Card */
+.view-more-card{ background:transparent; display:flex; width:100%; }
+.vm-link{
+  position:relative; display:flex; aspect-ratio:2/3; width:100%;
+  background:transparent;
+  text-decoration:none; color:#000;
+  align-items:center; justify-content:center;
+  transition:all .3s ease;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+}
+
+.vm-content{
+  display:flex; flex-direction:column; align-items:center; gap:clamp(12px,2.5vw,20px);
+  position:relative; z-index:1;
+  padding:clamp(16px,3vw,24px);
+}
+
+.vm-text{
+  display:flex; flex-direction:column; align-items:center; gap:clamp(4px,1vw,8px);
+}
+
+.vm-label{
+  font-family:var(--font-nuckles); font-weight:600;
+  font-size:clamp(14px,3.5vw,18px);
+  letter-spacing:1.8px; text-transform:uppercase;
+  color:#000; line-height:1.2;
+  transition:opacity .3s ease;
+}
+
+.vm-count{
+  font-family:var(--font-nuckles); font-weight:400;
+  font-size:clamp(11px,2.8vw,13px);
+  letter-spacing:1px; color:rgba(0,0,0,.6);
+  line-height:1.3;
+  transition:opacity .3s ease;
+}
+
+.vm-link:hover .vm-label,
+.vm-link:hover .vm-count{
+  opacity:.7;
+}
+
+.vm-arrow{
+  width:clamp(20px,4vw,24px); height:clamp(20px,4vw,24px);
+  color:#000; opacity:.7;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+.vm-link:hover .vm-arrow{
+  opacity:1; transform:translateX(4px);
+}
+
+/* Mobile adjustments for view more */
+@media (max-width: 899.98px){
+  .vm-content{ gap:10px; padding:16px 12px; }
+  .vm-label{ font-size:13px; letter-spacing:1.5px; }
+  .vm-count{ font-size:10px; }
+  .vm-arrow{ width:18px; height:18px; }
+}
+
+/* CTA */
+.na-cta{ padding:2rem 0 0; display:flex; justify-content:flex-end; padding-right:clamp(16px,2vw,32px); }
+@media (max-width: 899.98px){ .na-cta{ justify-content:center; padding-right:0; } }
+#new-arrivals .na-button{
+  display:inline-flex; align-items:center; justify-content:flex-end;
+  background:transparent; color:#000; border:1px solid #000;
+  border-radius:clamp(22px,5vw,30px); cursor:pointer; text-decoration:none; outline:none; transition:all .3s ease;
+  font-family:var(--font-nuckles); font-weight:400;
+  width:100%; max-width:min(700px,92%); height:clamp(42px,7vw,56px);
+  padding:0 clamp(16px,3vw,32px) 0 clamp(24px,5vw,40px);
+  font-size:clamp(13px,3.2vw,18px); line-height:1; text-transform:lowercase; text-align:right;
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+}
+/* Hover to white text */
+#new_arrivals .na-button:hover,
+#new_arrivals .na-button:focus,
+#new_arrivals .na-button:active{
+  background:#000 !important; color:#fff !important; -webkit-text-fill-color:#fff !important; border-color:#000 !important;
+}
+/* Selector fix (typo-safe) */
+#new-arrivals .na-button:hover,
+#new-arrivals .na-button:focus,
+#new-arrivals .na-button:active{
+  background:#000 !important; color:#fff !important; -webkit-text-fill-color:#fff !important; border-color:#000 !important;
+}
+#new-arrivals .na-button:hover *,
+#new-arrivals .na-button:focus *,
+#new-arrivals .na-button:active *{
+  color:#fff !important; -webkit-text-fill-color:#fff !important;
+}
+
+/* True circular dots */
+#new-arrivals .na-carousel .na-dots .na-dot{
+  padding:0 !important; min-width:0 !important; border:0 !important; border-radius:50% !important;
+  display:inline-block !important; line-height:0 !important; box-sizing:content-box !important;
+  width:4px !important; height:4px !important; background:rgba(0,0,0,.2) !important; margin:0 !important;
+}
+#new-arrivals .na-carousel .na-dots .na-dot.is-active{ background:#000 !important; opacity:1 !important; }
+
+/* Mobile: unify images + iOS blue text kill */
+@media (max-width: 899.98px){
+  #new-arrivals .na-slide, #new-arrivals .product-card{ min-width:0 !important; }
+  #new-arrivals .na-slide{ flex:0 0 50% !important; }
+  #new-arrivals .pc-media{ aspect-ratio:2/3 !important; width:100% !important; }
+  #new-arrivals .pc-img, #new-arrivals .pc-img.pc-img--hover{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+  #new-arrivals a, #new-arrivals a:link, #new-arrivals a:visited, #new-arrivals a:active, #new-arrivals a:focus{
+    color:#000 !important; text-decoration:none !important; -webkit-text-fill-color:#000 !important; -webkit-tap-highlight-color:transparent;
+  }
+
+  /* Ensure tray doesn't block taps; buttons still clickable */
+  #new-arrivals .pc-quick{ pointer-events:none !important; }
+  #new-arrivals .pc-quick .pc-sizes button,
+  #new-arrivals .pc-quick .pc-single{ pointer-events:auto !important; }
+  
+  /* Lighter hover for mobile */
+  #new-arrivals .pc-sizes button:hover:not(:disabled),
+  #new-arrivals .pc-sizes button:focus:not(:disabled),
+  #new-arrivals .pc-sizes button:active:not(:disabled){
+    background:#e5e5e5 !important;
+    color:#000 !important;
+  }
+}
+</style>
+
+<!-- iPad/iOS Safari text color hardening (same as Trending Products) -->
+<style id="ipad-quickcart-text-fix">
+  @supports (-webkit-touch-callout: none) {
+    #new-arrivals .pc-quick .pc-sizes button,
+    #new-arrivals .pc-quick .pc-sizes .pc-single{
+      color:#111 !important;
+      -webkit-text-fill-color:#111 !important;
+      text-decoration:none !important;
+    }
+    #new-arrivals .pc-quick .pc-sizes button:hover,
+    #new-arrivals .pc-quick .pc-sizes button:focus,
+    #new-arrivals .pc-quick .pc-sizes button:active,
+    #new-arrivals .pc-quick .pc-sizes .pc-single:hover,
+    #new-arrivals .pc-quick .pc-sizes .pc-single:focus,
+    #new-arrivals .pc-quick .pc-sizes .pc-single:active{
+      color:#111 !important;
+      -webkit-text-fill-color:#111 !important;
+      text-decoration:none !important;
+    }
+  }
+  /* Orientation hardening for iPad landscape */
+  @media (orientation: landscape) and (min-device-width:768px) and (max-device-width:1366px){
+    #new-arrivals .pc-quick .pc-sizes button,
+    #new-arrivals .pc-quick .pc-sizes .pc-single{
+      color:#111 !important;
+      -webkit-text-fill-color:#111 !important;
+    }
+  }
+</style>
+
+<script>
+(function(){
+  const root = document.getElementById('new-arrivals');
+  if(!root) return;
+
+  const track  = root.querySelector('.na-track');
+  const slides = Array.from(track.querySelectorAll('.na-slide'));
+  const dotsWrap = root.querySelector('.na-dots');
+
+  /* ===== Dots ===== */
+  const isDesktop = () => window.matchMedia('(min-width:900px)').matches;
+  const perView   = () => isDesktop() ? 4 : 2;
+
+  function buildDots(){
+    dotsWrap.innerHTML = '';
+    const pages = Math.ceil(slides.length / perView());
+    if (pages <= 1){ dotsWrap.style.display='none'; return; }
+    dotsWrap.style.display='flex';
+    for (let i=0;i<pages;i++){
+      const b = document.createElement('button');
+      b.type='button'; b.className='na-dot'+(i===0?' is-active':'');
+      b.setAttribute('aria-label','Go to page '+(i+1));
+      b.addEventListener('click', ()=>scrollToPage(i));
+      dotsWrap.appendChild(b);
+    }
+  }
+  function gapPx(){
+    if (slides.length > 1){
+      const r0 = slides[0].getBoundingClientRect();
+      const r1 = slides[1].getBoundingClientRect();
+      return Math.max(0, r1.left - r0.right);
+    }
+    return 0;
+  }
+  function pageWidth(){
+    const slideW = slides[0]?.getBoundingClientRect().width || 0;
+    return (slideW * perView()) + (gapPx() * Math.max(0, perView()-1));
+  }
+  function scrollToPage(i){ track.scrollTo({ left: Math.round(i * pageWidth()), behavior:'smooth' }); }
+  function currentPage(){
+    const w = pageWidth() || 1, pages = Math.ceil(slides.length / perView());
+    const idx = Math.floor((track.scrollLeft + w/2) / w);
+    return Math.min(Math.max(idx,0), pages-1);
+  }
+  function updateDots(){ const active = currentPage(); dotsWrap.querySelectorAll('.na-dot').forEach((d,i)=>d.classList.toggle('is-active', i===active)); }
+
+  buildDots();
+  track.addEventListener('scroll', updateDots, {passive:true});
+
+  /* ===== BUGFIX: don't dismiss tray during programmatic centering ===== */
+  let suppressDismiss = false;
+  let isUserScroll    = false;
+  let scrollKick;
+
+  function dismissTrays(){
+    root.querySelectorAll('.product-card.in-view').forEach(el=>el.classList.remove('in-view'));
+  }
+
+  ['touchstart','pointerdown','mousedown','wheel'].forEach(evt=>{
+    track.addEventListener(evt, ()=>{ isUserScroll = true; }, {passive:true});
+  });
+  ['touchend','pointerup','mouseup','mouseleave'].forEach(evt=>{
+    track.addEventListener(evt, ()=>{ isUserScroll = false; }, {passive:true});
+  });
+
+  track.addEventListener('scroll', ()=>{
+    if (suppressDismiss) return;
+    if (!isUserScroll) return;
+    clearTimeout(scrollKick);
+    scrollKick = setTimeout(dismissTrays, 50);
+  }, {passive:true});
+
+  function centerTo(card){
+    const slide = card.closest('.na-slide'); if(!slide) return;
+    const trackRect = track.getBoundingClientRect();
+    const slideRect = slide.getBoundingClientRect();
+    const current = track.scrollLeft;
+    const slideCenter = current + (slideRect.left - trackRect.left) + (slideRect.width / 2);
+    const targetLeft  = Math.max(0, slideCenter - trackRect.width / 2);
+
+    suppressDismiss = true;
+    track.scrollTo({ left: Math.round(targetLeft), behavior: 'smooth' });
+    setTimeout(()=>{ suppressDismiss = false; }, 450);
+  }
+
+  /* ===== Mobile tap logic: tap = open tray (tapped card) ; second tap = navigate ===== */
+  const TAP_MAX_MOVE = 8;
+  const ARM_TIMEOUT  = 1500;
+
+  // Reset media handlers
+  root.querySelectorAll('.product-card .pc-media').forEach(a=>{
+    const c = a.cloneNode(true);
+    a.replaceWith(c);
+  });
+
+  function arm(card){
+    root.querySelectorAll('.product-card.in-view').forEach(el=>{ if(el!==card) el.classList.remove('in-view'); });
+    card.classList.add('in-view');
+    clearTimeout(card._armTimer);
+    card._armTimer = setTimeout(()=>card.classList.remove('in-view'), ARM_TIMEOUT);
+  }
+
+  root.querySelectorAll('.product-card .pc-media').forEach(media=>{
+    const card = media.closest('.product-card');
+
+    // Desktop: default anchor behavior
+    if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+
+    let sx=0, sy=0, moved=false;
+
+    media.addEventListener('touchstart', (e)=>{
+      if (e.target.closest('.pc-sizes button,.pc-single')) return;
+      const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
+    }, {passive:true});
+
+    media.addEventListener('touchmove', (e)=>{
+      const t=e.touches[0];
+      if (Math.abs(t.clientX - sx) > TAP_MAX_MOVE || Math.abs(t.clientY - sy) > TAP_MAX_MOVE) moved = true;
+    }, {passive:true});
+
+    media.addEventListener('touchend', (e)=>{
+      if (e.target.closest('.pc-sizes button,.pc-single')) return;
+      if (moved) return;
+      e.preventDefault(); e.stopPropagation();
+
+      if (card.classList.contains('in-view')) {
+        window.location.href = media.getAttribute('href'); // second tap -> navigate
+      } else {
+        arm(card);      // first tap -> show tray on tapped card
+        centerTo(card); // center without dismissing
+      }
+    }, {passive:false});
+
+    // Prevent synthetic click on mobile
+    media.addEventListener('click', (e)=>{
+      if (window.matchMedia('(hover:none)').matches){
+        e.preventDefault(); e.stopPropagation();
+      }
+    }, {passive:false});
+  });
+
+  // Dismiss tray on outside touch
+  document.addEventListener('touchstart', (e)=>{
+    if (!e.target.closest('#new-arrivals .product-card')) {
+      dismissTrays();
+    }
+  }, {passive:true});
+
+  /* ===== Cart add + refresh (unchanged) ===== */
+  const SECTION_IDS = ['cart-icon-bubble','cart-drawer','cart-notification'];
+  const FREE_SHIPPING_THRESHOLD = 10000; // $100 in cents
+
+  async function renderSections(ids = SECTION_IDS){
+    try{
+      const res = await fetch(`/?sections=${ids.join(',')}`, { headers:{ 'Accept':'application/json' } });
+      if(!res.ok) return {};
+      return await res.json();
+    }catch(e){ console.warn('sections render failed', e); return {}; }
+  }
+
+  async function refreshCartUI({ openDrawer = false } = {}){
+    try{
+      const [cart, sections] = await Promise.all([
+        fetch('/cart.js', { headers:{ 'Accept':'application/json' }}).then(r=>r.json()).catch(()=>null),
+        renderSections().catch(()=> ({}))
+      ]);
+
+      if (cart){
+        const count = cart.item_count || 0;
+        document.querySelectorAll('[data-cart-count],.cart-count-bubble,.cart-count,.cart-bubble__count,.header__icon--cart .cart-count-bubble').forEach(el=>{
+          const target = el.querySelector('.count, .cart-bubble__count, .cart-count, span') || el;
+          if (target) target.textContent = count;
+          if (el.classList) el.classList.toggle('hidden', count === 0);
+        });
+
+        const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - (cart.total_price || 0));
+        document.querySelectorAll('[data-free-shipping-text]').forEach(el=>{
+          el.textContent = remaining > 0
+            ? `Only ${window.Shopify && Shopify.formatMoney ? Shopify.formatMoney(remaining) : ('$' + (remaining/100).toFixed(2))} away from free shipping`
+            : `You unlocked free shipping`;
+        });
+      }
+
+      Object.entries(sections || {}).forEach(([id, html])=>{
+        const mount = document.getElementById(`shopify-section-${id}`);
+        if (mount && html) mount.innerHTML = html;
+      });
+
+      if (openDrawer){
+        const drawerEl = document.querySelector('cart-drawer,[data-cart-drawer],#CartDrawer');
+        if (drawerEl){ drawerEl.classList.add('active'); drawerEl.setAttribute('open',''); }
+        document.dispatchEvent(new CustomEvent('cart:open'));
+      }
+    }catch(err){ console.warn('Cart refresh failed', err); }
+  }
+
+  function resetQuickAdd(btn, originalLabel){
+    btn.textContent = 'Added';
+    setTimeout(()=>{
+      btn.textContent = originalLabel || 'Add to cart';
+      const card = btn.closest('.product-card');
+      if (card){
+        card.querySelectorAll('.pc-sizes button').forEach(b=>{
+          if (!b.dataset.label) b.dataset.label = (b.textContent || '').trim();
+          b.disabled = false;
+          if ((b.textContent || '').trim() === 'Adding…') b.textContent = b.dataset.label || b.textContent;
+          b.classList.remove('is-selected');
+          b.setAttribute('aria-pressed','false');
+        });
+        card.classList.remove('in-view');
+      }
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    }, 900);
+  }
+
+  async function addToCart(variantId, btn, ev){
+    if (ev){ ev.preventDefault(); ev.stopPropagation(); }
+    if (btn.dataset.loading === '1') return;
+
+    const card = btn.closest('.product-card');
+    const original = btn.dataset.label = btn.dataset.label || (btn.textContent || '').trim();
+
+    if (card){
+      card.querySelectorAll('.pc-sizes button').forEach(b=>{
+        if (!b.dataset.label) b.dataset.label = (b.textContent || '').trim();
+        b.disabled = true;
+      });
+    }
+
+    btn.dataset.loading = '1';
+    btn.textContent = 'Adding…';
+
+    try{
+      const res = await fetch('/cart/add.js', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json','Accept':'application/json' },
+        body: JSON.stringify({ id: Number(variantId), quantity: 1 })
+      });
+
+      if (!res.ok) throw new Error('add failed');
+
+      refreshCartUI({ openDrawer:true });
+      resetQuickAdd(btn, original);
+      document.dispatchEvent(new CustomEvent('cart:updated'));
+    }catch(e){
+      const mediaLink = card?.querySelector('.pc-media');
+      if (mediaLink) window.location.href = mediaLink.getAttribute('href');
+    }finally{
+      btn.dataset.loading = '0';
+      setTimeout(()=>{ if (card){ card.querySelectorAll('.pc-sizes button').forEach(b=>b.disabled=false); } }, 300);
+    }
+  }
+
+  root.querySelectorAll('.pc-sizes button').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>addToCart(btn.dataset.variant, btn, ev));
+  });
+
+  // Initial nudge for mobile
+  setTimeout(()=>{ if (window.matchMedia('(max-width: 899.98px)').matches) track.scrollLeft = 0; }, 50);
+  window.addEventListener('resize', ()=>{ buildDots(); updateDots(); }, {passive:true});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "New Arrivals Carousel",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Choose a collection" }
+  ],
+  "presets": [{ "name": "New Arrivals Carousel" }]
+}
+{% endschema %}
