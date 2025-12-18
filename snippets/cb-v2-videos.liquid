@@ -230,16 +230,26 @@
     color: #fff;
   }
 
-  /* Instagram Reel iframe - hide header/footer, show only video */
+  /* Instagram Reel iframe - aggressively hide header/footer */
   .cb-video-card--instagram {
     background: #000;
+    overflow: hidden;
+  }
+
+  .cb-video-card--instagram .cb-video-card__wrapper {
+    position: absolute;
+    top: -54px; /* Hide header with profile info */
+    left: -1px;
+    right: -1px;
+    bottom: -44px; /* Hide "View more on Instagram" footer */
+    overflow: hidden;
   }
 
   .cb-video-card__iframe--instagram {
-    width: 100%;
-    height: 180%; /* Overflow to crop header/footer */
-    margin-top: -40%; /* Shift up to hide header */
+    width: calc(100% + 2px);
+    height: calc(100% + 98px); /* 54px top + 44px bottom = 98px total compensation */
     border: none;
+    pointer-events: auto;
   }
 
   /* Mobile adjustments */
