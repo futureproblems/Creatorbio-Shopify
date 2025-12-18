@@ -111,15 +111,15 @@
           {%- assign embed_url = '' -%}
           {%- if video_url contains '/reel/' -%}
             {%- assign video_id = video_url | split: '/reel/' | last | split: '/' | first | split: '?' | first -%}
-            {%- assign embed_url = 'https://www.instagram.com/reel/' | append: video_id | append: '/embed/' -%}
+            {%- assign embed_url = 'https://www.instagram.com/reel/' | append: video_id | append: '/embed/?cr=1&v=14&wp=540&rd=https%3A%2F%2Fcreator.amorayou.com' -%}
           {%- elsif video_url contains '/p/' -%}
             {%- assign video_id = video_url | split: '/p/' | last | split: '/' | first | split: '?' | first -%}
-            {%- assign embed_url = 'https://www.instagram.com/p/' | append: video_id | append: '/embed/' -%}
+            {%- assign embed_url = 'https://www.instagram.com/p/' | append: video_id | append: '/embed/?cr=1&v=14&wp=540&rd=https%3A%2F%2Fcreator.amorayou.com' -%}
           {%- endif -%}
 
           {%- if embed_url != blank -%}
             <div class="cb-video-card cb-video-card--portrait cb-video-card--instagram">
-              <div class="cb-video-card__wrapper">
+              <div class="cb-video-card__wrapper cb-video-card__wrapper--instagram">
                 <iframe
                   src="{{ embed_url }}"
                   class="cb-video-card__iframe cb-video-card__iframe--instagram"
@@ -234,22 +234,40 @@
   .cb-video-card--instagram {
     background: #000;
     overflow: hidden;
+    position: relative;
   }
 
-  .cb-video-card--instagram .cb-video-card__wrapper {
+  .cb-video-card__wrapper--instagram {
     position: absolute;
-    top: -54px; /* Hide header with profile info */
-    left: -1px;
-    right: -1px;
-    bottom: -44px; /* Hide "View more on Instagram" footer */
+    top: -60px; /* Hide header: profile pic, username, "View profile" button */
+    left: 0;
+    right: 0;
+    bottom: -48px; /* Hide footer: "View more on Instagram" */
     overflow: hidden;
+    pointer-events: none; /* Disable clicks on cropped areas */
   }
 
   .cb-video-card__iframe--instagram {
-    width: calc(100% + 2px);
-    height: calc(100% + 98px); /* 54px top + 44px bottom = 98px total compensation */
-    border: none;
+    width: 100%;
+    height: calc(100% + 108px); /* 60px top + 48px bottom = 108px total */
+    border: none !important;
     pointer-events: auto;
+    transform: scale(1.02); /* Slight scale to hide any edge artifacts */
+    transform-origin: center center;
+  }
+
+  /* Clickable overlay to open Instagram in new tab */
+  .cb-video-card--instagram::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    cursor: pointer;
+    background: transparent;
+    pointer-events: none; /* Let iframe handle clicks for play/pause */
   }
 
   /* Mobile adjustments */
