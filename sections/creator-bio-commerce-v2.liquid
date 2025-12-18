@@ -48,7 +48,12 @@
 {%- endif -%}
 
 {%- comment -%} Music player settings {%- endcomment -%}
-{%- assign enable_music_player = page.metafields.creator_bio.enable_music_player.value -%}
+{%- assign enable_music_player_raw = page.metafields.creator_bio.enable_music_player.value -%}
+{%- if enable_music_player_raw == 'true' or enable_music_player_raw == true -%}
+  {%- assign enable_music_player = true -%}
+{%- else -%}
+  {%- assign enable_music_player = false -%}
+{%- endif -%}
 {%- assign music_player_title = page.metafields.creator_bio.music_player_title.value -%}
 {%- assign music_player_theme = page.metafields.creator_bio.music_player_theme.value | default: 'auto' -%}
 {%- assign music_items_json = page.metafields.creator_bio.music_items.value -%}
