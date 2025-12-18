@@ -218,9 +218,14 @@
   </div>
 
   {%- comment -%} Music Player {%- endcomment -%}
+  {%- if enable_music_player and music_items != blank -%}
+    <div class="cb-section-header">
+      <h3 class="cb-section-title">{{ music_player_title | default: 'Music' }}</h3>
+    </div>
+  {%- endif -%}
   {%- render 'cb-v2-music-player',
     enable_music_player: enable_music_player,
-    music_player_title: music_player_title,
+    music_player_title: '',
     music_player_theme: music_player_theme,
     music_items: music_items
   -%}
