@@ -90,6 +90,25 @@
 {%- endif -%}
 
 {%- comment -%} ========================================
+  V2 LAYOUT SETTINGS (from metafields, with section.settings fallback)
+======================================== {%- endcomment -%}
+
+{%- assign text_alignment = page.metafields.creator_bio.text_alignment.value | default: section.settings.text_alignment | default: 'left' -%}
+{%- assign name_single_line_raw = page.metafields.creator_bio.name_single_line.value -%}
+{%- if name_single_line_raw == 'true' -%}
+  {%- assign name_single_line = true -%}
+{%- elsif name_single_line_raw == 'false' -%}
+  {%- assign name_single_line = false -%}
+{%- else -%}
+  {%- assign name_single_line = section.settings.name_single_line | default: false -%}
+{%- endif -%}
+{%- assign navigation_style = page.metafields.creator_bio.navigation_style.value | default: section.settings.navigation_style | default: 'tabs' -%}
+{%- assign bg_primary = page.metafields.creator_bio.bg_primary.value | default: section.settings.bg_primary | default: '#D4C4A8' -%}
+{%- assign bg_secondary = page.metafields.creator_bio.bg_secondary.value | default: section.settings.bg_secondary | default: '#C9B896' -%}
+{%- assign text_dark = page.metafields.creator_bio.text_dark.value | default: section.settings.text_dark | default: '#3C3226' -%}
+{%- assign accent_color = page.metafields.creator_bio.accent_color.value | default: section.settings.accent_color | default: '#1A1A1A' -%}
+
+{%- comment -%} ========================================
   DERIVED VALUES
 ======================================== {%- endcomment -%}
 
@@ -146,18 +165,18 @@
   data-creator="{{ username }}"
   data-user-id="{{ user_id }}"
   data-collection="{{ collection_handle }}"
-  data-alignment="{{ section.settings.text_alignment }}"
-  data-nav-style="{{ section.settings.navigation_style }}"
+  data-alignment="{{ text_alignment }}"
+  data-nav-style="{{ navigation_style }}"
   style="
-    --cb-bg-primary: {{ section.settings.bg_primary }};
-    --cb-bg-secondary: {{ section.settings.bg_secondary }};
-    --cb-text-dark: {{ section.settings.text_dark }};
-    --cb-text-medium: {{ section.settings.text_dark | color_modify: 'alpha', 0.7 }};
-    --cb-text-light: {{ section.settings.text_dark | color_modify: 'alpha', 0.5 }};
-    --cb-text-muted: {{ section.settings.text_dark | color_modify: 'alpha', 0.4 }};
+    --cb-bg-primary: {{ bg_primary }};
+    --cb-bg-secondary: {{ bg_secondary }};
+    --cb-text-dark: {{ text_dark }};
+    --cb-text-medium: {{ text_dark | color_modify: 'alpha', 0.7 }};
+    --cb-text-light: {{ text_dark | color_modify: 'alpha', 0.5 }};
+    --cb-text-muted: {{ text_dark | color_modify: 'alpha', 0.4 }};
     --cb-card-bg: rgba(255,255,255,0.7);
     --cb-border: rgba(92,77,60,0.15);
-    --cb-accent: {{ section.settings.accent_color }};
+    --cb-accent: {{ accent_color }};
   "
 >
 
@@ -171,8 +190,8 @@
     b_score: b_score,
     b_score_reviews: b_score_reviews,
     enable_email_signup: enable_email_signup,
-    text_alignment: section.settings.text_alignment,
-    name_single_line: section.settings.name_single_line
+    text_alignment: text_alignment,
+    name_single_line: name_single_line
   -%}
 
   {%- comment -%} ========== CONTENT AREA ========== {%- endcomment -%}
@@ -193,7 +212,7 @@
       music_player_title: music_player_title,
       music_player_theme: music_player_theme,
       music_items: music_items,
-      navigation_style: section.settings.navigation_style
+      navigation_style: navigation_style
     -%}
   </div>
 
