@@ -810,6 +810,7 @@ body.cb-suppress-cart cart-notification {
   cursor: pointer;
   position: relative;
   transition: all var(--cb-duration) var(--cb-ease);
+  color: var(--cb-text-primary);
 }
 
 .cb-shop__cart-btn:hover {
