@@ -87,7 +87,7 @@
 
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">TikTok</h4>
-        <div class="cb-videos__carousel">
+        <div class="cb-videos__stack">
           {%- for video_url in tiktok_array -%}
             {%- assign video_id = '' -%}
             {%- if video_url contains '/video/' -%}
@@ -122,7 +122,7 @@
       {%- assign instagram_array = instagram_videos | split: '|||' -%}
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">Reels</h4>
-        <div class="cb-videos__carousel">
+        <div class="cb-videos__stack">
           {%- for ig_url in instagram_array -%}
             {%- assign embed_url = '' -%}
             {%- if ig_url contains '/reel/' -%}
@@ -201,21 +201,13 @@
     gap: 16px;
   }
 
-  /* Horizontal carousel for portrait videos */
-  .cb-videos__carousel {
+  /* Stacked layout for portrait videos (centered) */
+  .cb-videos__stack {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 8px 0 16px 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .cb-videos__carousel::-webkit-scrollbar {
-    display: none;
+    padding: 8px 0;
   }
 
   /* ========================================
@@ -292,17 +284,11 @@
   }
 
   /* ========================================
-     TikTok - Portrait 9:16 (280x500 for commerce)
+     TikTok - Portrait 9:16 (smaller for commerce)
   ======================================== */
   .cb-video-card--tiktok {
-    flex: 0 0 280px;
-    width: 280px;
-    min-width: 280px;
-    max-width: 280px;
-    height: 500px;
-    min-height: 500px;
-    max-height: 500px;
-    scroll-snap-align: center;
+    width: 200px;
+    height: 355px;
   }
 
   .cb-video-card--tiktok .cb-video-card__inner {
@@ -328,7 +314,7 @@
     width: 100% !important;
     height: 100% !important;
     border: none !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
   }
 
   /* Hide loading when TikTok loads */
@@ -338,17 +324,11 @@
   }
 
   /* ========================================
-     Instagram Reels - Portrait 9:16
+     Instagram Reels - Portrait 9:16 (smaller)
   ======================================== */
   .cb-video-card--instagram {
-    flex: 0 0 280px;
-    width: 280px;
-    min-width: 280px;
-    max-width: 280px;
-    height: 500px;
-    min-height: 500px;
-    max-height: 500px;
-    scroll-snap-align: center;
+    width: 200px;
+    height: 355px;
   }
 
   .cb-video-card--instagram .cb-video-card__inner {
@@ -373,7 +353,7 @@
       margin-bottom: 16px;
     }
 
-    .cb-videos__carousel {
+    .cb-videos__stack {
       gap: 12px;
     }
 
@@ -383,13 +363,8 @@
 
     .cb-video-card--tiktok,
     .cb-video-card--instagram {
-      flex: 0 0 240px;
-      width: 240px;
-      min-width: 240px;
-      max-width: 240px;
-      height: 426px;
-      min-height: 426px;
-      max-height: 426px;
+      width: 180px;
+      height: 320px;
     }
 
     .cb-video-card__inner {
