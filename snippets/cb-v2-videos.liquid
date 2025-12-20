@@ -327,18 +327,22 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     overflow: hidden;
   }
 
   /* TikTok iframe - scaled down to fit */
   .cb-tiktok-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     border: none;
     overflow: hidden;
     transform: scale(0.96);
+    transform-origin: top center;
     margin-top: -14px;
   }
 
