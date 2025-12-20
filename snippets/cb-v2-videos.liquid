@@ -1,7 +1,7 @@
 {%- comment -%}
   CB Commerce V2 - Videos Component
   Displays embedded videos from YouTube, TikTok, and Instagram Reels
-  Clean, aesthetic implementation focusing on the video content.
+  Styling matched to creatorb-app TikTokVideoCard component
 {%- endcomment -%}
 
 {%- if videos_json != blank -%}
@@ -12,22 +12,15 @@
 
 {%- if videos != blank and videos.size > 0 -%}
   {%- assign youtube_videos = '' -%}
-  {%- assign youtube_shorts_videos = '' -%}
   {%- assign tiktok_videos = '' -%}
   {%- assign instagram_videos = '' -%}
 
   {%- for video in videos -%}
-    {%- if video.platform == 'youtube' -%}
+    {%- if video.platform == 'youtube' or video.platform == 'youtube_shorts' -%}
       {%- if youtube_videos == '' -%}
         {%- assign youtube_videos = video.url -%}
       {%- else -%}
         {%- assign youtube_videos = youtube_videos | append: '|||' | append: video.url -%}
-      {%- endif -%}
-    {%- elsif video.platform == 'youtube_shorts' -%}
-      {%- if youtube_shorts_videos == '' -%}
-        {%- assign youtube_shorts_videos = video.url -%}
-      {%- else -%}
-        {%- assign youtube_shorts_videos = youtube_shorts_videos | append: '|||' | append: video.url -%}
       {%- endif -%}
     {%- elsif video.platform == 'tiktok' -%}
       {%- if tiktok_videos == '' -%}
@@ -51,20 +44,26 @@
       {%- assign youtube_array = youtube_videos | split: '|||' -%}
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">YouTube</h4>
-        <div class="cb-videos__grid cb-videos__grid--landscape">
+        <div class="cb-videos__grid">
           {%- for video_url in youtube_array -%}
             {%- assign embed_url = '' -%}
-            {%- if video_url contains 'youtube.com/watch' -%}
+            {%- assign video_id = '' -%}
+
+            {%- if video_url contains 'youtube.com/shorts/' -%}
+              {%- assign video_id = video_url | split: '/shorts/' | last | split: '?' | first -%}
+            {%- elsif video_url contains 'youtube.com/watch' -%}
               {%- assign video_id = video_url | split: 'v=' | last | split: '&' | first -%}
-              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?modestbranding=1&controls=1&rel=0' -%}
             {%- elsif video_url contains 'youtu.be/' -%}
               {%- assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first -%}
-              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?modestbranding=1&controls=1&rel=0' -%}
+            {%- endif -%}
+
+            {%- if video_id != blank -%}
+              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?modestbranding=1&rel=0' -%}
             {%- endif -%}
 
             {%- if embed_url != blank -%}
-              <div class="cb-video-card cb-video-card--landscape">
-                <div class="cb-video-card__wrapper">
+              <div class="cb-video-card cb-video-card--youtube">
+                <div class="cb-video-card__inner">
                   <iframe
                     src="{{ embed_url }}"
                     class="cb-video-card__iframe"
@@ -84,9 +83,8 @@
     {%- comment -%} ========== TIKTOK ========== {%- endcomment -%}
     {%- if tiktok_videos != '' -%}
       {%- assign tiktok_array = tiktok_videos | split: '|||' -%}
-      {%- comment -%} Load TikTok SDK once {%- endcomment -%}
       <script async src="https://www.tiktok.com/embed.js"></script>
-      
+
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">TikTok</h4>
         <div class="cb-videos__carousel">
@@ -97,19 +95,18 @@
             {%- endif -%}
 
             {%- if video_id != blank -%}
-              <div class="cb-video-card cb-video-card--portrait cb-video-card--tiktok">
-                <div class="cb-video-card__wrapper">
-                  {%- comment -%} 
-                    Using the Blockquote method is standard for TikTok to render 
-                    cleaner native players than the pure iframe method.
-                  {%- endcomment -%}
-                  <blockquote 
-                    class="tiktok-embed" 
-                    cite="{{ video_url }}" 
-                    data-video-id="{{ video_id }}" 
-                    style="max-width: 605px;min-width: 325px;" >
-                    <section>
-                      <a target="_blank" href="{{ video_url }}">@tiktok</a>
+              <div class="cb-video-card cb-video-card--tiktok">
+                <div class="cb-video-card__inner">
+                  <div class="cb-video-card__loading">
+                    <div class="cb-video-card__shimmer"></div>
+                  </div>
+                  <blockquote
+                    class="tiktok-embed"
+                    cite="{{ video_url }}"
+                    data-video-id="{{ video_id }}"
+                  >
+                    <section style="display:none;">
+                      <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
                     </section>
                   </blockquote>
                 </div>
@@ -137,8 +134,8 @@
             {%- endif -%}
 
             {%- if embed_url != blank -%}
-              <div class="cb-video-card cb-video-card--portrait cb-video-card--instagram">
-                 <div class="cb-video-card__wrapper">
+              <div class="cb-video-card cb-video-card--instagram">
+                <div class="cb-video-card__inner">
                   <iframe
                     src="{{ embed_url }}"
                     class="cb-video-card__iframe"
@@ -149,8 +146,6 @@
                     loading="lazy"
                     title="Instagram Reel"
                   ></iframe>
-                  {%- comment -%} Overlay to block captions/chrome clicks if desired, optional {%- endcomment -%}
-                  <div class="cb-click-shield"></div>
                 </div>
               </div>
             {%- endif -%}
@@ -163,62 +158,96 @@
 {%- endif -%}
 
 <style>
-  /* --- Layout & Typography --- */
-  .cb-videos { padding: 0; }
-  .cb-videos__section { margin-bottom: 24px; }
-  .cb-videos__section:last-child { margin-bottom: 0; }
-  
-  .cb-videos__heading {
-    display: block;
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-style: italic;
-    text-align: center;
-    margin: 0 0 16px 0;
-    padding-top: 16px;
+  /* ========================================
+     CB Commerce V2 - Videos Styles
+     Matching creatorb-app TikTokVideoCard
+  ======================================== */
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 
-  .cb-videos__grid { display: grid; gap: 12px; }
-  .cb-videos__grid--landscape { grid-template-columns: 1fr; }
-  
+  .cb-videos {
+    padding: 0;
+  }
+
+  .cb-videos__section {
+    margin-bottom: 32px;
+  }
+
+  .cb-videos__section:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Section Headings - Playfair Display italic */
+  .cb-videos__heading {
+    display: block;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--cb-text-primary, #1a1a1a);
+    text-align: center;
+    margin: 0 0 20px 0;
+    padding: 24px 0 0 0;
+    letter-spacing: 0.01em;
+  }
+
+  /* Grid for YouTube (landscape) */
+  .cb-videos__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Horizontal carousel for portrait videos */
   .cb-videos__carousel {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 8px; /* Space for scrollbar if visible */
+    padding: 8px 0 16px 0;
     scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .cb-videos__carousel::-webkit-scrollbar { display: none; }
 
-  /* --- Card Base Styles --- */
+  .cb-videos__carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ========================================
+     Video Card Base - Glassmorphism Style
+  ======================================== */
   .cb-video-card {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    background: #000; /* Fallback */
-    /* Glassmorphism effect based on your React reference */
+    /* Glassmorphism matching TikTokVideoCard.tsx */
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    
-    transition: transform 0.3s ease;
+    padding: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .cb-video-card:hover {
     transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
 
-  .cb-video-card__wrapper {
+  /* Inner wrapper with smaller radius */
+  .cb-video-card__inner {
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 12px; /* Inner radius slightly smaller */
+    border-radius: 12px;
     overflow: hidden;
+    background: #000;
   }
 
   .cb-video-card__iframe {
@@ -228,61 +257,143 @@
     display: block;
   }
 
-  /* --- Specific Sizes --- */
-  
-  /* Landscape (YouTube) */
-  .cb-video-card--landscape {
+  /* Loading skeleton for TikTok */
+  .cb-video-card__loading {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .cb-video-card__shimmer {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* ========================================
+     YouTube - Landscape 16:9
+  ======================================== */
+  .cb-video-card--youtube {
+    width: 100%;
+  }
+
+  .cb-video-card--youtube .cb-video-card__inner {
     aspect-ratio: 16/9;
   }
 
-  /* Portrait (TikTok/Reels/Shorts) */
-  .cb-video-card--portrait {
-    flex: 0 0 325px;
-    width: 325px;
-    height: 575px;
+  /* ========================================
+     TikTok - Portrait 9:16 (280x500 for commerce)
+  ======================================== */
+  .cb-video-card--tiktok {
+    flex: 0 0 280px;
+    width: 280px;
+    min-width: 280px;
+    max-width: 280px;
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
     scroll-snap-align: center;
   }
 
-  /* --- Platform Specific Hacks for Cleanliness --- */
-
-  /* Instagram */
-  .cb-video-card--instagram .cb-video-card__iframe {
-    /* Transform to scale up and crop out the header/footer of the IG embed */
-    width: 100%;
-    height: 115%; /* Make it taller than container */
-    transform: translateY(-7%); /* Shift it up to center the video content */
-    object-fit: cover;
-  }
-
-  /* TikTok Clean Up */
-  .cb-video-card--tiktok .cb-video-card__wrapper {
+  .cb-video-card--tiktok .cb-video-card__inner {
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #000;
   }
-  
-  /* Force the TikTok blockquote to fill the container without margin */
+
+  /* TikTok embed overrides */
   .cb-video-card--tiktok blockquote.tiktok-embed {
     margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    min-width: 100% !important;
-    width: 100% !important;
+    background: transparent !important;
   }
 
-  /* Hide the TikTok footer/header using negative margins or scaling if needed 
-     Note: TikTok is harder to crop safely than IG due to dynamic heights, 
-     but the black background helps hide gaps. */
+  .cb-video-card--tiktok blockquote.tiktok-embed iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 12px !important;
+  }
 
-  /* Mobile Adjustments */
-  @media (max-width: 480px) {
-    .cb-video-card--portrait {
-      flex: 0 0 280px;
-      width: 280px;
-      height: 500px;
+  /* Hide loading when TikTok loads */
+  .cb-video-card--tiktok:has(iframe) .cb-video-card__loading {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ========================================
+     Instagram Reels - Portrait 9:16
+  ======================================== */
+  .cb-video-card--instagram {
+    flex: 0 0 280px;
+    width: 280px;
+    min-width: 280px;
+    max-width: 280px;
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
+    scroll-snap-align: center;
+  }
+
+  .cb-video-card--instagram .cb-video-card__inner {
+    height: 100%;
+  }
+
+  /* Crop Instagram embed to hide header/footer */
+  .cb-video-card--instagram .cb-video-card__iframe {
+    width: 100%;
+    height: 115%;
+    transform: translateY(-7%);
+    object-fit: cover;
+  }
+
+  /* ========================================
+     Mobile Adjustments (smaller screens)
+  ======================================== */
+  @media (max-width: 400px) {
+    .cb-videos__heading {
+      font-size: 18px;
+      padding-top: 20px;
+      margin-bottom: 16px;
+    }
+
+    .cb-videos__carousel {
+      gap: 12px;
+    }
+
+    .cb-video-card {
+      padding: 6px;
+    }
+
+    .cb-video-card--tiktok,
+    .cb-video-card--instagram {
+      flex: 0 0 240px;
+      width: 240px;
+      min-width: 240px;
+      max-width: 240px;
+      height: 426px;
+      min-height: 426px;
+      max-height: 426px;
+    }
+
+    .cb-video-card__inner {
+      border-radius: 10px;
     }
   }
 </style>
