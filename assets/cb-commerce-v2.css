@@ -2674,16 +2674,20 @@ body.cb-suppress-cart cart-notification {
   right: 16px;
   background: none;
   border: none;
-  color: var(--cb-text-muted);
+  color: #999;
   cursor: pointer;
   padding: 4px;
+}
+
+.cb-modal__close:hover {
+  color: #333;
 }
 
 .cb-modal__title {
   font-family: var(--cb-font-display);
   font-size: var(--cb-text-2xl);
   font-weight: var(--cb-weight-normal);
-  color: var(--cb-text-primary);
+  color: #1a1a1a;
   letter-spacing: var(--cb-tracking-tight);
   margin: 0 0 var(--cb-space-sm);
 }
@@ -2691,8 +2695,8 @@ body.cb-suppress-cart cart-notification {
 .cb-modal__desc {
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-md);
-font-weight: var(--cb-weight-normal);
-  color: var(--cb-text-tertiary);
+  font-weight: var(--cb-weight-normal);
+  color: #666;
   line-height: var(--cb-leading-normal);
   margin: 0 0 var(--cb-space-2xl);
 }
@@ -2706,22 +2710,28 @@ font-weight: var(--cb-weight-normal);
 .cb-email-input {
   width: 100%;
   padding: 14px 18px;
-  border: 1px solid var(--cb-border);
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
   font-size: 15px;
   font-family: var(--cb-font-sans);
   outline: none;
   transition: border-color 0.2s;
+  color: #1a1a1a;
+  background: #fff;
+}
+
+.cb-email-input::placeholder {
+  color: #999;
 }
 
 .cb-email-input:focus {
-  border-color: var(--cb-text-dark);
+  border-color: #1a1a1a;
 }
 
 .cb-email-btn {
   width: 100%;
   padding: 14px;
-  background: var(--cb-accent);
+  background: #1a1a1a;
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -2732,6 +2742,7 @@ font-weight: var(--cb-weight-normal);
 }
 
 .cb-email-btn:hover {
+  background: #333;
   transform: scale(1.02);
 }
 
