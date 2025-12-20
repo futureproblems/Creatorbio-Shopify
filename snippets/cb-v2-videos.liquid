@@ -83,12 +83,12 @@
       </div>
     {%- endif -%}
 
-    {%- comment -%} ========== YOUTUBE SHORTS (Portrait, side-by-side) ========== {%- endcomment -%}
+    {%- comment -%} ========== YOUTUBE SHORTS (Portrait, centered) ========== {%- endcomment -%}
     {%- if youtube_shorts_videos != '' -%}
       {%- assign shorts_array = youtube_shorts_videos | split: '|||' -%}
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">YouTube Shorts</h4>
-        <div class="cb-videos__grid-shorts">
+        <div class="cb-videos__portrait-stack">
           {%- for video_url in shorts_array -%}
             {%- assign video_id = '' -%}
             {%- if video_url contains '/shorts/' -%}
@@ -96,11 +96,12 @@
             {%- endif -%}
 
             {%- if video_id != blank -%}
-              <div class="cb-video-card cb-video-card--portrait">
+              <div class="cb-video-portrait">
                 <iframe
                   src="https://www.youtube.com/embed/{{ video_id }}"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen
+                  scrolling="no"
                   loading="lazy"
                   title="YouTube Shorts"
                 ></iframe>
@@ -118,7 +119,7 @@
 
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">TikTok</h4>
-        <div class="cb-videos__centered">
+        <div class="cb-videos__portrait-stack">
           {%- for video_url in tiktok_array -%}
             {%- assign video_id = '' -%}
             {%- if video_url contains '/video/' -%}
@@ -126,32 +127,27 @@
             {%- endif -%}
 
             {%- if video_id != blank -%}
-              {%- comment -%} Outer glassmorphism container - matches TikTokVideoCard.tsx exactly {%- endcomment -%}
-              <div class="cb-tiktok-outer" data-video-id="{{ video_id }}">
-                {%- comment -%} Inner container with overflow hidden {%- endcomment -%}
-                <div class="cb-tiktok-inner">
-                  <blockquote
-                    class="tiktok-embed"
-                    cite="{{ video_url }}"
-                    data-video-id="{{ video_id }}"
-                    style="margin:0;width:100%;height:100%;border:none;padding:0;position:relative;top:-1px;"
-                  >
-                    <section style="display:none;">
-                      <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
-                    </section>
-                  </blockquote>
-                </div>
+              <div class="cb-video-portrait cb-video-portrait--tiktok" data-video-id="{{ video_id }}">
+                <blockquote
+                  class="tiktok-embed"
+                  cite="{{ video_url }}"
+                  data-video-id="{{ video_id }}"
+                >
+                  <section style="display:none;">
+                    <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
+                  </section>
+                </blockquote>
               </div>
             {%- endif -%}
           {%- endfor -%}
         </div>
       </div>
 
-      {%- comment -%} JavaScript to style TikTok iframes when they load - matches TikTokVideoCard.tsx {%- endcomment -%}
+      {%- comment -%} JavaScript to style TikTok iframes when they load {%- endcomment -%}
       <script>
         (function() {
           function styleTikTokIframes() {
-            var containers = document.querySelectorAll('.cb-tiktok-outer');
+            var containers = document.querySelectorAll('.cb-video-portrait--tiktok');
             containers.forEach(function(container) {
               var iframe = container.querySelector('iframe');
               if (iframe) {
@@ -159,22 +155,18 @@
                 iframe.style.height = '100%';
                 iframe.style.border = 'none';
                 iframe.style.borderRadius = '12px';
-                iframe.style.overflow = 'hidden';
                 iframe.setAttribute('scrolling', 'no');
               }
             });
           }
 
-          // Check repeatedly until iframes are loaded
           var checkInterval = setInterval(function() {
-            var iframes = document.querySelectorAll('.cb-tiktok-outer iframe');
+            var iframes = document.querySelectorAll('.cb-video-portrait--tiktok iframe');
             if (iframes.length > 0) {
               styleTikTokIframes();
-              // Keep checking in case more load
             }
           }, 100);
 
-          // Stop checking after 10 seconds
           setTimeout(function() {
             clearInterval(checkInterval);
           }, 10000);
@@ -187,7 +179,7 @@
       {%- assign instagram_array = instagram_videos | split: '|||' -%}
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">Instagram</h4>
-        <div class="cb-videos__centered">
+        <div class="cb-videos__portrait-stack">
           {%- for ig_url in instagram_array -%}
             {%- assign video_id = '' -%}
             {%- if ig_url contains '/reel/' -%}
@@ -197,7 +189,7 @@
             {%- endif -%}
 
             {%- if video_id != blank -%}
-              <div class="cb-video-card cb-video-card--instagram">
+              <div class="cb-video-portrait">
                 <iframe
                   src="https://www.instagram.com/p/{{ video_id }}/embed"
                   frameborder="0"
@@ -285,16 +277,8 @@
     gap: 20px;
   }
 
-  /* Portrait videos (Shorts) - side by side */
-  .cb-videos__grid-shorts {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  /* Centered single videos (TikTok, Instagram) */
-  .cb-videos__centered {
+  /* Portrait videos stack (Shorts, TikTok, Instagram) - 1 column centered */
+  .cb-videos__portrait-stack {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -325,45 +309,32 @@
     aspect-ratio: 16/9;
   }
 
-  /* Portrait (YouTube Shorts) - 9:16, max 300px width */
-  .cb-video-card--portrait {
+  /* ========================================
+     Unified Portrait Video Card
+     Used for: YouTube Shorts, TikTok, Instagram Reels
+  ======================================== */
+  .cb-video-portrait {
     width: 100%;
-    max-width: 180px;
+    max-width: 300px;
     aspect-ratio: 9/16;
-  }
-
-  /* TikTok - Outer glassmorphism container (matches TikTokVideoCard.tsx exactly) */
-  .cb-tiktok-outer {
-    position: relative;
-    flex: 0 0 325px;
-    width: 325px;
-    height: 575px;
-    min-width: 325px;
-    max-width: 325px;
-    min-height: 575px;
-    max-height: 575px;
-    overflow: hidden;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    padding: 8px;
-  }
-
-  /* TikTok - Inner container */
-  .cb-tiktok-inner {
-    width: 100%;
-    height: 100%;
     border-radius: 12px;
     overflow: hidden;
     background: #000;
-    position: relative;
   }
 
-  /* TikTok blockquote and iframe */
-  .cb-tiktok-inner blockquote.tiktok-embed {
+  .cb-video-portrait iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* TikTok specific - blockquote styling */
+  .cb-video-portrait--tiktok {
+    min-height: 533px; /* Fallback for TikTok */
+  }
+
+  .cb-video-portrait--tiktok blockquote.tiktok-embed {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
@@ -373,66 +344,44 @@
     min-width: 0 !important;
   }
 
-  .cb-tiktok-inner iframe {
-    width: 100% !important;
-    height: 100% !important;
-    border: none !important;
-    border-radius: 12px !important;
-  }
-
-  /* Instagram - fixed size */
-  .cb-video-card--instagram {
-    width: 300px;
-    max-width: 100%;
-    aspect-ratio: 9/16;
-  }
-
   /* ========================================
      Mobile Adjustments
   ======================================== */
+
+  /* Large mobile (430px and below) */
   @media (max-width: 430px) {
     .cb-videos__heading {
       font-size: 12px;
     }
 
-    .cb-videos__grid-shorts {
-      gap: 12px;
-    }
-
-    .cb-video-card--portrait {
-      max-width: 150px;
-    }
-
-    .cb-tiktok-outer {
-      width: 280px;
-      min-width: 280px;
+    .cb-video-portrait {
       max-width: 280px;
-      height: 500px;
-      min-height: 500px;
-      max-height: 500px;
     }
 
-    .cb-video-card--instagram {
-      width: 260px;
+    .cb-video-portrait--tiktok {
+      min-height: 497px;
     }
   }
 
+  /* Medium mobile (380px and below) */
   @media (max-width: 380px) {
-    .cb-video-card--portrait {
-      max-width: 130px;
+    .cb-video-portrait {
+      max-width: 260px;
     }
 
-    .cb-tiktok-outer {
-      width: 250px;
-      min-width: 250px;
-      max-width: 250px;
-      height: 445px;
-      min-height: 445px;
-      max-height: 445px;
+    .cb-video-portrait--tiktok {
+      min-height: 462px;
+    }
+  }
+
+  /* Small mobile (340px and below) */
+  @media (max-width: 340px) {
+    .cb-video-portrait {
+      max-width: calc(100vw - 40px);
     }
 
-    .cb-video-card--instagram {
-      width: 240px;
+    .cb-video-portrait--tiktok {
+      min-height: calc((100vw - 40px) * 1.78);
     }
   }
 </style>
