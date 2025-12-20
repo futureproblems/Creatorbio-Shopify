@@ -111,10 +111,9 @@
       </div>
     {%- endif -%}
 
-    {%- comment -%} ========== TIKTOK (Portrait, centered) ========== {%- endcomment -%}
+    {%- comment -%} ========== TIKTOK (Portrait, centered) - Using /embed/v2/ endpoint ========== {%- endcomment -%}
     {%- if tiktok_videos != '' -%}
       {%- assign tiktok_array = tiktok_videos | split: '|||' -%}
-      <script async src="https://www.tiktok.com/embed.js"></script>
 
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">TikTok</h4>
@@ -126,60 +125,21 @@
             {%- endif -%}
 
             {%- if video_id != blank -%}
-              {%- comment -%} Outer glassmorphism container - matches TikTokVideoCard.tsx exactly {%- endcomment -%}
-              <div class="cb-tiktok-outer" data-video-id="{{ video_id }}">
-                {%- comment -%} Inner container with overflow hidden {%- endcomment -%}
-                <div class="cb-tiktok-inner">
-                  <blockquote
-                    class="tiktok-embed"
-                    cite="{{ video_url }}"
-                    data-video-id="{{ video_id }}"
-                    style="margin:0;width:100%;height:100%;border:none;padding:0;position:relative;top:-1px;"
-                  >
-                    <section style="display:none;">
-                      <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
-                    </section>
-                  </blockquote>
+              <div class="cb-tiktok-card">
+                <div class="cb-tiktok-ratio">
+                  <iframe
+                    src="https://www.tiktok.com/embed/v2/{{ video_id }}"
+                    allowfullscreen
+                    scrolling="no"
+                    allow="autoplay; encrypted-media"
+                    title="TikTok video"
+                  ></iframe>
                 </div>
               </div>
             {%- endif -%}
           {%- endfor -%}
         </div>
       </div>
-
-      {%- comment -%} JavaScript to style TikTok iframes when they load - matches TikTokVideoCard.tsx {%- endcomment -%}
-      <script>
-        (function() {
-          function styleTikTokIframes() {
-            var containers = document.querySelectorAll('.cb-tiktok-outer');
-            containers.forEach(function(container) {
-              var iframe = container.querySelector('iframe');
-              if (iframe) {
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
-                iframe.style.borderRadius = '12px';
-                iframe.style.overflow = 'hidden';
-                iframe.setAttribute('scrolling', 'no');
-              }
-            });
-          }
-
-          // Check repeatedly until iframes are loaded
-          var checkInterval = setInterval(function() {
-            var iframes = document.querySelectorAll('.cb-tiktok-outer iframe');
-            if (iframes.length > 0) {
-              styleTikTokIframes();
-              // Keep checking in case more load
-            }
-          }, 100);
-
-          // Stop checking after 10 seconds
-          setTimeout(function() {
-            clearInterval(checkInterval);
-          }, 10000);
-        })();
-      </script>
     {%- endif -%}
 
     {%- comment -%} ========== INSTAGRAM REELS (Portrait, centered) ========== {%- endcomment -%}
@@ -332,52 +292,30 @@
     aspect-ratio: 9/16;
   }
 
-  /* TikTok - Outer glassmorphism container (matches TikTokVideoCard.tsx exactly) */
-  .cb-tiktok-outer {
-    position: relative;
-    flex: 0 0 325px;
-    width: 325px;
-    height: 575px;
-    min-width: 325px;
-    max-width: 325px;
-    min-height: 575px;
-    max-height: 575px;
-    overflow: hidden;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    padding: 8px;
-  }
-
-  /* TikTok - Inner container */
-  .cb-tiktok-inner {
+  /* TikTok - Card container */
+  .cb-tiktok-card {
     width: 100%;
-    height: 100%;
-    border-radius: 12px;
+    max-width: 325px;
+    border-radius: 16px;
     overflow: hidden;
     background: #000;
+  }
+
+  /* TikTok - Ratio container (9:16 = 177.78%) */
+  .cb-tiktok-ratio {
     position: relative;
+    width: 100%;
+    padding-bottom: 177.78%;
+    background: #000;
   }
 
-  /* TikTok blockquote and iframe */
-  .cb-tiktok-inner blockquote.tiktok-embed {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    border: none !important;
-    max-width: none !important;
-    min-width: 0 !important;
-  }
-
-  .cb-tiktok-inner iframe {
-    width: 100% !important;
-    height: 100% !important;
-    border: none !important;
-    border-radius: 12px !important;
+  .cb-tiktok-ratio iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
   /* Instagram - fixed size */
@@ -403,13 +341,8 @@
       max-width: 150px;
     }
 
-    .cb-tiktok-outer {
-      width: 280px;
-      min-width: 280px;
-      max-width: 280px;
-      height: 500px;
-      min-height: 500px;
-      max-height: 500px;
+    .cb-tiktok-card {
+      max-width: 290px;
     }
 
     .cb-video-card--instagram {
@@ -422,13 +355,8 @@
       max-width: 130px;
     }
 
-    .cb-tiktok-outer {
-      width: 250px;
-      min-width: 250px;
-      max-width: 250px;
-      height: 445px;
-      min-height: 445px;
-      max-height: 445px;
+    .cb-tiktok-card {
+      max-width: 260px;
     }
 
     .cb-video-card--instagram {
