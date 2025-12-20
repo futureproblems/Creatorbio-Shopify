@@ -1,7 +1,7 @@
 {%- comment -%}
   CB Commerce V2 - Videos Component
-  Displays embedded videos from YouTube, TikTok, and Instagram Reels
-  Styling matched to creatorb-app TikTokVideoCard component
+  Displays embedded videos from YouTube, YouTube Shorts, TikTok, Instagram Reels, and Vimeo
+  Layout matches creatorb-app [username]/page.tsx
 {%- endcomment -%}
 
 {%- if videos_json != blank -%}
@@ -12,15 +12,23 @@
 
 {%- if videos != blank and videos.size > 0 -%}
   {%- assign youtube_videos = '' -%}
+  {%- assign youtube_shorts_videos = '' -%}
   {%- assign tiktok_videos = '' -%}
   {%- assign instagram_videos = '' -%}
+  {%- assign vimeo_videos = '' -%}
 
   {%- for video in videos -%}
-    {%- if video.platform == 'youtube' or video.platform == 'youtube_shorts' -%}
+    {%- if video.platform == 'youtube' -%}
       {%- if youtube_videos == '' -%}
         {%- assign youtube_videos = video.url -%}
       {%- else -%}
         {%- assign youtube_videos = youtube_videos | append: '|||' | append: video.url -%}
+      {%- endif -%}
+    {%- elsif video.platform == 'youtube_shorts' -%}
+      {%- if youtube_shorts_videos == '' -%}
+        {%- assign youtube_shorts_videos = video.url -%}
+      {%- else -%}
+        {%- assign youtube_shorts_videos = youtube_shorts_videos | append: '|||' | append: video.url -%}
       {%- endif -%}
     {%- elsif video.platform == 'tiktok' -%}
       {%- if tiktok_videos == '' -%}
@@ -34,45 +42,40 @@
       {%- else -%}
         {%- assign instagram_videos = instagram_videos | append: '|||' | append: video.url -%}
       {%- endif -%}
+    {%- elsif video.platform == 'vimeo' -%}
+      {%- if vimeo_videos == '' -%}
+        {%- assign vimeo_videos = video.url -%}
+      {%- else -%}
+        {%- assign vimeo_videos = vimeo_videos | append: '|||' | append: video.url -%}
+      {%- endif -%}
     {%- endif -%}
   {%- endfor -%}
 
   <div class="cb-videos">
 
-    {%- comment -%} ========== YOUTUBE VIDEOS ========== {%- endcomment -%}
+    {%- comment -%} ========== YOUTUBE (Landscape) ========== {%- endcomment -%}
     {%- if youtube_videos != '' -%}
       {%- assign youtube_array = youtube_videos | split: '|||' -%}
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">YouTube</h4>
-        <div class="cb-videos__grid">
+        <div class="cb-videos__grid-landscape">
           {%- for video_url in youtube_array -%}
-            {%- assign embed_url = '' -%}
             {%- assign video_id = '' -%}
-
-            {%- if video_url contains 'youtube.com/shorts/' -%}
-              {%- assign video_id = video_url | split: '/shorts/' | last | split: '?' | first -%}
-            {%- elsif video_url contains 'youtube.com/watch' -%}
+            {%- if video_url contains 'youtube.com/watch' -%}
               {%- assign video_id = video_url | split: 'v=' | last | split: '&' | first -%}
             {%- elsif video_url contains 'youtu.be/' -%}
               {%- assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first -%}
             {%- endif -%}
 
             {%- if video_id != blank -%}
-              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?modestbranding=1&rel=0' -%}
-            {%- endif -%}
-
-            {%- if embed_url != blank -%}
-              <div class="cb-video-card cb-video-card--youtube">
-                <div class="cb-video-card__inner">
-                  <iframe
-                    src="{{ embed_url }}"
-                    class="cb-video-card__iframe"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    loading="lazy"
-                    title="YouTube video"
-                  ></iframe>
-                </div>
+              <div class="cb-video-card cb-video-card--landscape">
+                <iframe
+                  src="https://www.youtube.com/embed/{{ video_id }}"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                  title="YouTube video"
+                ></iframe>
               </div>
             {%- endif -%}
           {%- endfor -%}
@@ -80,14 +83,42 @@
       </div>
     {%- endif -%}
 
-    {%- comment -%} ========== TIKTOK ========== {%- endcomment -%}
+    {%- comment -%} ========== YOUTUBE SHORTS (Portrait, side-by-side) ========== {%- endcomment -%}
+    {%- if youtube_shorts_videos != '' -%}
+      {%- assign shorts_array = youtube_shorts_videos | split: '|||' -%}
+      <div class="cb-videos__section">
+        <h4 class="cb-videos__heading">YouTube Shorts</h4>
+        <div class="cb-videos__grid-shorts">
+          {%- for video_url in shorts_array -%}
+            {%- assign video_id = '' -%}
+            {%- if video_url contains '/shorts/' -%}
+              {%- assign video_id = video_url | split: '/shorts/' | last | split: '?' | first -%}
+            {%- endif -%}
+
+            {%- if video_id != blank -%}
+              <div class="cb-video-card cb-video-card--portrait">
+                <iframe
+                  src="https://www.youtube.com/embed/{{ video_id }}"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                  title="YouTube Shorts"
+                ></iframe>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ========== TIKTOK (Portrait, centered) ========== {%- endcomment -%}
     {%- if tiktok_videos != '' -%}
       {%- assign tiktok_array = tiktok_videos | split: '|||' -%}
       <script async src="https://www.tiktok.com/embed.js"></script>
 
       <div class="cb-videos__section">
         <h4 class="cb-videos__heading">TikTok</h4>
-        <div class="cb-videos__stack">
+        <div class="cb-videos__centered">
           {%- for video_url in tiktok_array -%}
             {%- assign video_id = '' -%}
             {%- if video_url contains '/video/' -%}
@@ -96,20 +127,15 @@
 
             {%- if video_id != blank -%}
               <div class="cb-video-card cb-video-card--tiktok">
-                <div class="cb-video-card__inner">
-                  <div class="cb-video-card__loading">
-                    <div class="cb-video-card__shimmer"></div>
-                  </div>
-                  <blockquote
-                    class="tiktok-embed"
-                    cite="{{ video_url }}"
-                    data-video-id="{{ video_id }}"
-                  >
-                    <section style="display:none;">
-                      <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
-                    </section>
-                  </blockquote>
-                </div>
+                <blockquote
+                  class="tiktok-embed"
+                  cite="{{ video_url }}"
+                  data-video-id="{{ video_id }}"
+                >
+                  <section style="display:none;">
+                    <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
+                  </section>
+                </blockquote>
               </div>
             {%- endif -%}
           {%- endfor -%}
@@ -117,36 +143,59 @@
       </div>
     {%- endif -%}
 
-    {%- comment -%} ========== INSTAGRAM REELS ========== {%- endcomment -%}
+    {%- comment -%} ========== INSTAGRAM REELS (Portrait, centered) ========== {%- endcomment -%}
     {%- if instagram_videos != '' -%}
       {%- assign instagram_array = instagram_videos | split: '|||' -%}
       <div class="cb-videos__section">
-        <h4 class="cb-videos__heading">Reels</h4>
-        <div class="cb-videos__stack">
+        <h4 class="cb-videos__heading">Instagram</h4>
+        <div class="cb-videos__centered">
           {%- for ig_url in instagram_array -%}
-            {%- assign embed_url = '' -%}
+            {%- assign video_id = '' -%}
             {%- if ig_url contains '/reel/' -%}
               {%- assign video_id = ig_url | split: '/reel/' | last | split: '/' | first | split: '?' | first -%}
-              {%- assign embed_url = 'https://www.instagram.com/reel/' | append: video_id | append: '/embed/' -%}
             {%- elsif ig_url contains '/p/' -%}
               {%- assign video_id = ig_url | split: '/p/' | last | split: '/' | first | split: '?' | first -%}
-              {%- assign embed_url = 'https://www.instagram.com/p/' | append: video_id | append: '/embed/' -%}
             {%- endif -%}
 
-            {%- if embed_url != blank -%}
+            {%- if video_id != blank -%}
               <div class="cb-video-card cb-video-card--instagram">
-                <div class="cb-video-card__inner">
-                  <iframe
-                    src="{{ embed_url }}"
-                    class="cb-video-card__iframe"
-                    frameborder="0"
-                    scrolling="no"
-                    allowtransparency="true"
-                    allowfullscreen
-                    loading="lazy"
-                    title="Instagram Reel"
-                  ></iframe>
-                </div>
+                <iframe
+                  src="https://www.instagram.com/p/{{ video_id }}/embed"
+                  frameborder="0"
+                  scrolling="no"
+                  allowtransparency="true"
+                  allowfullscreen
+                  loading="lazy"
+                  title="Instagram"
+                ></iframe>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ========== VIMEO (Landscape) ========== {%- endcomment -%}
+    {%- if vimeo_videos != '' -%}
+      {%- assign vimeo_array = vimeo_videos | split: '|||' -%}
+      <div class="cb-videos__section">
+        <h4 class="cb-videos__heading">Vimeo</h4>
+        <div class="cb-videos__grid-landscape">
+          {%- for video_url in vimeo_array -%}
+            {%- assign video_id = '' -%}
+            {%- if video_url contains 'vimeo.com/' -%}
+              {%- assign video_id = video_url | split: 'vimeo.com/' | last | split: '?' | first | split: '/' | first -%}
+            {%- endif -%}
+
+            {%- if video_id != blank -%}
+              <div class="cb-video-card cb-video-card--landscape">
+                <iframe
+                  src="https://player.vimeo.com/video/{{ video_id }}"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                  title="Vimeo video"
+                ></iframe>
               </div>
             {%- endif -%}
           {%- endfor -%}
@@ -160,13 +209,8 @@
 <style>
   /* ========================================
      CB Commerce V2 - Videos Styles
-     Matching creatorb-app TikTokVideoCard
+     Matching [username]/page.tsx layout
   ======================================== */
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
 
   .cb-videos {
     padding: 0;
@@ -180,195 +224,144 @@
     margin-bottom: 0;
   }
 
-  /* Section Headings - Playfair Display italic */
+  /* Section Headings - Uppercase like bio page */
   .cb-videos__heading {
-    display: block;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 20px;
-    font-weight: 500;
-    font-style: italic;
-    color: var(--cb-text-primary, #1a1a1a);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cb-text-primary, #fff);
     text-align: center;
-    margin: 0 0 20px 0;
-    padding: 24px 0 0 0;
-    letter-spacing: 0.01em;
-  }
-
-  /* Grid for YouTube (landscape) */
-  .cb-videos__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  /* Stacked layout for portrait videos (centered) */
-  .cb-videos__stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 8px 0;
+    margin: 0 0 16px 0;
   }
 
   /* ========================================
-     Video Card Base - Glassmorphism Style
+     Layout Containers
   ======================================== */
+
+  /* Landscape videos - full width stack */
+  .cb-videos__grid-landscape {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Portrait videos (Shorts) - side by side */
+  .cb-videos__grid-shorts {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  /* Centered single videos (TikTok, Instagram) */
+  .cb-videos__centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* ========================================
+     Video Cards
+  ======================================== */
+
   .cb-video-card {
     position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    /* Glassmorphism matching TikTokVideoCard.tsx */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    padding: 8px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .cb-video-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Inner wrapper with smaller radius */
-  .cb-video-card__inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
     border-radius: 12px;
     overflow: hidden;
     background: #000;
   }
 
-  .cb-video-card__iframe {
+  .cb-video-card iframe {
     width: 100%;
     height: 100%;
     border: none;
     display: block;
   }
 
-  /* Loading skeleton for TikTok */
-  .cb-video-card__loading {
-    position: absolute;
-    top: 0;
-    left: 0;
+  /* Landscape (YouTube, Vimeo) - 16:9 */
+  .cb-video-card--landscape {
     width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-    z-index: 10;
-    pointer-events: none;
-  }
-
-  .cb-video-card__shimmer {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
-  }
-
-  /* ========================================
-     YouTube - Landscape 16:9
-  ======================================== */
-  .cb-video-card--youtube {
-    width: 100%;
-  }
-
-  .cb-video-card--youtube .cb-video-card__inner {
     aspect-ratio: 16/9;
   }
 
-  /* ========================================
-     TikTok - Portrait 9:16 (smaller for commerce)
-  ======================================== */
+  /* Portrait (YouTube Shorts) - 9:16, max 300px width */
+  .cb-video-card--portrait {
+    width: 100%;
+    max-width: 180px;
+    aspect-ratio: 9/16;
+  }
+
+  /* TikTok - fixed size matching bio page */
   .cb-video-card--tiktok {
-    width: 200px;
-    height: 355px;
+    width: 325px;
+    max-width: 100%;
+    height: 575px;
+    background: transparent;
   }
 
-  .cb-video-card--tiktok .cb-video-card__inner {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* TikTok embed overrides */
   .cb-video-card--tiktok blockquote.tiktok-embed {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
     height: 100% !important;
     border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    background: transparent !important;
+    max-width: none !important;
+    min-width: 0 !important;
   }
 
   .cb-video-card--tiktok blockquote.tiktok-embed iframe {
     width: 100% !important;
     height: 100% !important;
-    border: none !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
   }
 
-  /* Hide loading when TikTok loads */
-  .cb-video-card--tiktok:has(iframe) .cb-video-card__loading {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  /* ========================================
-     Instagram Reels - Portrait 9:16 (smaller)
-  ======================================== */
+  /* Instagram - fixed size */
   .cb-video-card--instagram {
-    width: 200px;
-    height: 355px;
-  }
-
-  .cb-video-card--instagram .cb-video-card__inner {
-    height: 100%;
-  }
-
-  /* Crop Instagram embed to hide header/footer */
-  .cb-video-card--instagram .cb-video-card__iframe {
-    width: 100%;
-    height: 115%;
-    transform: translateY(-7%);
-    object-fit: cover;
+    width: 300px;
+    max-width: 100%;
+    aspect-ratio: 9/16;
   }
 
   /* ========================================
-     Mobile Adjustments (smaller screens)
+     Mobile Adjustments
   ======================================== */
-  @media (max-width: 400px) {
+  @media (max-width: 430px) {
     .cb-videos__heading {
-      font-size: 18px;
-      padding-top: 20px;
-      margin-bottom: 16px;
+      font-size: 12px;
     }
 
-    .cb-videos__stack {
+    .cb-videos__grid-shorts {
       gap: 12px;
     }
 
-    .cb-video-card {
-      padding: 6px;
+    .cb-video-card--portrait {
+      max-width: 150px;
     }
 
-    .cb-video-card--tiktok,
+    .cb-video-card--tiktok {
+      width: 280px;
+      height: 500px;
+    }
+
     .cb-video-card--instagram {
-      width: 180px;
-      height: 320px;
+      width: 260px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .cb-video-card--portrait {
+      max-width: 130px;
     }
 
-    .cb-video-card__inner {
-      border-radius: 10px;
+    .cb-video-card--tiktok {
+      width: 250px;
+      height: 445px;
+    }
+
+    .cb-video-card--instagram {
+      width: 240px;
     }
   }
 </style>
