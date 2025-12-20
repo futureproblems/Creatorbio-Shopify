@@ -12,8 +12,6 @@
 {%- assign avatar_url = page.metafields.creator_bio.avatar_url.value -%}
 {%- assign hide_avatar = page.metafields.creator_bio.hide_avatar.value -%}
 {%- assign banner_image_url = page.metafields.creator_bio.banner_image_url.value -%}
-<!-- DEBUG SECTION: banner_image_url metafield = '{{ page.metafields.creator_bio.banner_image_url.value }}' -->
-<!-- DEBUG SECTION: banner_image_url variable = '{{ banner_image_url }}' -->
 {%- assign full_name = page.metafields.creator_bio.full_name.value -%}
 {%- assign username = page.metafields.creator_bio.username.value -%}
 {%- assign user_id = page.metafields.creator_bio.user_id.value -%}
@@ -22,9 +20,8 @@
 {%- assign videos_json = page.metafields.creator_bio.videos_json.value -%}
 
 {%- comment -%} Parse socials JSON {%- endcomment -%}
-{%- assign socials_json = page.metafields.creator_bio.socials_json.value -%}
-{%- if socials_json != blank -%}
-  {%- assign socials = socials_json | parse_json -%}
+{%- assign socials = page.metafields.creator_bio.socials_json.value -%}
+{%- if socials != blank -%}
   {%- assign instagram_url = socials.instagram -%}
   {%- assign twitter_url = socials.twitter -%}
   {%- assign facebook_url = socials.facebook -%}
@@ -37,9 +34,8 @@
 {%- endif -%}
 
 {%- comment -%} Email signup settings {%- endcomment -%}
-{%- assign email_signup_settings_json = page.metafields.creator_bio.email_signup_settings.value -%}
-{%- if email_signup_settings_json != blank -%}
-  {%- assign email_signup_settings = email_signup_settings_json | parse_json -%}
+{%- assign email_signup_settings = page.metafields.creator_bio.email_signup_settings.value -%}
+{%- if email_signup_settings != blank -%}
   {%- assign enable_email_signup = email_signup_settings.enabled -%}
   {%- assign email_signup_title = email_signup_settings.title -%}
   {%- assign email_signup_description = email_signup_settings.description -%}
@@ -56,12 +52,7 @@
 {%- endif -%}
 {%- assign music_player_title = page.metafields.creator_bio.music_player_title.value -%}
 {%- assign music_player_theme = page.metafields.creator_bio.music_player_theme.value | default: 'auto' -%}
-{%- assign music_items_json = page.metafields.creator_bio.music_items.value -%}
-{%- if music_items_json != blank -%}
-  {%- assign music_items = music_items_json | parse_json -%}
-{%- else -%}
-  {%- assign music_items = nil -%}
-{%- endif -%}
+{%- assign music_items = page.metafields.creator_bio.music_items.value -%}
 
 {%- comment -%} ========================================
   NEW V2 METAFIELDS
@@ -69,30 +60,11 @@
 
 {%- assign b_score = page.metafields.creator_bio.b_score.value | default: 0 -%}
 {%- assign b_score_reviews = page.metafields.creator_bio.b_score_reviews.value | default: 0 -%}
-{%- assign creator_tags_json = page.metafields.creator_bio.creator_tags.value -%}
-{%- assign social_stats_json = page.metafields.creator_bio.social_stats.value -%}
-
-{%- comment -%} Parse creator tags {%- endcomment -%}
-{%- if creator_tags_json != blank -%}
-  {%- assign creator_tags = creator_tags_json | parse_json -%}
-{%- else -%}
-  {%- assign creator_tags = nil -%}
-{%- endif -%}
-
-{%- comment -%} Parse social stats {%- endcomment -%}
-{%- if social_stats_json != blank -%}
-  {%- assign social_stats = social_stats_json | parse_json -%}
-{%- else -%}
-  {%- assign social_stats = nil -%}
-{%- endif -%}
+{%- assign creator_tags = page.metafields.creator_bio.creator_tags.value -%}
+{%- assign social_stats = page.metafields.creator_bio.social_stats.value -%}
 
 {%- comment -%} Parse social proof cards (video embeds) {%- endcomment -%}
-{%- assign social_proof_cards_json = page.metafields.creator_bio.social_proof_cards.value -%}
-{%- if social_proof_cards_json != blank -%}
-  {%- assign social_proof_cards = social_proof_cards_json | parse_json -%}
-{%- else -%}
-  {%- assign social_proof_cards = nil -%}
-{%- endif -%}
+{%- assign social_proof_cards = page.metafields.creator_bio.social_proof_cards.value -%}
 
 {%- comment -%} ========================================
   V2 LAYOUT SETTINGS (from metafields, with section.settings fallback)
@@ -136,21 +108,7 @@
 {%- endif -%}
 
 {%- comment -%} Extract unique product categories from collection {%- endcomment -%}
-{%- assign product_categories = "" -%}
-{%- if collection != blank -%}
-  {%- for product in collection.products -%}
-    {%- if product.type != blank -%}
-      {%- unless product_categories contains product.type -%}
-        {%- if product_categories == "" -%}
-          {%- assign product_categories = product.type -%}
-        {%- else -%}
-          {%- assign product_categories = product_categories | append: "|||" | append: product.type -%}
-        {%- endif -%}
-      {%- endunless -%}
-    {%- endif -%}
-  {%- endfor -%}
-{%- endif -%}
-{%- assign categories_array = product_categories | split: "|||" -%}
+{%- assign categories_array = collection.all_types -%}
 
 {%- comment -%} ========================================
   FONT LOADING
