@@ -1,6 +1,7 @@
 {%- comment -%}
   CB Commerce V2 - Videos Component
   Displays embedded videos from YouTube, YouTube Shorts, TikTok, and Instagram Reels
+  Grouped by platform type with sub-headings
   Matches the luxe aesthetic of the social cards
 
   Required variables:
@@ -15,118 +16,169 @@
 {%- endif -%}
 
 {%- if videos != blank and videos.size > 0 -%}
-  <div class="cb-videos">
-    <div class="cb-videos__grid">
-      {%- for video in videos -%}
-        {%- assign video_url = video.url -%}
-        {%- assign platform = video.platform -%}
-        {%- assign embed_url = '' -%}
+  {%- comment -%} Group videos by platform {%- endcomment -%}
+  {%- assign youtube_videos = '' -%}
+  {%- assign youtube_shorts_videos = '' -%}
+  {%- assign tiktok_videos = '' -%}
+  {%- assign instagram_videos = '' -%}
 
-        {%- comment -%} YouTube Regular {%- endcomment -%}
-        {%- if platform == 'youtube' -%}
-          {%- if video_url contains 'youtube.com/watch' -%}
-            {%- assign video_id = video_url | split: 'v=' | last | split: '&' | first -%}
-            {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id -%}
-          {%- elsif video_url contains 'youtu.be/' -%}
-            {%- assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first -%}
-            {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id -%}
-          {%- endif -%}
-
-          {%- if embed_url != blank -%}
-            <div class="cb-video-card cb-video-card--landscape">
-              <div class="cb-video-card__wrapper">
-                <iframe
-                  src="{{ embed_url }}"
-                  class="cb-video-card__iframe"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                  loading="lazy"
-                  title="YouTube video"
-                ></iframe>
-              </div>
-              <div class="cb-video-card__platform">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-              </div>
-            </div>
-          {%- endif -%}
-
-        {%- comment -%} YouTube Shorts {%- endcomment -%}
-        {%- elsif platform == 'youtube_shorts' -%}
-          {%- if video_url contains '/shorts/' -%}
-            {%- assign video_id = video_url | split: '/shorts/' | last | split: '?' | first -%}
-            {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id -%}
-          {%- endif -%}
-
-          {%- if embed_url != blank -%}
-            <div class="cb-video-card cb-video-card--portrait">
-              <div class="cb-video-card__wrapper">
-                <iframe
-                  src="{{ embed_url }}"
-                  class="cb-video-card__iframe"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                  loading="lazy"
-                  title="YouTube Shorts"
-                ></iframe>
-              </div>
-              <div class="cb-video-card__platform">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-              </div>
-            </div>
-          {%- endif -%}
-
-        {%- comment -%} TikTok {%- endcomment -%}
-        {%- elsif platform == 'tiktok' -%}
-          {%- if video_url contains '/video/' -%}
-            {%- assign video_id = video_url | split: '/video/' | last | split: '?' | first -%}
-            {%- assign embed_url = 'https://www.tiktok.com/embed/v2/' | append: video_id -%}
-          {%- endif -%}
-
-          {%- if embed_url != blank -%}
-            <div class="cb-video-card cb-video-card--portrait">
-              <div class="cb-video-card__wrapper">
-                <iframe
-                  src="{{ embed_url }}"
-                  class="cb-video-card__iframe"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                  loading="lazy"
-                  title="TikTok video"
-                ></iframe>
-              </div>
-              <div class="cb-video-card__platform cb-video-card__platform--tiktok">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                </svg>
-              </div>
-            </div>
-          {%- endif -%}
-
-        {%- comment -%} Skip Instagram in main grid - rendered separately below {%- endcomment -%}
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-
-    {%- comment -%} Instagram Reels Section - Full post embeds in carousel {%- endcomment -%}
-    {%- assign instagram_videos = '' -%}
-    {%- for video in videos -%}
-      {%- if video.platform == 'instagram_reels' or video.platform == 'instagram' -%}
-        {%- if instagram_videos == '' -%}
-          {%- assign instagram_videos = video.url -%}
-        {%- else -%}
-          {%- assign instagram_videos = instagram_videos | append: '|||' | append: video.url -%}
-        {%- endif -%}
+  {%- for video in videos -%}
+    {%- if video.platform == 'youtube' -%}
+      {%- if youtube_videos == '' -%}
+        {%- assign youtube_videos = video.url -%}
+      {%- else -%}
+        {%- assign youtube_videos = youtube_videos | append: '|||' | append: video.url -%}
       {%- endif -%}
-    {%- endfor -%}
+    {%- elsif video.platform == 'youtube_shorts' -%}
+      {%- if youtube_shorts_videos == '' -%}
+        {%- assign youtube_shorts_videos = video.url -%}
+      {%- else -%}
+        {%- assign youtube_shorts_videos = youtube_shorts_videos | append: '|||' | append: video.url -%}
+      {%- endif -%}
+    {%- elsif video.platform == 'tiktok' -%}
+      {%- if tiktok_videos == '' -%}
+        {%- assign tiktok_videos = video.url -%}
+      {%- else -%}
+        {%- assign tiktok_videos = tiktok_videos | append: '|||' | append: video.url -%}
+      {%- endif -%}
+    {%- elsif video.platform == 'instagram_reels' or video.platform == 'instagram' -%}
+      {%- if instagram_videos == '' -%}
+        {%- assign instagram_videos = video.url -%}
+      {%- else -%}
+        {%- assign instagram_videos = instagram_videos | append: '|||' | append: video.url -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
 
+  <div class="cb-videos">
+
+    {%- comment -%} ========== YOUTUBE VIDEOS ========== {%- endcomment -%}
+    {%- if youtube_videos != '' -%}
+      {%- assign youtube_array = youtube_videos | split: '|||' -%}
+      <div class="cb-videos__section">
+        <h4 class="cb-videos__heading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span>YouTube</span>
+        </h4>
+        <div class="cb-videos__grid cb-videos__grid--landscape">
+          {%- for video_url in youtube_array -%}
+            {%- assign embed_url = '' -%}
+            {%- if video_url contains 'youtube.com/watch' -%}
+              {%- assign video_id = video_url | split: 'v=' | last | split: '&' | first -%}
+              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id -%}
+            {%- elsif video_url contains 'youtu.be/' -%}
+              {%- assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first -%}
+              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id -%}
+            {%- endif -%}
+
+            {%- if embed_url != blank -%}
+              <div class="cb-video-card cb-video-card--landscape">
+                <div class="cb-video-card__wrapper">
+                  <iframe
+                    src="{{ embed_url }}"
+                    class="cb-video-card__iframe"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                    title="YouTube video"
+                  ></iframe>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ========== YOUTUBE SHORTS ========== {%- endcomment -%}
+    {%- if youtube_shorts_videos != '' -%}
+      {%- assign shorts_array = youtube_shorts_videos | split: '|||' -%}
+      <div class="cb-videos__section">
+        <h4 class="cb-videos__heading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span>YouTube Shorts</span>
+        </h4>
+        <div class="cb-videos__carousel">
+          {%- for video_url in shorts_array -%}
+            {%- assign embed_url = '' -%}
+            {%- if video_url contains '/shorts/' -%}
+              {%- assign video_id = video_url | split: '/shorts/' | last | split: '?' | first -%}
+              {%- assign embed_url = 'https://www.youtube.com/embed/' | append: video_id -%}
+            {%- endif -%}
+
+            {%- if embed_url != blank -%}
+              <div class="cb-video-card cb-video-card--portrait">
+                <div class="cb-video-card__wrapper">
+                  <iframe
+                    src="{{ embed_url }}"
+                    class="cb-video-card__iframe"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                    title="YouTube Shorts"
+                  ></iframe>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ========== TIKTOK ========== {%- endcomment -%}
+    {%- if tiktok_videos != '' -%}
+      {%- assign tiktok_array = tiktok_videos | split: '|||' -%}
+      <div class="cb-videos__section">
+        <h4 class="cb-videos__heading cb-videos__heading--tiktok">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+          </svg>
+          <span>TikTok</span>
+        </h4>
+        <div class="cb-videos__carousel">
+          {%- for video_url in tiktok_array -%}
+            {%- assign embed_url = '' -%}
+            {%- if video_url contains '/video/' -%}
+              {%- assign video_id = video_url | split: '/video/' | last | split: '?' | first -%}
+              {%- assign embed_url = 'https://www.tiktok.com/embed/v2/' | append: video_id -%}
+            {%- endif -%}
+
+            {%- if embed_url != blank -%}
+              <div class="cb-video-card cb-video-card--portrait">
+                <div class="cb-video-card__wrapper">
+                  <iframe
+                    src="{{ embed_url }}"
+                    class="cb-video-card__iframe"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                    title="TikTok video"
+                  ></iframe>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ========== INSTAGRAM REELS ========== {%- endcomment -%}
     {%- if instagram_videos != '' -%}
       {%- assign instagram_array = instagram_videos | split: '|||' -%}
-      <div class="cb-instagram-section">
-        <div class="cb-instagram-carousel{% if instagram_array.size == 1 %} cb-instagram-carousel--single{% endif %}">
+      <div class="cb-videos__section">
+        <h4 class="cb-videos__heading cb-videos__heading--instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0z"/>
+            <path d="M12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8z"/>
+            <circle cx="18.406" cy="5.594" r="1.44"/>
+          </svg>
+          <span>Reels</span>
+        </h4>
+        <div class="cb-videos__carousel">
           {%- for ig_url in instagram_array -%}
             {%- assign embed_url = '' -%}
             {%- if ig_url contains '/reel/' -%}
@@ -147,7 +199,7 @@
                   allowtransparency="true"
                   allowfullscreen
                   loading="lazy"
-                  title="Instagram Post"
+                  title="Instagram Reel"
                 ></iframe>
               </div>
             {%- endif -%}
@@ -155,6 +207,7 @@
         </div>
       </div>
     {%- endif -%}
+
   </div>
 {%- else -%}
   <div class="cb-empty-state cb-empty-state--small">
@@ -168,11 +221,70 @@
     padding: 0;
   }
 
-  /* Videos Grid - matches social cards layout */
+  /* Section with heading */
+  .cb-videos__section {
+    margin-bottom: var(--cb-space-xl, 24px);
+  }
+
+  .cb-videos__section:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Section Headings - Luxe style */
+  .cb-videos__heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--cb-font-body, 'Inter', sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cb-text-secondary, rgba(0,0,0,0.7));
+    margin: 0 0 var(--cb-space-md, 12px) 0;
+    padding-bottom: var(--cb-space-sm, 8px);
+    border-bottom: 1px solid var(--cb-border, rgba(0,0,0,0.08));
+  }
+
+  .cb-videos__heading svg {
+    color: #FF0000;
+    flex-shrink: 0;
+  }
+
+  .cb-videos__heading--tiktok svg {
+    color: var(--cb-text-primary, #000);
+  }
+
+  .cb-videos__heading--instagram svg {
+    color: #E1306C;
+  }
+
+  /* Videos Grid - for landscape videos */
   .cb-videos__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--cb-space-md, 12px);
+  }
+
+  .cb-videos__grid--landscape {
+    grid-template-columns: 1fr;
+  }
+
+  /* Videos Carousel - for portrait videos */
+  .cb-videos__carousel {
+    display: flex;
+    gap: var(--cb-space-md, 12px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 8px;
+  }
+
+  .cb-videos__carousel::-webkit-scrollbar {
+    display: none;
   }
 
   /* Video Card Base - matches social card aesthetic */
@@ -191,15 +303,19 @@
     box-shadow: var(--cb-shadow-lg, 0 12px 32px rgba(26, 22, 18, 0.08));
   }
 
-  /* Portrait Videos (TikTok, YouTube Shorts) - 9:16 */
+  /* Portrait Videos (TikTok, YouTube Shorts) - 9:16 in carousel */
   .cb-video-card--portrait {
+    flex: 0 0 180px;
+    min-width: 180px;
+    max-width: 180px;
     aspect-ratio: 9/16;
+    scroll-snap-align: start;
   }
 
   /* Landscape Videos (YouTube) - 16:9, full width */
   .cb-video-card--landscape {
     aspect-ratio: 16/9;
-    grid-column: 1 / -1;
+    width: 100%;
   }
 
   /* Wrapper for iframe positioning */
@@ -213,68 +329,6 @@
     width: 100%;
     height: 100%;
     border: none;
-  }
-
-  /* Platform Badge - subtle, luxe style */
-  .cb-video-card__platform {
-    position: absolute;
-    top: var(--cb-space-md, 12px);
-    left: var(--cb-space-md, 12px);
-    width: 28px;
-    height: 28px;
-    border-radius: var(--cb-radius-full, 9999px);
-    background: var(--cb-card-bg, rgba(255, 255, 255, 0.7));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #FF0000;
-    z-index: 10;
-    box-shadow: var(--cb-shadow-sm, 0 2px 4px rgba(26, 22, 18, 0.04));
-    border: 1px solid var(--cb-border, rgba(44, 36, 22, 0.08));
-  }
-
-  .cb-video-card__platform--tiktok {
-    color: var(--cb-text-primary, #1A1612);
-  }
-
-  .cb-video-card__platform--instagram {
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-    color: #fff;
-  }
-
-  /* Instagram Section - Below main video grid */
-  .cb-instagram-section {
-    margin-top: var(--cb-space-xl, 24px);
-    padding-top: var(--cb-space-lg, 20px);
-    border-top: 1px solid var(--cb-border, rgba(44, 36, 22, 0.08));
-  }
-
-  /* Instagram Carousel */
-  .cb-instagram-carousel {
-    display: flex;
-    gap: var(--cb-space-md, 12px);
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-bottom: 8px;
-  }
-
-  .cb-instagram-carousel::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Single item - centered */
-  .cb-instagram-carousel--single {
-    justify-content: center;
-  }
-
-  .cb-instagram-carousel--single .cb-instagram-embed {
-    flex: none;
   }
 
   /* Instagram Embed Card - matches video card aesthetic */
@@ -303,11 +357,29 @@
     display: block;
   }
 
-  /* Mobile adjustments for Instagram */
+  /* Mobile adjustments */
   @media (max-width: 400px) {
-    .cb-instagram-section {
-      margin-top: var(--cb-space-lg, 20px);
-      padding-top: var(--cb-space-md, 12px);
+    .cb-videos__section {
+      margin-bottom: var(--cb-space-lg, 20px);
+    }
+
+    .cb-videos__heading {
+      font-size: 11px;
+      margin-bottom: var(--cb-space-sm, 8px);
+    }
+
+    .cb-videos__grid {
+      gap: var(--cb-space-sm, 8px);
+    }
+
+    .cb-video-card {
+      border-radius: var(--cb-radius-md, 12px);
+    }
+
+    .cb-video-card--portrait {
+      flex: 0 0 160px;
+      min-width: 160px;
+      max-width: 160px;
     }
 
     .cb-instagram-embed {
@@ -319,29 +391,6 @@
 
     .cb-instagram-embed__iframe {
       height: 420px;
-    }
-  }
-
-  /* Mobile adjustments */
-  @media (max-width: 400px) {
-    .cb-videos__grid {
-      gap: var(--cb-space-sm, 8px);
-    }
-
-    .cb-video-card {
-      border-radius: var(--cb-radius-md, 12px);
-    }
-
-    .cb-video-card__platform {
-      width: 24px;
-      height: 24px;
-      top: var(--cb-space-sm, 8px);
-      left: var(--cb-space-sm, 8px);
-    }
-
-    .cb-video-card__platform svg {
-      width: 12px;
-      height: 12px;
     }
   }
 </style>
