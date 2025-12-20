@@ -299,6 +299,7 @@
     max-width: 100%;
     height: 575px;
     background: transparent;
+    overflow: hidden !important;
   }
 
   .cb-video-card--tiktok blockquote.tiktok-embed {
@@ -309,12 +310,25 @@
     border: none !important;
     max-width: none !important;
     min-width: 0 !important;
+    overflow: hidden !important;
   }
 
+  /* TikTok iframe - no scrolling */
+  .cb-video-card--tiktok iframe,
   .cb-video-card--tiktok blockquote.tiktok-embed iframe {
     width: 100% !important;
     height: 100% !important;
+    border: none !important;
     border-radius: 12px !important;
+    overflow: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .cb-video-card--tiktok iframe::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   /* Instagram - fixed size */
