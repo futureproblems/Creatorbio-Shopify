@@ -141,7 +141,7 @@
     --cb-text-secondary: {{ text_dark | color_modify: 'alpha', 0.85 }};
     --cb-text-tertiary: {{ text_dark | color_modify: 'alpha', 0.6 }};
     --cb-card-bg: rgba(255,255,255,0.7);
-    --cb-border: rgba(92,77,60,0.15);
+    --cb-border: {{ text_dark | color_modify: 'alpha', 0.15 }};
     --cb-accent: {{ accent_color }};
   "
 >
@@ -179,7 +179,8 @@
       music_player_title: music_player_title,
       music_player_theme: music_player_theme,
       music_items: music_items,
-      navigation_style: navigation_style
+      navigation_style: navigation_style,
+      text_alignment: text_alignment
     -%}
   </div>
 

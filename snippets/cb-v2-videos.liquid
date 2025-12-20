@@ -223,7 +223,7 @@
     width: 28px;
     height: 28px;
     border-radius: var(--cb-radius-full, 9999px);
-    background: var(--cb-bg-elevated, rgba(255, 255, 255, 0.85));
+    background: var(--cb-card-bg, rgba(255, 255, 255, 0.7));
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     display: flex;
@@ -232,7 +232,7 @@
     color: #FF0000;
     z-index: 10;
     box-shadow: var(--cb-shadow-sm, 0 2px 4px rgba(26, 22, 18, 0.04));
-    border: 1px solid var(--cb-border-light, rgba(44, 36, 22, 0.08));
+    border: 1px solid var(--cb-border, rgba(44, 36, 22, 0.08));
   }
 
   .cb-video-card__platform--tiktok {
@@ -248,7 +248,7 @@
   .cb-instagram-section {
     margin-top: var(--cb-space-xl, 24px);
     padding-top: var(--cb-space-lg, 20px);
-    border-top: 1px solid var(--cb-border-light, rgba(44, 36, 22, 0.08));
+    border-top: 1px solid var(--cb-border, rgba(44, 36, 22, 0.08));
   }
 
   /* Instagram Carousel */
@@ -285,7 +285,7 @@
     scroll-snap-align: start;
     border-radius: var(--cb-radius-lg, 16px);
     overflow: hidden;
-    background: var(--cb-bg-elevated, rgba(255, 255, 255, 0.85));
+    background: var(--cb-card-bg, rgba(255, 255, 255, 0.7));
     box-shadow: var(--cb-shadow-md, 0 6px 16px rgba(26, 22, 18, 0.06));
     transition: transform var(--cb-duration, 350ms) var(--cb-ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
                 box-shadow var(--cb-duration, 350ms) var(--cb-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
@@ -345,4 +345,3 @@
     }
   }
 </style>
-
