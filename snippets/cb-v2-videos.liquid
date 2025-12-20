@@ -315,7 +315,7 @@
   ======================================== */
   .cb-video-portrait {
     width: 100%;
-    max-width: 325px;
+    max-width: 300px;
     aspect-ratio: 9/16;
     border-radius: 12px;
     overflow: hidden;
@@ -329,10 +329,9 @@
     display: block;
   }
 
-  /* TikTok specific - needs more height for full embed */
+  /* TikTok specific - blockquote styling */
   .cb-video-portrait--tiktok {
-    aspect-ratio: auto;
-    min-height: 580px;
+    min-height: 533px; /* Fallback for TikTok */
   }
 
   .cb-video-portrait--tiktok blockquote.tiktok-embed {
@@ -349,25 +348,40 @@
      Mobile Adjustments
   ======================================== */
 
-  /* iPhone 15 Pro Max and similar (430px) */
+  /* Large mobile (430px and below) */
   @media (max-width: 430px) {
     .cb-videos__heading {
       font-size: 12px;
     }
 
     .cb-video-portrait {
+      max-width: 280px;
+    }
+
+    .cb-video-portrait--tiktok {
+      min-height: 497px;
+    }
+  }
+
+  /* Medium mobile (380px and below) */
+  @media (max-width: 380px) {
+    .cb-video-portrait {
+      max-width: 260px;
+    }
+
+    .cb-video-portrait--tiktok {
+      min-height: 462px;
+    }
+  }
+
+  /* Small mobile (340px and below) */
+  @media (max-width: 340px) {
+    .cb-video-portrait {
       max-width: calc(100vw - 40px);
     }
 
     .cb-video-portrait--tiktok {
-      min-height: 580px;
-    }
-  }
-
-  /* Smaller phones */
-  @media (max-width: 375px) {
-    .cb-video-portrait--tiktok {
-      min-height: 540px;
+      min-height: calc((100vw - 40px) * 1.78);
     }
   }
 </style>
