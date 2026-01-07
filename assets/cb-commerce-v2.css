@@ -2264,10 +2264,10 @@ body.cb-suppress-cart cart-notification {
 
 .cb-bottom-tabs {
   display: flex;
-  gap: var(--cb-space-xl);
-  padding: var(--cb-space-2xl) 0 var(--cb-space-lg);
+  gap: var(--cb-space-lg);
+  padding: var(--cb-space-xl) 0 var(--cb-space-md);
   border-bottom: 1px solid var(--cb-border-default);
-  margin-top: 0;
+  margin-top: var(--cb-space-lg);
   overflow-x: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -2285,7 +2285,7 @@ body.cb-suppress-cart cart-notification {
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-xs);
   font-weight: var(--cb-weight-semibold);
-  letter-spacing: var(--cb-tracking-widest);
+  letter-spacing: var(--cb-tracking-wide);
   color: var(--cb-text-muted);
   cursor: pointer;
   text-transform: uppercase;
