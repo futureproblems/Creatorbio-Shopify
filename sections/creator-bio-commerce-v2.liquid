@@ -69,10 +69,31 @@
 {%- comment -%} Section order - defines tab arrangement {%- endcomment -%}
 {%- assign section_order_raw = page.metafields.creator_bio.section_order.value -%}
 {%- if section_order_raw != blank -%}
-  {%- assign section_order = section_order_raw -%}
+  {%- comment -%} Check if it's an array or needs splitting {%- endcomment -%}
+  {%- if section_order_raw.first -%}
+    {%- assign section_order = section_order_raw -%}
+  {%- else -%}
+    {%- assign section_order = section_order_raw | split: ',' -%}
+  {%- endif -%}
 {%- else -%}
-  {%- comment -%} Default order: socials, links, videos, music, exclusive, reviews {%- endcomment -%}
+  {%- comment -%} Default order {%- endcomment -%}
   {%- assign section_order = "socials,links,videos,music,exclusive,reviews" | split: "," -%}
+{%- endif -%}
+
+{%- comment -%} Auto-add music tab if music content exists but not in section_order {%- endcomment -%}
+{%- if music_items != blank -%}
+  {%- assign has_music_in_order = false -%}
+  {%- for item in section_order -%}
+    {%- assign item_stripped = item | strip -%}
+    {%- if item_stripped == 'music' -%}
+      {%- assign has_music_in_order = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- unless has_music_in_order -%}
+    {%- assign music_array = "music" | split: "," -%}
+    {%- assign section_order = section_order | concat: music_array -%}
+  {%- endunless -%}
 {%- endif -%}
 
 {%- comment -%} ========================================
