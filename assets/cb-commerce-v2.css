@@ -2263,7 +2263,9 @@ body.cb-suppress-cart cart-notification {
    ============================================ */
 
 .cb-bottom-tabs {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   padding: var(--cb-space-xl) 0 var(--cb-space-md);
   border-bottom: 1px solid var(--cb-border-default);
   margin-top: var(--cb-space-lg);
@@ -2278,7 +2280,6 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-bottom-tab {
-  flex: 1;
   background: none;
   border: none;
   padding: var(--cb-space-xs) 0;
