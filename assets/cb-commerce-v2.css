@@ -2264,8 +2264,7 @@ body.cb-suppress-cart cart-notification {
 
 .cb-bottom-tabs {
   display: flex;
-  justify-content: flex-start;
-  gap: var(--cb-space-2xl);
+  justify-content: space-between;
   padding: var(--cb-space-xl) 0 var(--cb-space-md);
   border-bottom: 1px solid var(--cb-border-default);
   margin-top: var(--cb-space-lg);
