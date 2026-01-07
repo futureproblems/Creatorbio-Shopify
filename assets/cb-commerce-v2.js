@@ -474,9 +474,8 @@
         this.saveCart();
         this.updateShopCartBadge();
 
-        // Subtle pulse animation
+        // Keep button filled to show it was added
         btn.classList.add('added');
-        setTimeout(() => btn.classList.remove('added'), 600);
 
         // Track
         this.trackEvent('add_to_cart', {

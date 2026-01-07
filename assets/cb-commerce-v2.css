@@ -1273,12 +1273,11 @@ body.cb-suppress-cart cart-notification {
   border-color: var(--cb-border);
 }
 
-/* Size Button Added State - Subtle pulse */
+/* Size Button Added State - Stays filled */
 .cb-shop__size-btn.added {
   background: var(--cb-accent, #1A1612);
   color: #fff;
   border-color: var(--cb-accent, #1A1612);
-  transform: scale(1.08);
 }
 
 /* Details View */
