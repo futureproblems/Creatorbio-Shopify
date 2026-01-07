@@ -257,19 +257,6 @@
     </div>
   </div>
 
-  {%- comment -%} Music Player {%- endcomment -%}
-  {%- if enable_music_player and music_items != blank -%}
-    <div class="cb-section-header">
-      <h3 class="cb-section-title">{{ music_player_title | default: 'Music' }}</h3>
-    </div>
-  {%- endif -%}
-  {%- render 'cb-v2-music-player',
-    enable_music_player: enable_music_player,
-    music_player_title: '',
-    music_player_theme: music_player_theme,
-    music_items: music_items
-  -%}
-
   {%- comment -%} Bottom Tabs / Section Headers {%- endcomment -%}
   {%- if navigation_style == 'onepage' -%}
     {%- comment -%} ONE PAGE MODE - Section headers, all content visible {%- endcomment -%}
@@ -326,6 +313,22 @@
     </div>
 
     <div class="cb-section-header">
+      <h3 class="cb-section-title">{{ music_player_title | default: 'Music' }}</h3>
+    </div>
+    <div class="cb-tab-content" data-tab-content="music">
+      {%- if enable_music_player and music_items != blank -%}
+        {%- render 'cb-v2-music-player',
+          enable_music_player: enable_music_player,
+          music_player_title: '',
+          music_player_theme: music_player_theme,
+          music_items: music_items
+        -%}
+      {%- else -%}
+        <div class="cb-empty-state cb-empty-state--small"><p>No music added yet.</p></div>
+      {%- endif -%}
+    </div>
+
+    <div class="cb-section-header">
       <h3 class="cb-section-title">Exclusive</h3>
     </div>
     <div class="cb-tab-content" data-tab-content="exclusive">
@@ -345,6 +348,7 @@
       <button class="cb-bottom-tab active" data-tab="socials">SOCIALS</button>
       <button class="cb-bottom-tab" data-tab="links">LINKS</button>
       <button class="cb-bottom-tab" data-tab="videos">VIDEOS</button>
+      <button class="cb-bottom-tab" data-tab="music">MUSIC</button>
       <button class="cb-bottom-tab" data-tab="exclusive">EXCLUSIVE</button>
       <button class="cb-bottom-tab" data-tab="reviews">REVIEWS</button>
     </div>
@@ -389,6 +393,19 @@
 
     <div class="cb-tab-content" data-tab-content="videos" style="display: none;">
       {%- render 'cb-v2-videos', videos_json: videos_json -%}
+    </div>
+
+    <div class="cb-tab-content" data-tab-content="music" style="display: none;">
+      {%- if enable_music_player and music_items != blank -%}
+        {%- render 'cb-v2-music-player',
+          enable_music_player: enable_music_player,
+          music_player_title: '',
+          music_player_theme: music_player_theme,
+          music_items: music_items
+        -%}
+      {%- else -%}
+        <div class="cb-empty-state cb-empty-state--small"><p>No music added yet.</p></div>
+      {%- endif -%}
     </div>
 
     <div class="cb-tab-content" data-tab-content="exclusive" style="display: none;">
