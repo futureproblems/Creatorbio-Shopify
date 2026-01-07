@@ -837,13 +837,15 @@ body.cb-suppress-cart cart-notification {
   color: var(--cb-text-primary);
 }
 
-.cb-shop__cart-btn:hover {
+.cb-shop__cart-btn:hover,
+.cb-shop__cart-btn:active {
   background: var(--cb-text-primary);
   border-color: var(--cb-text-primary);
   color: var(--cb-bg-primary);
 }
 
-.cb-shop__cart-btn:hover .cb-shop__cart-count {
+.cb-shop__cart-btn:hover .cb-shop__cart-count,
+.cb-shop__cart-btn:active .cb-shop__cart-count {
   color: var(--cb-bg-primary);
 }
 
@@ -1270,11 +1272,15 @@ body.cb-suppress-cart cart-notification {
   -webkit-tap-highlight-color: transparent;
 }
 
-.cb-shop__size-btn:hover {
+.cb-shop__size-btn:hover,
+.cb-shop__size-btn:active {
   background: var(--cb-text-primary);
   border-color: var(--cb-text-primary);
   color: var(--cb-bg-primary);
-  transform: translateY(-1px);
+}
+
+.cb-shop__size-btn:active {
+  transform: scale(0.95);
 }
 
 /* Size button clicked/added state - inverted colors */
