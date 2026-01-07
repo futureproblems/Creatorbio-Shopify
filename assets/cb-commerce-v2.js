@@ -150,6 +150,23 @@
         }
       });
 
+      // Keyboard accessibility - Enter key on product cards
+      this.shopSection.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const product = e.target.closest('.cb-shop__product[data-action="shop-select-product"]');
+          if (product && !product.classList.contains('cb-shop__product--sold-out')) {
+            e.preventDefault();
+            this.handleShopProductSelect({ target: product });
+          }
+
+          // Also handle size buttons with keyboard
+          if (e.target.classList.contains('cb-shop__size-btn') && !e.target.classList.contains('sold-out')) {
+            e.preventDefault();
+            this.handleShopSizeSelect(e.target);
+          }
+        }
+      });
+
       // Shop category tabs
       const categoryBtns = this.shopSection.querySelectorAll('.cb-shop__category');
       categoryBtns.forEach(btn => {
@@ -185,6 +202,7 @@
     setShopView(view) {
       if (!this.shopSection) return;
 
+      const previousView = this.shopView;
       this.shopView = view;
       this.shopSection.dataset.shopView = view;
 
@@ -195,15 +213,25 @@
         this.shopSection.classList.remove('cb-shop--details-open');
       }
 
-      // Hide all content sections
+      // Hide all content sections with fade out
       this.shopSection.querySelectorAll('[data-shop-content]').forEach(el => {
         el.style.display = 'none';
+        el.classList.remove('cb-shop--view-enter');
       });
 
-      // Show the active content
+      // Show the active content with fade in animation
       const activeContent = this.shopSection.querySelector(`[data-shop-content="${view}"]`);
       if (activeContent) {
         activeContent.style.display = view === 'grid' ? 'flex' : (view === 'cart' ? 'block' : 'flex');
+        // Trigger animation
+        requestAnimationFrame(() => {
+          activeContent.classList.add('cb-shop--view-enter');
+        });
+      }
+
+      // Scroll to top of shop section when changing views
+      if (previousView !== view) {
+        this.shopSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
       // Update header elements
@@ -495,6 +523,12 @@
           if (action === 'increase') {
             this.cart[index].quantity += 1;
           } else if (action === 'decrease') {
+            // Confirm before removing last item
+            if (this.cart[index].quantity === 1) {
+              if (!confirm('Remove this item from cart?')) {
+                return;
+              }
+            }
             this.cart[index].quantity -= 1;
             if (this.cart[index].quantity <= 0) {
               this.cart.splice(index, 1);
@@ -755,7 +789,7 @@
         }
 
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Loading...';
+        submitBtn.innerHTML = '<span class="cb-shop__spinner"></span>';
 
         // Store customer info for checkout URL
         this.customerInfo = {
@@ -817,33 +851,90 @@
       errorInputs.forEach(el => el.classList.remove('cb-shop__input-error'));
     }
 
+    showToast(message, type = 'error') {
+      // Remove existing toast
+      const existing = document.querySelector('.cb-shop__toast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.className = `cb-shop__toast cb-shop__toast--${type}`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button class="cb-shop__toast-close" aria-label="Close">×</button>
+      `;
+
+      document.body.appendChild(toast);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        toast.classList.add('visible');
+      });
+
+      // Close button
+      toast.querySelector('.cb-shop__toast-close').addEventListener('click', () => {
+        toast.classList.remove('visible');
+        setTimeout(() => toast.remove(), 300);
+      });
+
+      // Auto dismiss after 5 seconds
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.classList.remove('visible');
+          setTimeout(() => toast.remove(), 300);
+        }
+      }, 5000);
+    }
+
     async syncCartAndOpenCheckout(usePopup = false) {
-      // Build direct checkout URL - bypasses cart entirely so theme can't intercept
-      // Format: /cart/{variant_id}:{quantity},{variant_id}:{quantity}
-      const lineItems = this.cart.map(item => `${item.variantId}:${item.quantity}`).join(',');
+      try {
+        // Validate cart has items
+        if (this.cart.length === 0) {
+          this.showToast('Your cart is empty');
+          return;
+        }
 
-      // Build customer info params
-      const params = new URLSearchParams();
-      if (this.customerInfo) {
-        if (this.customerInfo.email) params.set('checkout[email]', this.customerInfo.email);
-        if (this.customerInfo.firstName) params.set('checkout[shipping_address][first_name]', this.customerInfo.firstName);
-        if (this.customerInfo.lastName) params.set('checkout[shipping_address][last_name]', this.customerInfo.lastName);
-        if (this.customerInfo.address1) params.set('checkout[shipping_address][address1]', this.customerInfo.address1);
-        if (this.customerInfo.address2) params.set('checkout[shipping_address][address2]', this.customerInfo.address2);
-        if (this.customerInfo.city) params.set('checkout[shipping_address][city]', this.customerInfo.city);
-        if (this.customerInfo.zip) params.set('checkout[shipping_address][zip]', this.customerInfo.zip);
-        if (this.customerInfo.country) params.set('checkout[shipping_address][country]', this.customerInfo.country);
+        // Build direct checkout URL - bypasses cart entirely so theme can't intercept
+        // Format: /cart/{variant_id}:{quantity},{variant_id}:{quantity}
+        const lineItems = this.cart.map(item => `${item.variantId}:${item.quantity}`).join(',');
+
+        if (!lineItems) {
+          this.showToast('Unable to process cart items');
+          return;
+        }
+
+        // Build customer info params
+        const params = new URLSearchParams();
+        if (this.customerInfo) {
+          if (this.customerInfo.email) params.set('checkout[email]', this.customerInfo.email);
+          if (this.customerInfo.firstName) params.set('checkout[shipping_address][first_name]', this.customerInfo.firstName);
+          if (this.customerInfo.lastName) params.set('checkout[shipping_address][last_name]', this.customerInfo.lastName);
+          if (this.customerInfo.address1) params.set('checkout[shipping_address][address1]', this.customerInfo.address1);
+          if (this.customerInfo.address2) params.set('checkout[shipping_address][address2]', this.customerInfo.address2);
+          if (this.customerInfo.city) params.set('checkout[shipping_address][city]', this.customerInfo.city);
+          if (this.customerInfo.zip) params.set('checkout[shipping_address][zip]', this.customerInfo.zip);
+          if (this.customerInfo.country) params.set('checkout[shipping_address][country]', this.customerInfo.country);
+        }
+
+        // Direct checkout URL - goes straight to checkout without touching cart API
+        const checkoutUrl = `/cart/${lineItems}?${params.toString()}`;
+
+        // Mark that checkout was initiated (cart will be cleared after successful purchase)
+        // Keep cart in localStorage so if user backs out, they still have their items
+        sessionStorage.setItem('cb_checkout_initiated', 'true');
+
+        // Redirect to checkout
+        window.location.href = checkoutUrl;
+      } catch (error) {
+        console.error('Checkout error:', error);
+        this.showToast('Something went wrong. Please try again.');
+
+        // Reset submit button
+        const submitBtn = this.shopSection?.querySelector('.cb-shop__form-submit');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Continue to Payment';
+        }
       }
-
-      // Direct checkout URL - goes straight to checkout without touching cart API
-      const checkoutUrl = `/cart/${lineItems}?${params.toString()}`;
-
-      // Mark that checkout was initiated (cart will be cleared after successful purchase)
-      // Keep cart in localStorage so if user backs out, they still have their items
-      sessionStorage.setItem('cb_checkout_initiated', 'true');
-
-      // Redirect to checkout
-      window.location.href = checkoutUrl;
     }
 
     // ============================================
