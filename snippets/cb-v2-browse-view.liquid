@@ -285,7 +285,7 @@
   {%- endif -%}
 
   {%- assign has_music = false -%}
-  {%- if enable_music_player and music_items != blank -%}
+  {%- if music_items != blank -%}
     {%- assign has_music = true -%}
   {%- endif -%}
 
@@ -362,7 +362,7 @@
 
             {%- when 'music' -%}
               {%- render 'cb-v2-music-player',
-                enable_music_player: enable_music_player,
+                enable_music_player: true,
                 music_player_title: '',
                 music_player_theme: music_player_theme,
                 music_items: music_items
@@ -469,7 +469,7 @@
 
             {%- when 'music' -%}
               {%- render 'cb-v2-music-player',
-                enable_music_player: enable_music_player,
+                enable_music_player: true,
                 music_player_title: '',
                 music_player_theme: music_player_theme,
                 music_items: music_items
