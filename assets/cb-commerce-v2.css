@@ -843,6 +843,10 @@ body.cb-suppress-cart cart-notification {
   color: var(--cb-bg-primary);
 }
 
+.cb-shop__cart-btn:hover .cb-shop__cart-count {
+  color: var(--cb-bg-primary);
+}
+
 .cb-shop__cart-btn:active {
   transform: scale(0.95);
 }
