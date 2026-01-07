@@ -384,16 +384,17 @@
       const message = document.createElement('div');
       message.className = 'cb-shop__added-message';
       message.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
-        Added to cart
+        Added
       `;
 
-      // Insert after size selector
-      const sizeSelector = this.shopSection?.querySelector('.cb-shop__sizes');
-      if (sizeSelector) {
-        sizeSelector.parentNode.insertBefore(message, sizeSelector.nextSibling);
+      // Append to product info area (positioned absolutely)
+      const productInfo = this.shopSection?.querySelector('.cb-shop__product-info');
+      if (productInfo) {
+        productInfo.style.position = 'relative';
+        productInfo.appendChild(message);
       }
 
       // Animate in
@@ -405,7 +406,7 @@
       setTimeout(() => {
         message.classList.remove('visible');
         setTimeout(() => message.remove(), 300);
-      }, 2000);
+      }, 1800);
     }
 
     updateShopCartBadge() {
