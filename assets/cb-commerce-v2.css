@@ -3204,6 +3204,85 @@ body.cb-suppress-cart cart-notification {
 }
 
 /* ============================================
+   LIGHTBOX
+   ============================================ */
+
+.cb-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s var(--cb-ease-out), visibility 0.3s;
+}
+
+.cb-lightbox.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cb-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+
+.cb-lightbox__content {
+  position: relative;
+  z-index: 1;
+  max-width: 90vw;
+  max-height: 85vh;
+  transform: scale(0.95);
+  transition: transform 0.3s var(--cb-ease-out);
+}
+
+.cb-lightbox.visible .cb-lightbox__content {
+  transform: scale(1);
+}
+
+.cb-lightbox__content img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--cb-radius-lg, 16px);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+}
+
+.cb-lightbox__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.cb-lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* Make carousel images show pointer cursor */
+.cb-shop__carousel-slide img {
+  cursor: zoom-in;
+}
+
+/* ============================================
    VIEW TRANSITION ANIMATIONS
    ============================================ */
 

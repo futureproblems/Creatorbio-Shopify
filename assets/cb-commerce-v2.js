@@ -364,9 +364,14 @@
       if (carousel && product.images?.length > 0) {
         carousel.innerHTML = product.images.map((img, i) => `
           <div class="cb-shop__carousel-slide" data-slide-index="${i}">
-            <img src="${img}" alt="${product.title}" loading="lazy">
+            <img src="${img}" alt="${product.title}" loading="lazy" data-action="open-lightbox" data-img-src="${img}">
           </div>
         `).join('');
+
+        // Add lightbox click handlers
+        carousel.querySelectorAll('[data-action="open-lightbox"]').forEach(img => {
+          img.addEventListener('click', () => this.openLightbox(img.dataset.imgSrc, product.title));
+        });
 
         // Render dots
         if (dotsContainer && product.images.length > 1) {
@@ -494,6 +499,55 @@
         const count = this.cart.reduce((sum, item) => sum + item.quantity, 0);
         badge.textContent = count;
         badge.style.display = count > 0 ? 'flex' : 'none';
+      }
+    }
+
+    openLightbox(imgSrc, alt) {
+      // Remove existing lightbox
+      const existing = document.querySelector('.cb-lightbox');
+      if (existing) existing.remove();
+
+      const lightbox = document.createElement('div');
+      lightbox.className = 'cb-lightbox';
+      lightbox.innerHTML = `
+        <div class="cb-lightbox__backdrop" data-action="close-lightbox"></div>
+        <div class="cb-lightbox__content">
+          <img src="${imgSrc}" alt="${alt || 'Product image'}">
+        </div>
+        <button class="cb-lightbox__close" data-action="close-lightbox" aria-label="Close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      `;
+
+      document.body.appendChild(lightbox);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        lightbox.classList.add('visible');
+      });
+
+      // Close handlers
+      lightbox.querySelectorAll('[data-action="close-lightbox"]').forEach(el => {
+        el.addEventListener('click', () => this.closeLightbox());
+      });
+
+      // Close on escape
+      const escHandler = (e) => {
+        if (e.key === 'Escape') {
+          this.closeLightbox();
+          document.removeEventListener('keydown', escHandler);
+        }
+      };
+      document.addEventListener('keydown', escHandler);
+    }
+
+    closeLightbox() {
+      const lightbox = document.querySelector('.cb-lightbox');
+      if (lightbox) {
+        lightbox.classList.remove('visible');
+        setTimeout(() => lightbox.remove(), 300);
       }
     }
 
