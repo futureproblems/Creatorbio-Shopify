@@ -852,6 +852,7 @@ body.cb-suppress-cart cart-notification {
   top: -4px;
   right: -4px;
   min-width: 18px;
+  max-width: 32px;
   height: 18px;
   padding: 0 5px;
   border-radius: 100px;
@@ -862,6 +863,9 @@ body.cb-suppress-cart cart-notification {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Shop Category Tabs */

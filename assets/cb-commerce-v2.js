@@ -497,7 +497,7 @@
       const badge = this.shopSection?.querySelector('[data-shop-cart-count]');
       if (badge) {
         const count = this.cart.reduce((sum, item) => sum + item.quantity, 0);
-        badge.textContent = count;
+        badge.textContent = count > 99 ? '99+' : count;
         badge.style.display = count > 0 ? 'flex' : 'none';
       }
     }
