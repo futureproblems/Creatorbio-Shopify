@@ -372,27 +372,57 @@
     {%- endfor -%}
 
   {%- else -%}
-    {%- comment -%} TABS MODE - Show all tabs in section_order {%- endcomment -%}
+    {%- comment -%} TABS MODE - Only show tabs with content {%- endcomment -%}
+    {%- assign first_tab_set = false -%}
     <div class="cb-bottom-tabs">
       {%- for section_name in section_order -%}
         {%- assign section_key = section_name | strip -%}
-        <button class="cb-bottom-tab{% if forloop.first %} active{% endif %}" data-tab="{{ section_key }}">
-          {%- case section_key -%}
-            {%- when 'socials' -%}SOCIALS
-            {%- when 'links' -%}LINKS
-            {%- when 'videos' -%}VIDEOS
-            {%- when 'music' -%}MUSIC
-            {%- when 'exclusive' -%}EXCLUSIVE
-            {%- when 'reviews' -%}REVIEWS
-          {%- endcase -%}
-        </button>
+        {%- assign show_tab = false -%}
+
+        {%- comment -%} Check if section has content {%- endcomment -%}
+        {%- case section_key -%}
+          {%- when 'socials' -%}{%- if has_socials -%}{%- assign show_tab = true -%}{%- endif -%}
+          {%- when 'links' -%}{%- if has_links -%}{%- assign show_tab = true -%}{%- endif -%}
+          {%- when 'videos' -%}{%- if has_videos -%}{%- assign show_tab = true -%}{%- endif -%}
+          {%- when 'music' -%}{%- if has_music -%}{%- assign show_tab = true -%}{%- endif -%}
+          {%- when 'exclusive' -%}{%- if has_exclusive -%}{%- assign show_tab = true -%}{%- endif -%}
+          {%- when 'reviews' -%}{%- if has_reviews -%}{%- assign show_tab = true -%}{%- endif -%}
+        {%- endcase -%}
+
+        {%- if show_tab -%}
+          <button class="cb-bottom-tab{% unless first_tab_set %} active{% assign first_tab_set = true %}{% endunless %}" data-tab="{{ section_key }}">
+            {%- case section_key -%}
+              {%- when 'socials' -%}SOCIALS
+              {%- when 'links' -%}LINKS
+              {%- when 'videos' -%}VIDEOS
+              {%- when 'music' -%}MUSIC
+              {%- when 'exclusive' -%}EXCLUSIVE
+              {%- when 'reviews' -%}REVIEWS
+            {%- endcase -%}
+          </button>
+        {%- endif -%}
       {%- endfor -%}
     </div>
 
-    {%- comment -%} Tab Content - Render all sections, snippets handle empty states {%- endcomment -%}
+    {%- comment -%} Tab Content - Only render sections with content {%- endcomment -%}
+    {%- assign first_content_set = false -%}
     {%- for section_name in section_order -%}
       {%- assign section_key = section_name | strip -%}
-      <div class="cb-tab-content" data-tab-content="{{ section_key }}"{% unless forloop.first %} style="display: none;"{% endunless %}>
+      {%- assign show_content = false -%}
+
+      {%- comment -%} Check if section has content {%- endcomment -%}
+      {%- case section_key -%}
+        {%- when 'socials' -%}{%- if has_socials -%}{%- assign show_content = true -%}{%- endif -%}
+        {%- when 'links' -%}{%- if has_links -%}{%- assign show_content = true -%}{%- endif -%}
+        {%- when 'videos' -%}{%- if has_videos -%}{%- assign show_content = true -%}{%- endif -%}
+        {%- when 'music' -%}{%- if has_music -%}{%- assign show_content = true -%}{%- endif -%}
+        {%- when 'exclusive' -%}{%- if has_exclusive -%}{%- assign show_content = true -%}{%- endif -%}
+        {%- when 'reviews' -%}{%- if has_reviews -%}{%- assign show_content = true -%}{%- endif -%}
+      {%- endcase -%}
+
+      {%- if show_content -%}
+        <div class="cb-tab-content" data-tab-content="{{ section_key }}"{% if first_content_set %} style="display: none;"{% endif %}>
+          {%- unless first_content_set -%}{%- assign first_content_set = true -%}{%- endunless -%}
           {%- case section_key -%}
             {%- when 'socials' -%}
               {%- render 'cb-v2-social-cards',
@@ -405,32 +435,24 @@
               -%}
 
             {%- when 'links' -%}
-              {%- if links_json != blank -%}
-                {%- assign parsed_links = links_json | parse_json -%}
-                {%- if parsed_links.size > 0 -%}
-                  <div class="cb-links-list">
-                    {%- for link in parsed_links -%}
-                      {%- assign link_url = link.url -%}
-                      {%- unless link_url contains 'http://' or link_url contains 'https://' -%}
-                        {%- assign link_url = link_url | prepend: 'https://' -%}
-                      {%- endunless -%}
-                      <a href="{{ link_url }}" class="cb-link-card" target="_blank" rel="noopener">
-                        <div class="cb-link-card__content">
-                          <span class="cb-link-card__title">{{ link.title }}</span>
-                          <span class="cb-link-card__subtitle">View</span>
-                        </div>
-                        <svg class="cb-link-card__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M7 17L17 7M17 7H7M17 7V17"/>
-                        </svg>
-                      </a>
-                    {%- endfor -%}
-                  </div>
-                {%- else -%}
-                  <div class="cb-empty-state cb-empty-state--small"><p>No links added yet.</p></div>
-                {%- endif -%}
-              {%- else -%}
-                <div class="cb-empty-state cb-empty-state--small"><p>No links added yet.</p></div>
-              {%- endif -%}
+              {%- assign parsed_links = links_json | parse_json -%}
+              <div class="cb-links-list">
+                {%- for link in parsed_links -%}
+                  {%- assign link_url = link.url -%}
+                  {%- unless link_url contains 'http://' or link_url contains 'https://' -%}
+                    {%- assign link_url = link_url | prepend: 'https://' -%}
+                  {%- endunless -%}
+                  <a href="{{ link_url }}" class="cb-link-card" target="_blank" rel="noopener">
+                    <div class="cb-link-card__content">
+                      <span class="cb-link-card__title">{{ link.title }}</span>
+                      <span class="cb-link-card__subtitle">View</span>
+                    </div>
+                    <svg class="cb-link-card__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                    </svg>
+                  </a>
+                {%- endfor -%}
+              </div>
 
             {%- when 'videos' -%}
               {%- render 'cb-v2-videos', videos_json: videos_json -%}
@@ -444,12 +466,13 @@
               -%}
 
             {%- when 'exclusive' -%}
-              <div class="cb-empty-state cb-empty-state--small"><p>Exclusive content coming soon.</p></div>
+              {%- comment -%} Exclusive content here {%- endcomment -%}
 
             {%- when 'reviews' -%}
-              <div class="cb-empty-state cb-empty-state--small"><p>Reviews coming soon.</p></div>
+              {%- comment -%} Reviews content here {%- endcomment -%}
           {%- endcase -%}
         </div>
+      {%- endif -%}
     {%- endfor -%}
   {%- endif -%}
 
