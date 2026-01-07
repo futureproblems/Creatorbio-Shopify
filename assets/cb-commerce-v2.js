@@ -612,7 +612,13 @@
 
           this.saveCart();
           this.updateShopCartBadge();
-          this.renderShopCart();
+
+          // If cart is now empty, go back to grid view
+          if (this.cart.length === 0) {
+            this.setShopView('grid');
+          } else {
+            this.renderShopCart();
+          }
         });
       });
     }
