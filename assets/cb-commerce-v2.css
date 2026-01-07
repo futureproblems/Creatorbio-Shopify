@@ -1247,7 +1247,9 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__size-btn:hover {
-  border-color: var(--cb-text-muted);
+  background: var(--cb-accent, #1A1612);
+  color: #fff;
+  border-color: var(--cb-accent, #1A1612);
   transform: translateY(-1px);
 }
 
