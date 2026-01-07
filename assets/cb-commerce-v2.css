@@ -2264,10 +2264,18 @@ body.cb-suppress-cart cart-notification {
 
 .cb-bottom-tabs {
   display: flex;
-  justify-content: space-between;
+  gap: var(--cb-space-xl);
   padding: var(--cb-space-2xl) 0 var(--cb-space-lg);
   border-bottom: 1px solid var(--cb-border-default);
   margin-top: 0;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cb-bottom-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .cb-bottom-tab {
@@ -2284,6 +2292,8 @@ body.cb-suppress-cart cart-notification {
   position: relative;
   transition: color var(--cb-duration) var(--cb-ease);
   -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .cb-bottom-tab:hover {

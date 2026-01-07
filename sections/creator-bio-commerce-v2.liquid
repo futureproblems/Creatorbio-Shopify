@@ -66,6 +66,15 @@
 {%- comment -%} Parse social proof cards (video embeds) {%- endcomment -%}
 {%- assign social_proof_cards = page.metafields.creator_bio.social_proof_cards.value -%}
 
+{%- comment -%} Section order - defines tab arrangement {%- endcomment -%}
+{%- assign section_order_raw = page.metafields.creator_bio.section_order.value -%}
+{%- if section_order_raw != blank -%}
+  {%- assign section_order = section_order_raw -%}
+{%- else -%}
+  {%- comment -%} Default order: socials, links, videos, music, exclusive, reviews {%- endcomment -%}
+  {%- assign section_order = "socials,links,videos,music,exclusive,reviews" | split: "," -%}
+{%- endif -%}
+
 {%- comment -%} ========================================
   V2 LAYOUT SETTINGS (from metafields, with section.settings fallback)
 ======================================== {%- endcomment -%}
@@ -180,7 +189,8 @@
       music_player_theme: music_player_theme,
       music_items: music_items,
       navigation_style: navigation_style,
-      text_alignment: text_alignment
+      text_alignment: text_alignment,
+      section_order: section_order
     -%}
   </div>
 
