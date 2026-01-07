@@ -324,12 +324,6 @@
 
     handleShopSizeSelect(btn) {
       const size = btn.dataset.size;
-      this.shopSelectedSize = size;
-
-      // Update selected state
-      this.shopSection.querySelectorAll('.cb-shop__size-btn').forEach(b => {
-        b.classList.toggle('selected', b.dataset.size === size);
-      });
 
       // Add to cart immediately when size selected
       if (this.shopSelectedProduct && size) {
@@ -362,6 +356,15 @@
         this.saveCart();
         this.updateShopCartBadge();
 
+        // Show brief "added" state on button
+        btn.classList.add('added');
+        setTimeout(() => {
+          btn.classList.remove('added');
+        }, 1200);
+
+        // Show "Added to cart" message
+        this.showAddedToCartMessage();
+
         // Track
         this.trackEvent('add_to_cart', {
           product_id: product.id,
@@ -370,6 +373,39 @@
           price: product.price,
         });
       }
+    }
+
+    showAddedToCartMessage() {
+      // Remove existing message if any
+      const existing = this.shopSection?.querySelector('.cb-shop__added-message');
+      if (existing) existing.remove();
+
+      // Create message element
+      const message = document.createElement('div');
+      message.className = 'cb-shop__added-message';
+      message.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Added to cart
+      `;
+
+      // Insert after size selector
+      const sizeSelector = this.shopSection?.querySelector('.cb-shop__sizes');
+      if (sizeSelector) {
+        sizeSelector.parentNode.insertBefore(message, sizeSelector.nextSibling);
+      }
+
+      // Animate in
+      requestAnimationFrame(() => {
+        message.classList.add('visible');
+      });
+
+      // Remove after delay
+      setTimeout(() => {
+        message.classList.remove('visible');
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
     }
 
     updateShopCartBadge() {
