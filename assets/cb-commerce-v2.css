@@ -860,7 +860,7 @@ body.cb-suppress-cart cart-notification {
   top: 56%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: var(--cb-weight-bold);
   color: var(--cb-text-primary);
   line-height: 1;
