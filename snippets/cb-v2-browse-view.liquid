@@ -89,6 +89,7 @@
             class="cb-shop__product{% if is_sold_out %} cb-shop__product--sold-out{% endif %}"
             {% unless is_sold_out %}data-action="shop-select-product"{% endunless %}
             data-product-id="{{ product.id }}"
+            data-category="{{ product.type | handleize }}"
             tabindex="0"
             role="button"
             aria-label="{{ product.title }}{% if is_sold_out %}, sold out{% endif %}"
