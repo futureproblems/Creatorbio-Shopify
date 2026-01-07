@@ -1112,11 +1112,13 @@ body.cb-suppress-cart cart-notification {
   font-weight: var(--cb-weight-medium);
   letter-spacing: var(--cb-tracking-wide);
   cursor: pointer;
+  transition: all var(--cb-duration) var(--cb-ease);
   -webkit-tap-highlight-color: transparent;
 }
 
-.cb-shop__size-btn:active {
-  opacity: 0.8;
+.cb-shop__size-btn:hover {
+  border-color: var(--cb-text-muted);
+  transform: translateY(-1px);
 }
 
 .cb-shop__size-btn.selected {
