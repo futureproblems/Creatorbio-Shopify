@@ -847,22 +847,30 @@ body.cb-suppress-cart cart-notification {
   transform: scale(0.95);
 }
 
-.cb-shop__cart-badge {
+.cb-shop__cart-icon {
+  transition: opacity var(--cb-duration) var(--cb-ease);
+}
+
+.cb-shop__cart-count {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  min-width: 14px;
-  height: 14px;
-  padding: 0 3px;
-  border-radius: 100px;
-  background: var(--cb-accent);
-  color: #fff;
-  font-size: 9px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
   font-weight: var(--cb-weight-bold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: var(--cb-text-primary);
   line-height: 1;
+  margin-top: 2px;
+}
+
+/* Hide count when empty */
+.cb-shop__cart-count:empty {
+  display: none;
+}
+
+/* When count is visible, fade the bag handles */
+.cb-shop__cart-btn:has(.cb-shop__cart-count:not(:empty)) .cb-shop__cart-icon path:nth-child(3) {
+  opacity: 0;
 }
 
 /* Shop Category Tabs */
