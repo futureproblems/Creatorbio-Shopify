@@ -1586,6 +1586,7 @@
 
     initBottomTabs() {
       const tabs = this.page.querySelectorAll('.cb-bottom-tab');
+      const contentArea = this.page.querySelector('.cb-content-area');
 
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -1598,6 +1599,11 @@
           this.page.querySelectorAll('[data-tab-content]').forEach(content => {
             content.style.display = content.dataset.tabContent === tabName ? 'block' : 'none';
           });
+
+          // Scroll to content area top
+          if (contentArea) {
+            contentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         });
       });
     }
