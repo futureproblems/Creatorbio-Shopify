@@ -829,8 +829,8 @@ body.cb-suppress-cart cart-notification {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #2C2416;
-  color: #fff;
+  background: var(--cb-accent);
+  color: var(--cb-bg-primary);
   font-size: 9px;
   font-weight: 600;
   display: flex;
@@ -1013,7 +1013,7 @@ body.cb-suppress-cart cart-notification {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(44,36,22,0.2);
+  background: var(--cb-border);
   border: none;
   padding: 0;
   cursor: pointer;
@@ -1021,7 +1021,7 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__carousel-dot.active {
-  background: #2C2416;
+  background: var(--cb-text-primary);
   transform: scale(1.2);
 }
 
@@ -1041,7 +1041,7 @@ body.cb-suppress-cart cart-notification {
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-md);
   font-weight: var(--cb-weight-normal);
-  color: var(--cb-text-tertiary);
+  color: var(--cb-text-primary);
   line-height: var(--cb-leading-snug);
 }
 
@@ -1049,7 +1049,7 @@ body.cb-suppress-cart cart-notification {
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-xl);
   font-weight: var(--cb-weight-semibold);
-  color: var(--cb-text-primary);
+  color: var(--cb-accent);
   letter-spacing: var(--cb-tracking-tight);
   line-height: var(--cb-leading-tight);
   margin-top: var(--cb-space-xs);
@@ -1077,14 +1077,14 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__size-btn:hover {
-  background: rgba(255,255,255,0.9);
+  background: var(--cb-bg-elevated);
   transform: translateY(-1px);
 }
 
 .cb-shop__size-btn.selected {
-  background: #2C2416;
-  color: #fff;
-  border-color: #2C2416;
+  background: var(--cb-accent);
+  color: var(--cb-bg-primary);
+  border-color: var(--cb-accent);
 }
 
 /* Details View */
@@ -1144,7 +1144,7 @@ body.cb-suppress-cart cart-notification {
   align-items: center;
   gap: 14px;
   padding: 16px 0;
-  border-bottom: 1px solid rgba(44,36,22,0.1);
+  border-bottom: 1px solid var(--cb-border);
   animation: fadeInUp 400ms var(--cb-ease);
 }
 
@@ -1201,7 +1201,7 @@ body.cb-suppress-cart cart-notification {
 .cb-shop__cart-remove {
   background: none;
   border: none;
-  color: #8B7D6B;
+  color: var(--cb-text-muted);
   font-size: 18px;
   cursor: pointer;
   padding: 8px;
@@ -1223,9 +1223,9 @@ body.cb-suppress-cart cart-notification {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid rgba(44,36,22,0.2);
+  border: 1px solid var(--cb-border);
   background: transparent;
-  color: #5C4D3C;
+  color: var(--cb-text-secondary);
   font-size: 14px;
   cursor: pointer;
   display: flex;
@@ -1236,7 +1236,7 @@ body.cb-suppress-cart cart-notification {
 
 .cb-shop__cart-qty-btn:hover {
   background: var(--cb-accent);
-  color: var(--cb-text-inverse);
+  color: var(--cb-bg-primary);
   border-color: var(--cb-accent);
   transform: scale(1.05);
 }
@@ -1248,7 +1248,7 @@ body.cb-suppress-cart cart-notification {
 .cb-shop__cart-qty-value {
   font-size: 13px;
   font-weight: 500;
-  color: #2C2416;
+  color: var(--cb-text-primary);
   min-width: 20px;
   text-align: center;
 }
@@ -1256,7 +1256,7 @@ body.cb-suppress-cart cart-notification {
 /* Checkout Section */
 .cb-shop__checkout {
   padding: 16px 0 20px;
-  border-top: 1px solid rgba(44,36,22,0.1);
+  border-top: 1px solid var(--cb-border);
   margin-top: 16px;
 }
 
@@ -1293,7 +1293,7 @@ body.cb-suppress-cart cart-notification {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(44,36,22,0.15);
+  background: var(--cb-border);
 }
 
 .cb-shop__checkout-divider span {
@@ -1360,7 +1360,7 @@ body.cb-suppress-cart cart-notification {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(44,36,22,0.15);
+  background: var(--cb-border);
 }
 
 .cb-shop__checkout-or span {
@@ -1598,8 +1598,8 @@ body.cb-suppress-cart cart-notification {
 .cb-shop__spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid rgba(44,36,22,0.1);
-  border-top-color: #2C2416;
+  border: 2px solid var(--cb-border);
+  border-top-color: var(--cb-text-primary);
   border-radius: 50%;
   animation: cb-spin 0.8s linear infinite;
 }
