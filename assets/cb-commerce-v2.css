@@ -1293,37 +1293,42 @@ body.cb-suppress-cart cart-notification {
 
 /* Checkout Section */
 .cb-shop__checkout {
-  padding: 16px 0 20px;
-  border-top: 1px solid var(--cb-border);
-  margin-top: 16px;
+  padding: 20px;
+  background: var(--cb-surface);
+  border-radius: 20px;
+  margin-top: 20px;
 }
 
 .cb-shop__checkout-total {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  padding-bottom: 20px;
   margin-bottom: 20px;
+  border-bottom: 1px solid var(--cb-border);
 }
 
 .cb-shop__checkout-total span:first-child {
   font-family: var(--cb-font-body);
-  font-size: var(--cb-text-md);
+  font-size: var(--cb-text-sm);
   font-weight: var(--cb-weight-medium);
-  color: var(--cb-text-tertiary);
+  color: var(--cb-text-muted);
+  letter-spacing: var(--cb-tracking-wider);
+  text-transform: uppercase;
 }
 
 .cb-shop__checkout-total span:last-child {
   font-family: var(--cb-font-body);
-  font-size: var(--cb-text-2xl);
+  font-size: var(--cb-text-3xl);
   font-weight: var(--cb-weight-bold);
-  color: var(--cb-text-primary);
+  color: var(--cb-accent);
   letter-spacing: var(--cb-tracking-tight);
 }
 
 .cb-shop__checkout-divider {
   display: flex;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .cb-shop__checkout-divider::before,
@@ -1335,19 +1340,19 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__checkout-divider span {
-  padding: 0 12px;
+  padding: 0 14px;
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-xs);
   font-weight: var(--cb-weight-medium);
   color: var(--cb-text-muted);
-  letter-spacing: var(--cb-tracking-wider);
+  letter-spacing: var(--cb-tracking-widest);
   text-transform: uppercase;
 }
 
 .cb-shop__express-buttons {
   display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .cb-shop__express-btn {
@@ -1356,15 +1361,20 @@ body.cb-suppress-cart cart-notification {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 8px;
-  border-radius: var(--cb-radius-md);
+  padding: 14px 10px;
+  border-radius: 12px;
   border: none;
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-sm);
   font-weight: var(--cb-weight-semibold);
-  letter-spacing: var(--cb-tracking-wide);
+  letter-spacing: var(--cb-tracking-normal);
   cursor: pointer;
-  transition: transform var(--cb-duration-fast) var(--cb-ease), opacity var(--cb-duration-fast) var(--cb-ease);
+  transition: all var(--cb-duration) var(--cb-ease);
+}
+
+.cb-shop__express-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .cb-shop__express-btn:active {
@@ -1376,10 +1386,18 @@ body.cb-suppress-cart cart-notification {
   color: #fff;
 }
 
+.cb-shop__express-btn--apple:hover {
+  background: #1a1a1a;
+}
+
 .cb-shop__express-btn--google {
   background: #fff;
-  color: #5f6368;
-  border: 1px solid rgba(0,0,0,0.1);
+  color: #3c4043;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.cb-shop__express-btn--google:hover {
+  background: #f8f9fa;
 }
 
 .cb-shop__express-btn--shop {
@@ -1387,10 +1405,14 @@ body.cb-suppress-cart cart-notification {
   color: #fff;
 }
 
+.cb-shop__express-btn--shop:hover {
+  background: #4925d1;
+}
+
 .cb-shop__checkout-or {
   display: flex;
   align-items: center;
-  margin-bottom: 14px;
+  margin: 16px 0;
 }
 
 .cb-shop__checkout-or::before,
@@ -1407,17 +1429,17 @@ body.cb-suppress-cart cart-notification {
   font-size: var(--cb-text-xs);
   font-weight: var(--cb-weight-medium);
   color: var(--cb-text-muted);
-  letter-spacing: var(--cb-tracking-wider);
+  letter-spacing: var(--cb-tracking-widest);
   text-transform: uppercase;
 }
 
 .cb-shop__checkout-btn {
   width: 100%;
-  padding: 14px 24px;
-  background: var(--cb-accent);
-  color: var(--cb-text-inverse);
+  padding: 16px 24px;
+  background: var(--cb-text-primary);
+  color: var(--cb-bg-primary);
   border: none;
-  border-radius: var(--cb-radius-md);
+  border-radius: 14px;
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-md);
   font-weight: var(--cb-weight-semibold);
@@ -1428,9 +1450,9 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__checkout-btn:hover {
-  background: #3d3220;
+  background: var(--cb-accent);
   transform: translateY(-2px);
-  box-shadow: var(--cb-shadow-xl);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
 .cb-shop__checkout-btn:active {
