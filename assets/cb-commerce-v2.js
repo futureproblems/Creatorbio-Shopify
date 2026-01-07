@@ -410,18 +410,32 @@
           </div>
           <div class="cb-shop__cart-item-info">
             <p class="name">${item.title}</p>
-            <p class="price">$${item.price.toFixed(2)}</p>
-            <p class="meta">Size: ${item.size} · Creator - ${item.creator || this.creator}</p>
+            <p class="price">$${(item.price * item.quantity).toFixed(2)}</p>
+            <p class="meta">Size: ${item.size}</p>
           </div>
-          <button class="cb-shop__cart-remove" data-remove-index="${index}">×</button>
+          <div class="cb-shop__cart-qty">
+            <button class="cb-shop__cart-qty-btn" data-qty-action="decrease" data-index="${index}">−</button>
+            <span class="cb-shop__cart-qty-value">${item.quantity}</span>
+            <button class="cb-shop__cart-qty-btn" data-qty-action="increase" data-index="${index}">+</button>
+          </div>
         </div>
       `).join('');
 
-      // Bind remove buttons
-      itemsContainer.querySelectorAll('[data-remove-index]').forEach(btn => {
+      // Bind quantity buttons
+      itemsContainer.querySelectorAll('[data-qty-action]').forEach(btn => {
         btn.addEventListener('click', () => {
-          const index = parseInt(btn.dataset.removeIndex, 10);
-          this.cart.splice(index, 1);
+          const index = parseInt(btn.dataset.index, 10);
+          const action = btn.dataset.qtyAction;
+
+          if (action === 'increase') {
+            this.cart[index].quantity += 1;
+          } else if (action === 'decrease') {
+            this.cart[index].quantity -= 1;
+            if (this.cart[index].quantity <= 0) {
+              this.cart.splice(index, 1);
+            }
+          }
+
           this.saveCart();
           this.updateShopCartBadge();
           this.renderShopCart();
