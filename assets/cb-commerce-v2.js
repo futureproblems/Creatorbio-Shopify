@@ -39,7 +39,7 @@
     // ============================================
 
     init() {
-      // Clear cart and customer info on each page load (fresh session)
+      // Initialize session data (clears cart only on thank-you page after purchase)
       this.clearSessionData();
 
       this.bindEvents();
@@ -169,6 +169,9 @@
           // Could show/hide tab content here
         });
       });
+
+      // Update cart badge with any existing cart items from localStorage
+      this.updateShopCartBadge();
     }
 
     setShopView(view) {
