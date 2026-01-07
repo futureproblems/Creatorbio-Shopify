@@ -117,7 +117,13 @@
             this.setShopView('details');
             break;
           case 'shop-show-cart':
-            this.setShopView('cart');
+            // If checkout form is open, go back to cart properly
+            const checkoutForm = this.shopSection?.querySelector('.cb-shop__checkout-form');
+            if (checkoutForm) {
+              this.backToCart();
+            } else {
+              this.setShopView('cart');
+            }
             break;
           case 'checkout-back-to-cart':
             this.backToCart();
