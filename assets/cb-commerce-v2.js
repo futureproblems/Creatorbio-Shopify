@@ -58,18 +58,26 @@
                              window.location.pathname.includes('/orders/') ||
                              document.querySelector('.os-step__title');
 
-      // Check if checkout was initiated
+      // Check if checkout was initiated (user went to Shopify checkout)
       const checkoutInitiated = sessionStorage.getItem('cb_checkout_initiated');
 
-      if (isThankYouPage && checkoutInitiated) {
-        // Order completed - clear the cart
+      if (isThankYouPage) {
+        // Order completed - clear everything
         this.cart = [];
         localStorage.removeItem(CART_STORAGE_KEY);
         sessionStorage.removeItem('cb_checkout_initiated');
         console.log('Order completed - cart cleared');
-      } else {
-        // Keep cart from localStorage (persists across sessions)
+      } else if (checkoutInitiated) {
+        // User returned from Shopify checkout (failed/cancelled) - keep cart for retry
         this.cart = this.loadCart();
+        // Clear the flag so next refresh will be fresh
+        sessionStorage.removeItem('cb_checkout_initiated');
+        console.log('Returned from checkout - cart preserved');
+      } else {
+        // Normal page load/refresh - fresh cart
+        this.cart = [];
+        localStorage.removeItem(CART_STORAGE_KEY);
+        console.log('Fresh session - cart cleared');
       }
 
       // Clear customer info (don't persist sensitive data)
