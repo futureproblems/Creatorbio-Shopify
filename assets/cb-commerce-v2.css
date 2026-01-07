@@ -1764,21 +1764,22 @@ body.cb-suppress-cart cart-notification {
 .cb-shop__form-submit {
   width: 100%;
   padding: 16px 24px;
-  background: var(--cb-accent);
-  color: var(--cb-bg-primary);
+  background: var(--cb-accent, #1A1612);
+  color: #fff;
   border: none;
   border-radius: 100px;
-  font-family: var(--cb-font-body);
-  font-size: var(--cb-text-sm);
-  font-weight: var(--cb-weight-semibold);
-  letter-spacing: var(--cb-tracking-wide);
+  font-family: var(--cb-font-body, 'Inter', sans-serif);
+  font-size: var(--cb-text-sm, 11px);
+  font-weight: var(--cb-weight-semibold, 600);
+  letter-spacing: var(--cb-tracking-wide, 0.02em);
   cursor: pointer;
-  transition: transform var(--cb-duration) var(--cb-ease), opacity var(--cb-duration) var(--cb-ease);
+  transition: transform var(--cb-duration, 350ms) var(--cb-ease, ease), opacity var(--cb-duration, 350ms) var(--cb-ease, ease);
   -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 52px;
+  text-transform: uppercase;
 }
 
 .cb-shop__form-submit:hover {
