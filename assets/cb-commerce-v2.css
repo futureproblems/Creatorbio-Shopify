@@ -3234,7 +3234,7 @@ body.cb-suppress-cart cart-notification {
 .cb-lightbox__content {
   position: relative;
   z-index: 1;
-  max-width: 90vw;
+  max-width: min(90vw, 430px);
   max-height: 85vh;
   transform: scale(0.95);
   transition: transform 0.3s var(--cb-ease-out);
@@ -3254,15 +3254,15 @@ body.cb-suppress-cart cart-notification {
 
 .cb-lightbox__close {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 12px;
+  right: 12px;
   z-index: 2;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
