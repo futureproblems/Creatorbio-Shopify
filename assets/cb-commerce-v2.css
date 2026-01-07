@@ -905,10 +905,15 @@ body.cb-suppress-cart cart-notification {
   flex-shrink: 0;
   cursor: pointer;
   scroll-snap-align: start;
+  transition: transform 0.15s var(--cb-ease);
 }
 
 .cb-shop__product:active {
-  opacity: 0.8;
+  transform: scale(0.96);
+}
+
+.cb-shop__product:active .cb-shop__product-image {
+  opacity: 0.9;
 }
 
 .cb-shop__product-image {
