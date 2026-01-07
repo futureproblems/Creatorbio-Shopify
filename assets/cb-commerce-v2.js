@@ -474,6 +474,10 @@
         this.saveCart();
         this.updateShopCartBadge();
 
+        // Brief pulse animation
+        btn.classList.add('added');
+        setTimeout(() => btn.classList.remove('added'), 400);
+
         // Track
         this.trackEvent('add_to_cart', {
           product_id: product.id,

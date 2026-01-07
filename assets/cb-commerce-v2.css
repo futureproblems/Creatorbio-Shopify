@@ -1251,6 +1251,13 @@ body.cb-suppress-cart cart-notification {
   transform: translateY(-1px);
 }
 
+/* Size button clicked/added state - inverted colors */
+.cb-shop__size-btn.added {
+  background: var(--cb-accent, #1A1612);
+  color: #fff;
+  border-color: var(--cb-accent, #1A1612);
+}
+
 .cb-shop__size-btn.sold-out {
   opacity: 0.4;
   cursor: not-allowed;
