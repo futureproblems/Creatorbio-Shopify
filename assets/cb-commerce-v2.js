@@ -474,15 +474,9 @@
         this.saveCart();
         this.updateShopCartBadge();
 
-        // Show brief checkmark on button
-        const originalText = btn.textContent;
+        // Subtle pulse animation
         btn.classList.add('added');
-        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-
-        setTimeout(() => {
-          btn.classList.remove('added');
-          btn.textContent = originalText;
-        }, 800);
+        setTimeout(() => btn.classList.remove('added'), 600);
 
         // Track
         this.trackEvent('add_to_cart', {
