@@ -963,11 +963,11 @@ body.cb-suppress-cart cart-notification {
 
 .cb-shop__carousel {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0 12px 16px;
+  padding: 0 20px 20px;
   flex: 1;
   min-height: 0;
   -ms-overflow-style: none;
@@ -980,20 +980,28 @@ body.cb-suppress-cart cart-notification {
 
 .cb-shop__carousel-slide {
   flex-shrink: 0;
-  width: calc(100% - 40px);
-  max-width: 320px;
+  width: calc(100% - 48px);
+  max-width: 300px;
   aspect-ratio: 3/4;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
-  background: #fff;
+  background: var(--cb-bg-secondary);
   scroll-snap-align: center;
-  transition: transform var(--cb-duration) var(--cb-ease);
-  box-shadow: var(--cb-shadow-sm);
+  transition: all var(--cb-duration) var(--cb-ease);
+  position: relative;
 }
 
-.cb-shop__carousel-slide:hover {
-  transform: scale(1.01);
-  box-shadow: var(--cb-shadow-md);
+.cb-shop__carousel-slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  border: 1px solid var(--cb-border);
+  pointer-events: none;
+}
+
+.cb-shop__carousel-slide.active {
+  transform: scale(1.02);
 }
 
 .cb-shop__carousel-slide img {
@@ -1006,32 +1014,37 @@ body.cb-suppress-cart cart-notification {
 .cb-shop__carousel-dots {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  padding: 0 0 12px;
+  gap: 8px;
+  padding: 0 20px 16px;
 }
 
 .cb-shop__carousel-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--cb-border);
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: all 0.3s var(--cb-ease);
+  transition: all var(--cb-duration) var(--cb-ease);
+}
+
+.cb-shop__carousel-dot:hover {
+  background: var(--cb-text-muted);
 }
 
 .cb-shop__carousel-dot.active {
-  background: var(--cb-text-primary);
-  transform: scale(1.2);
+  background: var(--cb-accent);
+  width: 24px;
+  border-radius: 4px;
 }
 
 .cb-shop__product-info {
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
-  gap: 8px 12px;
-  padding: 12px 0 16px;
+  gap: 10px 16px;
+  padding: 0 20px 20px;
   flex-shrink: 0;
 }
 
