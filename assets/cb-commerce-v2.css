@@ -2264,7 +2264,8 @@ body.cb-suppress-cart cart-notification {
 
 .cb-bottom-tabs {
   display: flex;
-  gap: var(--cb-space-lg);
+  justify-content: flex-start;
+  gap: var(--cb-space-2xl);
   padding: var(--cb-space-xl) 0 var(--cb-space-md);
   border-bottom: 1px solid var(--cb-border-default);
   margin-top: var(--cb-space-lg);
@@ -2293,7 +2294,7 @@ body.cb-suppress-cart cart-notification {
   transition: color var(--cb-duration) var(--cb-ease);
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .cb-bottom-tab:hover {
