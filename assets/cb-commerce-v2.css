@@ -853,24 +853,18 @@ body.cb-suppress-cart cart-notification {
 
 .cb-shop__cart-count {
   position: absolute;
-  top: 50%;
+  top: 54%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: var(--cb-weight-bold);
   color: var(--cb-text-primary);
   line-height: 1;
-  margin-top: 2px;
 }
 
 /* Hide count when empty */
 .cb-shop__cart-count:empty {
   display: none;
-}
-
-/* When count is visible, fade the bag handles */
-.cb-shop__cart-btn:has(.cb-shop__cart-count:not(:empty)) .cb-shop__cart-icon path:nth-child(3) {
-  opacity: 0;
 }
 
 /* Shop Category Tabs */
