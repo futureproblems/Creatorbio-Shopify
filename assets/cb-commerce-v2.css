@@ -1775,6 +1775,10 @@ body.cb-suppress-cart cart-notification {
   cursor: pointer;
   transition: transform var(--cb-duration) var(--cb-ease), opacity var(--cb-duration) var(--cb-ease);
   -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
 }
 
 .cb-shop__form-submit:hover {
@@ -1871,12 +1875,19 @@ body.cb-suppress-cart cart-notification {
 
 /* Loading Spinner */
 .cb-shop__spinner {
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--cb-border);
-  border-top-color: var(--cb-text-primary);
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: cb-spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+/* Spinner in button - center it */
+.cb-shop__form-submit .cb-shop__spinner {
+  margin: 0 auto;
 }
 
 @keyframes cb-spin {
