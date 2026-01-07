@@ -1127,6 +1127,28 @@ body.cb-suppress-cart cart-notification {
   border-color: var(--cb-text-primary);
 }
 
+.cb-shop__size-btn.sold-out {
+  opacity: 0.4;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.cb-shop__size-btn.sold-out::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: var(--cb-text-primary);
+  transform: rotate(-45deg);
+}
+
+.cb-shop__size-btn.sold-out:hover {
+  transform: none;
+  border-color: var(--cb-border);
+}
+
 /* Details View */
 .cb-shop__details-view {
   padding: 0 20px 20px;
