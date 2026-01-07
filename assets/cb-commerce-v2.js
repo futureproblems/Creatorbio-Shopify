@@ -1586,7 +1586,7 @@
 
     initBottomTabs() {
       const tabs = this.page.querySelectorAll('.cb-bottom-tab');
-      const contentArea = this.page.querySelector('.cb-content-area');
+      const tabsContainer = this.page.querySelector('.cb-bottom-tabs');
 
       tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -1600,9 +1600,9 @@
             content.style.display = content.dataset.tabContent === tabName ? 'block' : 'none';
           });
 
-          // Scroll to content area top
-          if (contentArea) {
-            contentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Scroll so tabs are at the top of viewport
+          if (tabsContainer) {
+            tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         });
       });

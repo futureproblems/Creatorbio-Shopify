@@ -2267,9 +2267,14 @@ body.cb-suppress-cart cart-notification {
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   gap: 0;
-  padding: var(--cb-space-lg) 0 var(--cb-space-sm);
+  padding: var(--cb-space-lg) var(--cb-space-xl) var(--cb-space-sm);
+  margin: var(--cb-space-md) calc(-1 * var(--cb-space-xl)) 0;
   border-bottom: 1px solid var(--cb-border-default);
-  margin-top: var(--cb-space-md);
+  /* Sticky positioning */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--cb-bg-primary);
 }
 
 .cb-bottom-tab {
