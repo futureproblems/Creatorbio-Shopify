@@ -849,23 +849,20 @@ body.cb-suppress-cart cart-notification {
 
 .cb-shop__cart-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  max-width: 32px;
-  height: 18px;
-  padding: 0 5px;
+  bottom: 2px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
   border-radius: 100px;
   background: var(--cb-accent);
-  color: var(--cb-bg-primary);
-  font-size: 10px;
-  font-weight: var(--cb-weight-semibold);
+  color: #fff;
+  font-size: 9px;
+  font-weight: var(--cb-weight-bold);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1;
 }
 
 /* Shop Category Tabs */
