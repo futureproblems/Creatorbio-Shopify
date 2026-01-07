@@ -207,41 +207,45 @@
 
       let touchStartX = 0;
       let touchStartY = 0;
-      let touchEndX = 0;
-      let touchEndY = 0;
-      let isInsideScrollable = false;
+      let scrollableContainer = null;
 
       const minSwipeDistance = 80;
       const maxVerticalDistance = 100;
-      const edgeThreshold = 40; // Only trigger from left edge
+      const edgeThreshold = 30; // Only trigger from left edge
 
       this.shopSection.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
 
-        // Check if touch started inside a horizontally scrollable container
-        const target = e.target;
-        isInsideScrollable = !!target.closest('.cb-shop__carousel, .cb-shop__products, .cb-shop__categories');
+        // Find if touch started inside a horizontally scrollable container
+        scrollableContainer = e.target.closest('.cb-shop__carousel, .cb-shop__products, .cb-shop__categories');
       }, { passive: true });
 
       this.shopSection.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
 
         const deltaX = touchEndX - touchStartX;
         const deltaY = Math.abs(touchEndY - touchStartY);
 
-        // Only trigger swipe back if:
-        // 1. Started from left edge OR not inside a scrollable container
-        // 2. Swipe distance is sufficient
-        // 3. Mostly horizontal movement
-        const startedFromEdge = touchStartX < edgeThreshold;
-
-        if (deltaX > minSwipeDistance && deltaY < maxVerticalDistance) {
-          if (startedFromEdge || !isInsideScrollable) {
-            this.handleSwipeBack();
-          }
+        // Only process right swipes
+        if (deltaX <= minSwipeDistance || deltaY >= maxVerticalDistance) {
+          return;
         }
+
+        // If started from left edge, always allow swipe back
+        if (touchStartX < edgeThreshold) {
+          this.handleSwipeBack();
+          return;
+        }
+
+        // If inside a scrollable container, don't trigger swipe back
+        if (scrollableContainer) {
+          return;
+        }
+
+        // Otherwise allow swipe back
+        this.handleSwipeBack();
       }, { passive: true });
     }
 
