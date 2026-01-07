@@ -165,7 +165,16 @@
 
     {%- comment -%} Cart View {%- endcomment -%}
     <div class="cb-shop__cart-view" data-shop-content="cart" style="display: none;">
-      <p class="cb-shop__cart-empty" data-shop-cart-empty>Your cart is empty</p>
+      <div class="cb-shop__cart-empty" data-shop-cart-empty>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M6 6h15l-1.5 9h-12z"/>
+          <circle cx="9" cy="20" r="1" fill="currentColor"/>
+          <circle cx="18" cy="20" r="1" fill="currentColor"/>
+          <path d="M6 6L5 3H2"/>
+        </svg>
+        <p>Your cart is empty</p>
+        <button class="cb-shop__cart-empty-btn" data-action="shop-back-to-grid">Continue Shopping</button>
+      </div>
       <div data-shop-cart-items>
         {%- comment -%} Cart items populated by JS {%- endcomment -%}
       </div>

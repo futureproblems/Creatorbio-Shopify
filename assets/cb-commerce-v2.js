@@ -599,6 +599,12 @@
         const methodLabel = methodLabels[expressMethod] || 'Express Pay';
 
         formContainer.innerHTML = `
+          <button type="button" class="cb-shop__form-back" data-action="checkout-back-to-cart">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to cart
+          </button>
           <p class="cb-shop__form-note">Enter your details to continue with ${methodLabel}</p>
 
           <form class="cb-shop__form" data-checkout-form data-express="true" data-method="${expressMethod}">
@@ -623,6 +629,13 @@
       } else {
         // Full checkout form
         formContainer.innerHTML = `
+          <button type="button" class="cb-shop__form-back" data-action="checkout-back-to-cart">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to cart
+          </button>
+
           <form class="cb-shop__form" data-checkout-form>
             <div class="cb-shop__form-section">
               <label>Contact</label>

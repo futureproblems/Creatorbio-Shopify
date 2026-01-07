@@ -1242,11 +1242,43 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 60px 20px;
+  color: var(--cb-text-muted);
+}
+
+.cb-shop__cart-empty svg {
+  opacity: 0.4;
+  margin-bottom: 16px;
+}
+
+.cb-shop__cart-empty p {
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-base);
-  color: var(--cb-text-muted);
-  padding-top: 60px;
+  font-weight: var(--cb-weight-medium);
+  margin: 0 0 20px;
+}
+
+.cb-shop__cart-empty-btn {
+  padding: 12px 24px;
+  background: var(--cb-accent);
+  color: var(--cb-bg-primary);
+  border: none;
+  border-radius: 100px;
+  font-family: var(--cb-font-body);
+  font-size: var(--cb-text-sm);
+  font-weight: var(--cb-weight-semibold);
+  cursor: pointer;
+  transition: opacity var(--cb-duration) var(--cb-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cb-shop__cart-empty-btn:hover {
+  opacity: 0.85;
 }
 
 .cb-shop__cart-item {
