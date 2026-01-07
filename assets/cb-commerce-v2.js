@@ -362,8 +362,8 @@
           btn.classList.remove('added');
         }, 1200);
 
-        // Show "Added to cart" message
-        this.showAddedToCartMessage();
+        // Show "Added to cart" message above the clicked button
+        this.showAddedToCartMessage(btn);
 
         // Track
         this.trackEvent('add_to_cart', {
@@ -375,7 +375,7 @@
       }
     }
 
-    showAddedToCartMessage() {
+    showAddedToCartMessage(btn) {
       // Remove existing message if any
       const existing = this.shopSection?.querySelector('.cb-shop__added-message');
       if (existing) existing.remove();
@@ -390,12 +390,9 @@
         Added
       `;
 
-      // Append to product info area (positioned absolutely)
-      const productInfo = this.shopSection?.querySelector('.cb-shop__product-info');
-      if (productInfo) {
-        productInfo.style.position = 'relative';
-        productInfo.appendChild(message);
-      }
+      // Position relative to clicked button
+      btn.style.position = 'relative';
+      btn.appendChild(message);
 
       // Animate in
       requestAnimationFrame(() => {
