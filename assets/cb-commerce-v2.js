@@ -478,9 +478,6 @@
         btn.classList.add('added');
         this.showAddedToCartMessage(btn);
 
-        // Show success toast
-        this.showToast(`${product.title} added to cart`, 'success');
-
         // Remove both at the same time
         setTimeout(() => {
           btn.classList.remove('added');
@@ -970,45 +967,11 @@
       errorInputs.forEach(el => el.classList.remove('cb-shop__input-error'));
     }
 
-    showToast(message, type = 'error') {
-      // Remove existing toast
-      const existing = document.querySelector('.cb-shop__toast');
-      if (existing) existing.remove();
-
-      const toast = document.createElement('div');
-      toast.className = `cb-shop__toast cb-shop__toast--${type}`;
-      toast.innerHTML = `
-        <span>${message}</span>
-        <button class="cb-shop__toast-close" aria-label="Close">×</button>
-      `;
-
-      document.body.appendChild(toast);
-
-      // Animate in
-      requestAnimationFrame(() => {
-        toast.classList.add('visible');
-      });
-
-      // Close button
-      toast.querySelector('.cb-shop__toast-close').addEventListener('click', () => {
-        toast.classList.remove('visible');
-        setTimeout(() => toast.remove(), 300);
-      });
-
-      // Auto dismiss after 5 seconds
-      setTimeout(() => {
-        if (toast.parentNode) {
-          toast.classList.remove('visible');
-          setTimeout(() => toast.remove(), 300);
-        }
-      }, 5000);
-    }
-
     async syncCartAndOpenCheckout(usePopup = false) {
       try {
         // Validate cart has items
         if (this.cart.length === 0) {
-          this.showToast('Your cart is empty');
+          console.log('Cart is empty');
           return;
         }
 
@@ -1017,7 +980,7 @@
         const lineItems = this.cart.map(item => `${item.variantId}:${item.quantity}`).join(',');
 
         if (!lineItems) {
-          this.showToast('Unable to process cart items');
+          console.log('Unable to process cart items');
           return;
         }
 
@@ -1045,7 +1008,7 @@
         window.location.href = checkoutUrl;
       } catch (error) {
         console.error('Checkout error:', error);
-        this.showToast('Something went wrong. Please try again.');
+        console.error('Checkout failed');
 
         // Reset submit button
         const submitBtn = this.shopSection?.querySelector('.cb-shop__form-submit');
