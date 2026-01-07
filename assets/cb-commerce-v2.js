@@ -133,7 +133,7 @@
 
       // Shop size buttons
       this.shopSection.addEventListener('click', (e) => {
-        if (e.target.classList.contains('cb-shop__size-btn')) {
+        if (e.target.classList.contains('cb-shop__size-btn') && !e.target.classList.contains('sold-out')) {
           this.handleShopSizeSelect(e.target);
         }
       });
@@ -283,7 +283,7 @@
           sizesContainer.innerHTML = sizes.map(size => {
             const variant = variants.find(v => v.option1 === size);
             const available = variant?.available !== false;
-            return `<button class="cb-shop__size-btn" data-size="${size}" ${!available ? 'disabled' : ''}>${size}</button>`;
+            return `<button class="cb-shop__size-btn${!available ? ' sold-out' : ''}" data-size="${size}" ${!available ? 'disabled' : ''}>${size}</button>`;
           }).join('');
           this.shopSelectedSize = null;
         }
