@@ -3,9 +3,18 @@
    Based on user provided layout (No width bugs)
    ============================================ */
 
-/* === DISABLE DOUBLE-TAP ZOOM === */
-* {
+/* === GLOBAL RESETS === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   touch-action: manipulation;
+}
+
+/* Prevent horizontal overflow on all elements */
+img, video, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
 }
 
 /* === FONT IMPORTS === */
@@ -491,12 +500,14 @@ body.cb-suppress-cart cart-notification {
   min-height: 100vh;
   background: linear-gradient(180deg, var(--cb-bg-primary) 0%, var(--cb-bg-secondary) 100%);
   font-family: var(--cb-font-body);
+  width: 100%;
   max-width: 430px;
   margin: 0 auto;
   position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
   /* Added GPU transform to fix jitter but maintained original layout */
-  transform: translate3d(0,0,0); 
+  transform: translate3d(0,0,0);
 }
 
 /* ============================================
@@ -722,6 +733,9 @@ body.cb-suppress-cart cart-notification {
   padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
   position: relative;
   z-index: 4;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* ============================================
@@ -732,6 +746,9 @@ body.cb-suppress-cart cart-notification {
   display: flex;
   flex-direction: column;
   min-height: 320px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* When showing checkout form, allow natural height */
@@ -3234,8 +3251,8 @@ body.cb-suppress-cart cart-notification {
 .cb-lightbox__content {
   position: relative;
   z-index: 1;
-  max-width: min(90vw, 430px);
-  max-height: 85vh;
+  max-width: min(85vw, 360px);
+  max-height: 70vh;
   transform: scale(0.95);
   transition: transform 0.3s var(--cb-ease-out);
 }
@@ -3246,7 +3263,7 @@ body.cb-suppress-cart cart-notification {
 
 .cb-lightbox__content img {
   max-width: 100%;
-  max-height: 85vh;
+  max-height: 70vh;
   object-fit: contain;
   border-radius: var(--cb-radius-lg, 16px);
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
