@@ -1247,10 +1247,9 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__size-btn:hover {
+  border-color: var(--cb-text-primary, #1A1612);
   background: var(--cb-accent, #1A1612);
   color: #fff;
-  border-color: var(--cb-accent, #1A1612);
-  transform: translateY(-1px);
 }
 
 .cb-shop__size-btn.sold-out {
@@ -1275,11 +1274,12 @@ body.cb-suppress-cart cart-notification {
   border-color: var(--cb-border);
 }
 
-/* Size Button Added State - Stays filled */
+/* Size Button Added State - Brief pulse */
 .cb-shop__size-btn.added {
   background: var(--cb-accent, #1A1612);
-  color: #fff;
+  color: #fff !important;
   border-color: var(--cb-accent, #1A1612);
+  transform: scale(1.05);
 }
 
 /* Details View */
