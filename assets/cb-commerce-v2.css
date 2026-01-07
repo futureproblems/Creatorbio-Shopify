@@ -2264,7 +2264,6 @@ body.cb-suppress-cart cart-notification {
 
 .cb-bottom-tabs {
   display: flex;
-  justify-content: space-between;
   padding: var(--cb-space-xl) 0 var(--cb-space-md);
   border-bottom: 1px solid var(--cb-border-default);
   margin-top: var(--cb-space-lg);
@@ -2279,6 +2278,7 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-bottom-tab {
+  flex: 1;
   background: none;
   border: none;
   padding: var(--cb-space-xs) 0;
@@ -2293,7 +2293,7 @@ body.cb-suppress-cart cart-notification {
   transition: color var(--cb-duration) var(--cb-ease);
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
-  flex: 0 0 auto;
+  text-align: center;
 }
 
 .cb-bottom-tab:hover {
