@@ -229,9 +229,9 @@
         });
       }
 
-      // Scroll to top of shop section when changing views
+      // Scroll to center shop section when changing views
       if (previousView !== view) {
-        this.shopSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.shopSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
       // Update header elements
