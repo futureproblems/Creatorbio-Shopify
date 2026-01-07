@@ -284,10 +284,8 @@
     {%- assign has_videos = true -%}
   {%- endif -%}
 
-  {%- assign has_music = false -%}
-  {%- if music_items != blank -%}
-    {%- assign has_music = true -%}
-  {%- endif -%}
+  {%- comment -%} Music: always show if in section_order, let content handle empty state {%- endcomment -%}
+  {%- assign has_music = true -%}
 
   {%- comment -%} Exclusive and reviews - set to false until content exists {%- endcomment -%}
   {%- assign has_exclusive = false -%}
