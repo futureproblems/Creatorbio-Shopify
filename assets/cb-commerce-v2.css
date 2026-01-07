@@ -1271,7 +1271,9 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-shop__size-btn:hover {
-  border-color: var(--cb-text-muted);
+  background: var(--cb-text-primary);
+  border-color: var(--cb-text-primary);
+  color: var(--cb-bg-primary);
   transform: translateY(-1px);
 }
 
