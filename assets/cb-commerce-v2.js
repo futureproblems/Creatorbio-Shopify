@@ -639,12 +639,6 @@
           if (action === 'increase') {
             this.cart[index].quantity += 1;
           } else if (action === 'decrease') {
-            // Confirm before removing last item
-            if (this.cart[index].quantity === 1) {
-              if (!confirm('Remove this item from cart?')) {
-                return;
-              }
-            }
             this.cart[index].quantity -= 1;
             if (this.cart[index].quantity <= 0) {
               this.cart.splice(index, 1);
