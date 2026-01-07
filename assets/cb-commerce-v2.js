@@ -474,19 +474,15 @@
         this.saveCart();
         this.updateShopCartBadge();
 
-        // Show brief "added" state on button and message together
+        // Show brief checkmark on button
+        const originalText = btn.textContent;
         btn.classList.add('added');
-        this.showAddedToCartMessage(btn);
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
-        // Remove both at the same time
         setTimeout(() => {
           btn.classList.remove('added');
-          const message = btn.querySelector('.cb-shop__added-message');
-          if (message) {
-            message.classList.remove('visible');
-            setTimeout(() => message.remove(), 300);
-          }
-        }, 1200);
+          btn.textContent = originalText;
+        }, 800);
 
         // Track
         this.trackEvent('add_to_cart', {
@@ -496,31 +492,6 @@
           price: product.price,
         });
       }
-    }
-
-    showAddedToCartMessage(btn) {
-      // Remove existing message if any
-      const existing = this.shopSection?.querySelector('.cb-shop__added-message');
-      if (existing) existing.remove();
-
-      // Create message element
-      const message = document.createElement('div');
-      message.className = 'cb-shop__added-message';
-      message.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        Added
-      `;
-
-      // Position relative to clicked button
-      btn.style.position = 'relative';
-      btn.appendChild(message);
-
-      // Animate in
-      requestAnimationFrame(() => {
-        message.classList.add('visible');
-      });
     }
 
     updateShopCartBadge() {

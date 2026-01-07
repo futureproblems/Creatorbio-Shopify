@@ -1273,55 +1273,15 @@ body.cb-suppress-cart cart-notification {
   border-color: var(--cb-border);
 }
 
-/* Size Button Added State */
+/* Size Button Added State - Simple checkmark */
 .cb-shop__size-btn.added {
-  background: var(--cb-accent);
-  color: var(--cb-bg-primary);
-  border-color: var(--cb-accent);
-  transform: scale(1.1);
+  background: #28a745;
+  color: #fff;
+  border-color: #28a745;
 }
 
-/* Added to Cart Message - Floating Bubble */
-.cb-shop__added-message {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(8px) scale(0.9);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--cb-accent);
-  border-radius: 100px;
-  color: var(--cb-bg-primary);
-  font-family: var(--cb-font-body);
-  font-size: var(--cb-text-xs);
-  font-weight: var(--cb-weight-semibold);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: all 0.25s var(--cb-ease);
-  z-index: 10;
-}
-
-.cb-shop__added-message::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: var(--cb-accent);
-}
-
-.cb-shop__added-message.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
-}
-
-.cb-shop__added-message svg {
-  flex-shrink: 0;
+.cb-shop__size-btn.added svg {
+  display: block;
 }
 
 /* Details View */
