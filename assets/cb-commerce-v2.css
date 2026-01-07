@@ -1762,6 +1762,21 @@ body.cb-suppress-cart cart-notification {
   height: 14px;
 }
 
+/* Form Error States */
+.cb-shop__input-error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
+}
+
+.cb-shop__form-error {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--cb-font-body);
+  font-size: var(--cb-text-xs);
+  font-weight: var(--cb-weight-medium);
+  color: #dc3545;
+}
+
 /* Loading Spinner */
 .cb-shop__spinner {
   width: 24px;

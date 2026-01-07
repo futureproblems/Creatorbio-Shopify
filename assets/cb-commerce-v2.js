@@ -53,11 +53,26 @@
     }
 
     clearSessionData() {
-      // Reset cart on each page load
-      this.cart = [];
-      sessionStorage.removeItem(CART_STORAGE_KEY);
+      // Check if we're on a thank you page (order completed)
+      const isThankYouPage = window.location.pathname.includes('/thank_you') ||
+                             window.location.pathname.includes('/orders/') ||
+                             document.querySelector('.os-step__title');
 
-      // Clear customer info
+      // Check if checkout was initiated
+      const checkoutInitiated = sessionStorage.getItem('cb_checkout_initiated');
+
+      if (isThankYouPage && checkoutInitiated) {
+        // Order completed - clear the cart
+        this.cart = [];
+        localStorage.removeItem(CART_STORAGE_KEY);
+        sessionStorage.removeItem('cb_checkout_initiated');
+        console.log('Order completed - cart cleared');
+      } else {
+        // Keep cart from localStorage (persists across sessions)
+        this.cart = this.loadCart();
+      }
+
+      // Clear customer info (don't persist sensitive data)
       this.customerInfo = null;
 
       // Clear pricing data to force re-fetch (dynamic pricing)
@@ -659,14 +674,64 @@
         const formData = new FormData(form);
         const isExpressForm = form.dataset.express === 'true';
 
+        // Validate email
+        const email = formData.get('email');
+        const emailInput = form.querySelector('input[name="email"]');
+
+        if (!this.isValidEmail(email)) {
+          this.showFormError(emailInput, 'Please enter a valid email address');
+          return;
+        }
+
+        // Validate required fields
+        const firstName = formData.get('firstName');
+        const lastName = formData.get('lastName');
+
+        if (!firstName || firstName.trim() === '') {
+          const input = form.querySelector('input[name="firstName"]');
+          this.showFormError(input, 'First name is required');
+          return;
+        }
+
+        if (!lastName || lastName.trim() === '') {
+          const input = form.querySelector('input[name="lastName"]');
+          this.showFormError(input, 'Last name is required');
+          return;
+        }
+
+        // For full checkout, validate address fields
+        if (!isExpressForm) {
+          const address1 = formData.get('address1');
+          const city = formData.get('city');
+          const zip = formData.get('zip');
+
+          if (!address1 || address1.trim() === '') {
+            const input = form.querySelector('input[name="address1"]');
+            this.showFormError(input, 'Address is required');
+            return;
+          }
+
+          if (!city || city.trim() === '') {
+            const input = form.querySelector('input[name="city"]');
+            this.showFormError(input, 'City is required');
+            return;
+          }
+
+          if (!zip || zip.trim() === '') {
+            const input = form.querySelector('input[name="zip"]');
+            this.showFormError(input, 'ZIP code is required');
+            return;
+          }
+        }
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Loading...';
 
         // Store customer info for checkout URL
         this.customerInfo = {
-          email: formData.get('email'),
-          firstName: formData.get('firstName'),
-          lastName: formData.get('lastName'),
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
         };
 
         // Only add full address for regular checkout
@@ -681,6 +746,45 @@
         // Open checkout (popup for express pay, modal for regular)
         await this.syncCartAndOpenCheckout(isExpressForm);
       });
+    }
+
+    isValidEmail(email) {
+      if (!email) return false;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email.trim());
+    }
+
+    showFormError(input, message) {
+      // Remove any existing error
+      this.clearFormErrors();
+
+      // Add error class to input
+      input.classList.add('cb-shop__input-error');
+
+      // Create error message
+      const errorEl = document.createElement('span');
+      errorEl.className = 'cb-shop__form-error';
+      errorEl.textContent = message;
+
+      // Insert after input
+      input.parentNode.insertBefore(errorEl, input.nextSibling);
+
+      // Focus the input
+      input.focus();
+
+      // Remove error on input change
+      input.addEventListener('input', () => {
+        input.classList.remove('cb-shop__input-error');
+        errorEl.remove();
+      }, { once: true });
+    }
+
+    clearFormErrors() {
+      const errors = document.querySelectorAll('.cb-shop__form-error');
+      errors.forEach(el => el.remove());
+
+      const errorInputs = document.querySelectorAll('.cb-shop__input-error');
+      errorInputs.forEach(el => el.classList.remove('cb-shop__input-error'));
     }
 
     async syncCartAndOpenCheckout(usePopup = false) {
@@ -704,9 +808,11 @@
       // Direct checkout URL - goes straight to checkout without touching cart API
       const checkoutUrl = `/cart/${lineItems}?${params.toString()}`;
 
-      // Clear local cart and redirect to checkout
-      this.cart = [];
-      this.saveCart();
+      // Mark that checkout was initiated (cart will be cleared after successful purchase)
+      // Keep cart in localStorage so if user backs out, they still have their items
+      sessionStorage.setItem('cb_checkout_initiated', 'true');
+
+      // Redirect to checkout
       window.location.href = checkoutUrl;
     }
 
@@ -1027,16 +1133,16 @@
 
     loadCart() {
       try {
-        // Use sessionStorage - cart resets when tab closes
-        return JSON.parse(sessionStorage.getItem(CART_STORAGE_KEY) || '[]');
+        // Use localStorage - cart persists across sessions
+        return JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
       } catch {
         return [];
       }
     }
 
     saveCart() {
-      // Use sessionStorage - cart resets when tab closes
-      sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(this.cart));
+      // Use localStorage - cart persists across sessions
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(this.cart));
       this.updateCartCount();
     }
 
