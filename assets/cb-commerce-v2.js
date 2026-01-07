@@ -209,13 +209,19 @@
       let touchStartY = 0;
       let touchEndX = 0;
       let touchEndY = 0;
+      let isInsideScrollable = false;
 
       const minSwipeDistance = 80;
       const maxVerticalDistance = 100;
+      const edgeThreshold = 40; // Only trigger from left edge
 
       this.shopSection.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
+
+        // Check if touch started inside a horizontally scrollable container
+        const target = e.target;
+        isInsideScrollable = !!target.closest('.cb-shop__carousel, .cb-shop__products, .cb-shop__categories');
       }, { passive: true });
 
       this.shopSection.addEventListener('touchend', (e) => {
@@ -225,9 +231,16 @@
         const deltaX = touchEndX - touchStartX;
         const deltaY = Math.abs(touchEndY - touchStartY);
 
-        // Check for horizontal swipe right (to go back)
+        // Only trigger swipe back if:
+        // 1. Started from left edge OR not inside a scrollable container
+        // 2. Swipe distance is sufficient
+        // 3. Mostly horizontal movement
+        const startedFromEdge = touchStartX < edgeThreshold;
+
         if (deltaX > minSwipeDistance && deltaY < maxVerticalDistance) {
-          this.handleSwipeBack();
+          if (startedFromEdge || !isInsideScrollable) {
+            this.handleSwipeBack();
+          }
         }
       }, { passive: true });
     }
