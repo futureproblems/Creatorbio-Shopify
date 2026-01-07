@@ -356,14 +356,19 @@
         this.saveCart();
         this.updateShopCartBadge();
 
-        // Show brief "added" state on button
+        // Show brief "added" state on button and message together
         btn.classList.add('added');
+        this.showAddedToCartMessage(btn);
+
+        // Remove both at the same time
         setTimeout(() => {
           btn.classList.remove('added');
+          const message = btn.querySelector('.cb-shop__added-message');
+          if (message) {
+            message.classList.remove('visible');
+            setTimeout(() => message.remove(), 300);
+          }
         }, 1200);
-
-        // Show "Added to cart" message above the clicked button
-        this.showAddedToCartMessage(btn);
 
         // Track
         this.trackEvent('add_to_cart', {
@@ -398,12 +403,6 @@
       requestAnimationFrame(() => {
         message.classList.add('visible');
       });
-
-      // Remove after delay
-      setTimeout(() => {
-        message.classList.remove('visible');
-        setTimeout(() => message.remove(), 300);
-      }, 1800);
     }
 
     updateShopCartBadge() {
