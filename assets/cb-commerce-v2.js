@@ -167,13 +167,13 @@
         }
       });
 
-      // Shop category tabs
+      // Shop category tabs with filtering
       const categoryBtns = this.shopSection.querySelectorAll('.cb-shop__category');
       categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           categoryBtns.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          // Filter would go here if needed
+          this.filterShopProducts(btn.dataset.category);
         });
       });
 
@@ -197,6 +197,64 @@
 
       // Update cart badge with any existing cart items from localStorage
       this.updateShopCartBadge();
+
+      // Swipe to go back gesture
+      this.initSwipeGestures();
+    }
+
+    initSwipeGestures() {
+      if (!this.shopSection) return;
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+
+      const minSwipeDistance = 80;
+      const maxVerticalDistance = 100;
+
+      this.shopSection.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      this.shopSection.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = Math.abs(touchEndY - touchStartY);
+
+        // Check for horizontal swipe right (to go back)
+        if (deltaX > minSwipeDistance && deltaY < maxVerticalDistance) {
+          this.handleSwipeBack();
+        }
+      }, { passive: true });
+    }
+
+    handleSwipeBack() {
+      // Only handle swipe back when not on grid view
+      if (this.shopView === 'grid') return;
+
+      // Check if checkout form is open
+      const checkoutForm = this.shopSection?.querySelector('.cb-shop__checkout-form');
+      if (checkoutForm) {
+        this.backToCart();
+        return;
+      }
+
+      // Navigate back based on current view
+      switch (this.shopView) {
+        case 'product':
+          this.setShopView('grid');
+          break;
+        case 'details':
+          this.setShopView('product');
+          break;
+        case 'cart':
+          this.setShopView('grid');
+          break;
+      }
     }
 
     setShopView(view) {
@@ -420,6 +478,9 @@
         btn.classList.add('added');
         this.showAddedToCartMessage(btn);
 
+        // Show success toast
+        this.showToast(`${product.title} added to cart`, 'success');
+
         // Remove both at the same time
         setTimeout(() => {
           btn.classList.remove('added');
@@ -471,6 +532,64 @@
         const count = this.cart.reduce((sum, item) => sum + item.quantity, 0);
         badge.textContent = count;
         badge.style.display = count > 0 ? 'flex' : 'none';
+      }
+    }
+
+    filterShopProducts(category) {
+      if (!this.shopSection) return;
+
+      const products = this.shopSection.querySelectorAll('.cb-shop__product');
+      let visibleCount = 0;
+
+      products.forEach(product => {
+        const productCategory = product.querySelector('.cb-shop__product-data');
+        let productData = null;
+
+        try {
+          productData = productCategory ? JSON.parse(productCategory.textContent) : null;
+        } catch (e) {}
+
+        // Get category from data attribute or product type
+        const productCat = product.dataset.category;
+
+        if (category === 'all' || productCat === category) {
+          product.style.display = '';
+          visibleCount++;
+        } else {
+          product.style.display = 'none';
+        }
+      });
+
+      // Show/hide empty state
+      this.toggleShopEmptyState(visibleCount === 0, category);
+    }
+
+    toggleShopEmptyState(isEmpty, category) {
+      const productsContainer = this.shopSection?.querySelector('[data-shop-content="grid"]');
+      if (!productsContainer) return;
+
+      // Remove existing empty state
+      const existingEmpty = productsContainer.querySelector('.cb-shop__empty-state');
+      if (existingEmpty) existingEmpty.remove();
+
+      if (isEmpty) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'cb-shop__empty-state';
+        emptyState.innerHTML = `
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <p>No products found${category !== 'all' ? ` in "${category}"` : ''}</p>
+          <button class="cb-shop__empty-btn" data-action="shop-clear-filter">View All Products</button>
+        `;
+        productsContainer.appendChild(emptyState);
+
+        // Bind clear filter button
+        emptyState.querySelector('[data-action="shop-clear-filter"]')?.addEventListener('click', () => {
+          const allBtn = this.shopSection.querySelector('.cb-shop__category[data-category="all"]');
+          if (allBtn) allBtn.click();
+        });
       }
     }
 
@@ -1632,16 +1751,29 @@
         const shopProducts = this.page.querySelectorAll('.cb-shop__product');
 
         shopProducts.forEach(product => {
+          const productId = product.dataset.productId;
           const priceElement = product.querySelector('.cb-shop__product-price');
+          const commissionBadge = product.querySelector('[data-commission-badge]');
+
           if (!priceElement) return;
 
           const basePrice = parseFloat(priceElement.dataset.basePrice);
           if (!basePrice || isNaN(basePrice)) return;
 
+          // Check if product has creator commission
+          const hasCommission = creatorProducts.some(p =>
+            p.product_id === productId || String(p.product_id) === productId
+          );
+
           // Apply pricing delta
           if (delta > 0) {
             const newPrice = basePrice * (1 + delta / 100);
             priceElement.textContent = `$${newPrice.toFixed(2)}`;
+          }
+
+          // Show commission badge if has commission
+          if (hasCommission && commissionBadge) {
+            commissionBadge.classList.add('show');
           }
 
           // Update embedded product data JSON
