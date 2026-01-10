@@ -2573,19 +2573,14 @@ body.cb-suppress-cart cart-notification {
   aspect-ratio: 16/9;
 }
 
-/* Portrait videos - fixed height, natural width */
+/* Portrait videos - all same size to match TikTok */
 .cb-video--portrait {
-  width: 270px;
-  height: 480px;
+  width: 325px;
+  height: 580px;
   scroll-snap-align: start;
 }
 
-/* TikTok - their embeds need more space */
-.cb-video--tiktok {
-  width: 325px;
-  height: 580px;
-}
-
+/* TikTok blockquote overrides */
 .cb-video--tiktok blockquote.tiktok-embed {
   margin: 0 !important;
   padding: 0 !important;
