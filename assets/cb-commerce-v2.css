@@ -2607,8 +2607,9 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-tiktok-inner {
-  width: 100%;
+  width: 75%;
   height: 100%;
+  margin: 0 auto;
   border-radius: 12px;
   overflow: hidden !important;
   background: #000;
@@ -2616,19 +2617,20 @@ body.cb-suppress-cart cart-notification {
   display: block;
 }
 
-.cb-tiktok-inner * {
-  max-width: 100%;
-  max-height: 100%;
-}
-
 .cb-video-wrapper-tiktok .tiktok-embed {
   margin: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  border: none !important;
   padding: 0 !important;
-  position: relative !important;
-  top: -1px !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+/* Target TikTok's injected container */
+.cb-tiktok-inner > div {
+  position: absolute !important;
+  top: 0 !important;
+  left: 46px !important;
+  right: -50px !important;
+  bottom: 0 !important;
 }
 
 /* ============================================
