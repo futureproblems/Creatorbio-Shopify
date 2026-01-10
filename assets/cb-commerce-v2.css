@@ -2585,46 +2585,45 @@ body.cb-suppress-cart cart-notification {
   border: none;
 }
 
-/* TikTok - Fixed dimensions at 75% scale (244x431px) */
+/* TikTok - Position-based cropping */
 .cb-video--tiktok {
   padding-top: 0; /* Override aspect ratio */
-  width: 244px !important;
-  max-width: 244px;
-  height: 431px !important;
-  min-height: 431px;
+  width: 325px;
+  max-width: 325px;
+  height: 575px;
   border-radius: var(--cb-radius-xl);
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: #000;
+  position: relative;
+  overflow: hidden;
 }
 
 .cb-video--tiktok .cb-tiktok-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  overflow: hidden !important;
-  background: #000;
   position: relative;
+  width: 75%;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .cb-video--tiktok .tiktok-embed {
   margin: 0 !important;
   padding: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  border: none !important;
-  position: relative !important;
-  top: -1px !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+.cb-video--tiktok .tiktok-embed > div {
+  position: absolute;
+  top: 0;
+  left: 46px;
+  right: -50px;
+  bottom: 0;
 }
 
 .cb-video--tiktok iframe {
   width: 100% !important;
   height: 100% !important;
   border: none !important;
-  border-radius: 12px !important;
+  border-radius: 0 !important;
 }
 
 /* ============================================
