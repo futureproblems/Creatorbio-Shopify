@@ -138,16 +138,30 @@
       {%- if portrait_videos contains 'tiktok' -%}
         <script>
           (function() {
-            function styleTikTokIframes() {
-              document.querySelectorAll('.cb-video--tiktok iframe').forEach(function(iframe) {
-                iframe.style.cssText = 'width:100%;height:100%;border:none;border-radius:var(--cb-radius-lg)';
-                iframe.setAttribute('scrolling', 'no');
+            function styleTikTokEmbeds() {
+              document.querySelectorAll('.cb-video--tiktok').forEach(function(container) {
+                var inner = container.querySelector('.cb-tiktok-inner');
+                if (!inner) return;
+
+                // Style the inner wrapper
+                inner.style.cssText = 'position:relative;width:75%;height:100%;margin:0 auto;';
+
+                // Find TikTok's injected container (first div child or the embed itself)
+                var tiktokContainer = inner.querySelector('div') || inner.firstElementChild;
+                if (tiktokContainer && tiktokContainer.tagName !== 'BLOCKQUOTE') {
+                  tiktokContainer.style.cssText = 'position:absolute;top:0;left:46px;right:-50px;bottom:0;';
+                }
+
+                // Style the iframe
+                var iframe = container.querySelector('iframe');
+                if (iframe) {
+                  iframe.style.cssText = 'width:100%;height:100%;border:none;';
+                  iframe.setAttribute('scrolling', 'no');
+                }
               });
             }
-            var check = setInterval(function() {
-              if (document.querySelector('.cb-video--tiktok iframe')) styleTikTokIframes();
-            }, 100);
-            setTimeout(function() { clearInterval(check); }, 10000);
+            var check = setInterval(styleTikTokEmbeds, 100);
+            setTimeout(function() { clearInterval(check); }, 15000);
           })();
         </script>
       {%- endif -%}
