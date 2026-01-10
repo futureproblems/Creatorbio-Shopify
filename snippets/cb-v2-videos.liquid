@@ -118,15 +118,17 @@
             {%- endif -%}
             {%- if video_id != blank -%}
               <div class="cb-video cb-video--portrait cb-video--tiktok" data-video-id="{{ video_id }}">
-                <blockquote
-                  class="tiktok-embed"
-                  cite="{{ video_url }}"
-                  data-video-id="{{ video_id }}"
-                >
-                  <section style="display:none;">
-                    <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
-                  </section>
-                </blockquote>
+                <div class="cb-tiktok-inner">
+                  <blockquote
+                    class="tiktok-embed"
+                    cite="{{ video_url }}"
+                    data-video-id="{{ video_id }}"
+                  >
+                    <section style="display:none;">
+                      <a target="_blank" href="{{ video_url }}" rel="noopener">View on TikTok</a>
+                    </section>
+                  </blockquote>
+                </div>
               </div>
             {%- endif -%}
           {%- endif -%}
