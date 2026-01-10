@@ -1,7 +1,7 @@
 {%- comment -%}
   CB Commerce V2 - Videos Component
-  Displays embedded videos from YouTube, YouTube Shorts, TikTok, Instagram Reels, and Vimeo
-  Layout matches creatorb-app [username]/page.tsx
+  Clean format-based layout: Landscape (YouTube, Vimeo) + Portrait (Shorts, TikTok)
+  No platform headings, no Instagram (unreliable embeds)
 {%- endcomment -%}
 
 {%- if videos_json != blank -%}
@@ -11,123 +11,113 @@
 {%- endif -%}
 
 {%- if videos != blank and videos.size > 0 -%}
-  {%- assign youtube_videos = '' -%}
-  {%- assign youtube_shorts_videos = '' -%}
-  {%- assign tiktok_videos = '' -%}
-  {%- assign instagram_videos = '' -%}
-  {%- assign vimeo_videos = '' -%}
+  {%- comment -%} Separate videos by format {%- endcomment -%}
+  {%- assign landscape_videos = '' -%}
+  {%- assign portrait_videos = '' -%}
 
   {%- for video in videos -%}
-    {%- if video.platform == 'youtube' -%}
-      {%- if youtube_videos == '' -%}
-        {%- assign youtube_videos = video.url -%}
-      {%- else -%}
-        {%- assign youtube_videos = youtube_videos | append: '|||' | append: video.url -%}
-      {%- endif -%}
-    {%- elsif video.platform == 'youtube_shorts' -%}
-      {%- if youtube_shorts_videos == '' -%}
-        {%- assign youtube_shorts_videos = video.url -%}
-      {%- else -%}
-        {%- assign youtube_shorts_videos = youtube_shorts_videos | append: '|||' | append: video.url -%}
-      {%- endif -%}
-    {%- elsif video.platform == 'tiktok' -%}
-      {%- if tiktok_videos == '' -%}
-        {%- assign tiktok_videos = video.url -%}
-      {%- else -%}
-        {%- assign tiktok_videos = tiktok_videos | append: '|||' | append: video.url -%}
-      {%- endif -%}
-    {%- elsif video.platform == 'instagram_reels' or video.platform == 'instagram' -%}
-      {%- if instagram_videos == '' -%}
-        {%- assign instagram_videos = video.url -%}
-      {%- else -%}
-        {%- assign instagram_videos = instagram_videos | append: '|||' | append: video.url -%}
-      {%- endif -%}
-    {%- elsif video.platform == 'vimeo' -%}
-      {%- if vimeo_videos == '' -%}
-        {%- assign vimeo_videos = video.url -%}
-      {%- else -%}
-        {%- assign vimeo_videos = vimeo_videos | append: '|||' | append: video.url -%}
-      {%- endif -%}
-    {%- endif -%}
+    {%- case video.platform -%}
+      {%- when 'youtube' or 'vimeo' -%}
+        {%- if landscape_videos == '' -%}
+          {%- assign landscape_videos = video.platform | append: '::' | append: video.url -%}
+        {%- else -%}
+          {%- assign landscape_videos = landscape_videos | append: '|||' | append: video.platform | append: '::' | append: video.url -%}
+        {%- endif -%}
+      {%- when 'youtube_shorts' or 'tiktok' -%}
+        {%- if portrait_videos == '' -%}
+          {%- assign portrait_videos = video.platform | append: '::' | append: video.url -%}
+        {%- else -%}
+          {%- assign portrait_videos = portrait_videos | append: '|||' | append: video.platform | append: '::' | append: video.url -%}
+        {%- endif -%}
+    {%- endcase -%}
   {%- endfor -%}
 
   <div class="cb-videos">
 
-    {%- comment -%} ========== YOUTUBE (Landscape) ========== {%- endcomment -%}
-    {%- if youtube_videos != '' -%}
-      {%- assign youtube_array = youtube_videos | split: '|||' -%}
-      <div class="cb-videos__section">
-        <h4 class="cb-videos__heading">YouTube</h4>
-        <div class="cb-videos__grid-landscape">
-          {%- for video_url in youtube_array -%}
-            {%- assign video_id = '' -%}
+    {%- comment -%} ========== LANDSCAPE VIDEOS ========== {%- endcomment -%}
+    {%- if landscape_videos != '' -%}
+      {%- assign landscape_array = landscape_videos | split: '|||' -%}
+      <div class="cb-videos__landscape">
+        {%- for item in landscape_array -%}
+          {%- assign parts = item | split: '::' -%}
+          {%- assign platform = parts[0] -%}
+          {%- assign video_url = parts[1] -%}
+          {%- assign video_id = '' -%}
+
+          {%- if platform == 'youtube' -%}
             {%- if video_url contains 'youtube.com/watch' -%}
               {%- assign video_id = video_url | split: 'v=' | last | split: '&' | first -%}
             {%- elsif video_url contains 'youtu.be/' -%}
               {%- assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first -%}
             {%- endif -%}
-
             {%- if video_id != blank -%}
-              <div class="cb-video-card cb-video-card--landscape">
+              <div class="cb-video cb-video--landscape">
                 <iframe
                   src="https://www.youtube.com/embed/{{ video_id }}"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen
                   loading="lazy"
-                  title="YouTube video"
+                  title="Video"
                 ></iframe>
               </div>
             {%- endif -%}
-          {%- endfor -%}
-        </div>
+          {%- elsif platform == 'vimeo' -%}
+            {%- if video_url contains 'vimeo.com/' -%}
+              {%- assign video_id = video_url | split: 'vimeo.com/' | last | split: '?' | first | split: '/' | first -%}
+            {%- endif -%}
+            {%- if video_id != blank -%}
+              <div class="cb-video cb-video--landscape">
+                <iframe
+                  src="https://player.vimeo.com/video/{{ video_id }}"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"
+                  title="Video"
+                ></iframe>
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
       </div>
     {%- endif -%}
 
-    {%- comment -%} ========== YOUTUBE SHORTS (Portrait, centered) ========== {%- endcomment -%}
-    {%- if youtube_shorts_videos != '' -%}
-      {%- assign shorts_array = youtube_shorts_videos | split: '|||' -%}
-      <div class="cb-videos__section">
-        <h4 class="cb-videos__heading">YouTube Shorts</h4>
-        <div class="cb-videos__portrait-stack">
-          {%- for video_url in shorts_array -%}
-            {%- assign video_id = '' -%}
+    {%- comment -%} ========== PORTRAIT VIDEOS ========== {%- endcomment -%}
+    {%- if portrait_videos != '' -%}
+      {%- assign portrait_array = portrait_videos | split: '|||' -%}
+
+      {%- comment -%} Load TikTok embed script if needed {%- endcomment -%}
+      {%- if portrait_videos contains 'tiktok' -%}
+        <script async src="https://www.tiktok.com/embed.js"></script>
+      {%- endif -%}
+
+      <div class="cb-videos__portrait">
+        {%- for item in portrait_array -%}
+          {%- assign parts = item | split: '::' -%}
+          {%- assign platform = parts[0] -%}
+          {%- assign video_url = parts[1] -%}
+          {%- assign video_id = '' -%}
+
+          {%- if platform == 'youtube_shorts' -%}
             {%- if video_url contains '/shorts/' -%}
               {%- assign video_id = video_url | split: '/shorts/' | last | split: '?' | first -%}
             {%- endif -%}
-
             {%- if video_id != blank -%}
-              <div class="cb-video-portrait">
+              <div class="cb-video cb-video--portrait">
                 <iframe
                   src="https://www.youtube.com/embed/{{ video_id }}"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen
-                  scrolling="no"
                   loading="lazy"
-                  title="YouTube Shorts"
+                  title="Video"
                 ></iframe>
               </div>
             {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} ========== TIKTOK (Portrait, centered) ========== {%- endcomment -%}
-    {%- if tiktok_videos != '' -%}
-      {%- assign tiktok_array = tiktok_videos | split: '|||' -%}
-      <script async src="https://www.tiktok.com/embed.js"></script>
-
-      <div class="cb-videos__section">
-        <h4 class="cb-videos__heading">TikTok</h4>
-        <div class="cb-videos__portrait-stack">
-          {%- for video_url in tiktok_array -%}
-            {%- assign video_id = '' -%}
+          {%- elsif platform == 'tiktok' -%}
             {%- if video_url contains '/video/' -%}
               {%- assign video_id = video_url | split: '/video/' | last | split: '?' | first -%}
             {%- endif -%}
-
             {%- if video_id != blank -%}
-              <div class="cb-video-portrait cb-video-portrait--tiktok" data-video-id="{{ video_id }}">
+              <div class="cb-video cb-video--portrait cb-video--tiktok" data-video-id="{{ video_id }}">
                 <blockquote
                   class="tiktok-embed"
                   cite="{{ video_url }}"
@@ -139,249 +129,31 @@
                 </blockquote>
               </div>
             {%- endif -%}
-          {%- endfor -%}
-        </div>
+          {%- endif -%}
+        {%- endfor -%}
       </div>
 
-      {%- comment -%} JavaScript to style TikTok iframes when they load {%- endcomment -%}
-      <script>
-        (function() {
-          function styleTikTokIframes() {
-            var containers = document.querySelectorAll('.cb-video-portrait--tiktok');
-            containers.forEach(function(container) {
-              var iframe = container.querySelector('iframe');
-              if (iframe) {
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
-                iframe.style.borderRadius = '12px';
+      {%- if portrait_videos contains 'tiktok' -%}
+        <script>
+          (function() {
+            function styleTikTokIframes() {
+              document.querySelectorAll('.cb-video--tiktok iframe').forEach(function(iframe) {
+                iframe.style.cssText = 'width:100%;height:100%;border:none;border-radius:var(--cb-radius-lg)';
                 iframe.setAttribute('scrolling', 'no');
-              }
-            });
-          }
-
-          var checkInterval = setInterval(function() {
-            var iframes = document.querySelectorAll('.cb-video-portrait--tiktok iframe');
-            if (iframes.length > 0) {
-              styleTikTokIframes();
+              });
             }
-          }, 100);
-
-          setTimeout(function() {
-            clearInterval(checkInterval);
-          }, 10000);
-        })();
-      </script>
-    {%- endif -%}
-
-    {%- comment -%} ========== INSTAGRAM REELS (Portrait, centered) ========== {%- endcomment -%}
-    {%- if instagram_videos != '' -%}
-      {%- assign instagram_array = instagram_videos | split: '|||' -%}
-      <div class="cb-videos__section">
-        <h4 class="cb-videos__heading">Instagram</h4>
-        <div class="cb-videos__portrait-stack">
-          {%- for ig_url in instagram_array -%}
-            {%- assign video_id = '' -%}
-            {%- if ig_url contains '/reel/' -%}
-              {%- assign video_id = ig_url | split: '/reel/' | last | split: '/' | first | split: '?' | first -%}
-            {%- elsif ig_url contains '/p/' -%}
-              {%- assign video_id = ig_url | split: '/p/' | last | split: '/' | first | split: '?' | first -%}
-            {%- endif -%}
-
-            {%- if video_id != blank -%}
-              <div class="cb-video-portrait">
-                <iframe
-                  src="https://www.instagram.com/p/{{ video_id }}/embed"
-                  frameborder="0"
-                  scrolling="no"
-                  allowtransparency="true"
-                  allowfullscreen
-                  loading="lazy"
-                  title="Instagram"
-                ></iframe>
-              </div>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
-    {%- endif -%}
-
-    {%- comment -%} ========== VIMEO (Landscape) ========== {%- endcomment -%}
-    {%- if vimeo_videos != '' -%}
-      {%- assign vimeo_array = vimeo_videos | split: '|||' -%}
-      <div class="cb-videos__section">
-        <h4 class="cb-videos__heading">Vimeo</h4>
-        <div class="cb-videos__grid-landscape">
-          {%- for video_url in vimeo_array -%}
-            {%- assign video_id = '' -%}
-            {%- if video_url contains 'vimeo.com/' -%}
-              {%- assign video_id = video_url | split: 'vimeo.com/' | last | split: '?' | first | split: '/' | first -%}
-            {%- endif -%}
-
-            {%- if video_id != blank -%}
-              <div class="cb-video-card cb-video-card--landscape">
-                <iframe
-                  src="https://player.vimeo.com/video/{{ video_id }}"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowfullscreen
-                  loading="lazy"
-                  title="Vimeo video"
-                ></iframe>
-              </div>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
+            var check = setInterval(function() {
+              if (document.querySelector('.cb-video--tiktok iframe')) styleTikTokIframes();
+            }, 100);
+            setTimeout(function() { clearInterval(check); }, 10000);
+          })();
+        </script>
+      {%- endif -%}
     {%- endif -%}
 
   </div>
+{%- else -%}
+  <div class="cb-empty-state cb-empty-state--small">
+    <p>No videos yet.</p>
+  </div>
 {%- endif -%}
-
-<style>
-  /* ========================================
-     CB Commerce V2 - Videos Styles
-     Matching [username]/page.tsx layout
-  ======================================== */
-
-  .cb-videos {
-    padding: 0;
-  }
-
-  .cb-videos__section {
-    margin-bottom: 32px;
-  }
-
-  .cb-videos__section:last-child {
-    margin-bottom: 0;
-  }
-
-  /* Section Headings - Uppercase like bio page */
-  .cb-videos__heading {
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--cb-text-primary, #fff);
-    text-align: center;
-    margin: 0 0 16px 0;
-  }
-
-  /* ========================================
-     Layout Containers
-  ======================================== */
-
-  /* Landscape videos - full width stack */
-  .cb-videos__grid-landscape {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  /* Portrait videos stack (Shorts, TikTok, Instagram) - 1 column centered */
-  .cb-videos__portrait-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-
-  /* ========================================
-     Video Cards
-  ======================================== */
-
-  .cb-video-card {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #000;
-  }
-
-  .cb-video-card iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
-
-  /* Landscape (YouTube, Vimeo) - 16:9 */
-  .cb-video-card--landscape {
-    width: 100%;
-    aspect-ratio: 16/9;
-  }
-
-  /* ========================================
-     Unified Portrait Video Card
-     Used for: YouTube Shorts, TikTok, Instagram Reels
-  ======================================== */
-  .cb-video-portrait {
-    width: 100%;
-    max-width: 300px;
-    aspect-ratio: 9/16;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #000;
-  }
-
-  .cb-video-portrait iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
-
-  /* TikTok specific - blockquote styling */
-  .cb-video-portrait--tiktok {
-    min-height: 533px; /* Fallback for TikTok */
-  }
-
-  .cb-video-portrait--tiktok blockquote.tiktok-embed {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    border: none !important;
-    max-width: none !important;
-    min-width: 0 !important;
-  }
-
-  /* ========================================
-     Mobile Adjustments
-  ======================================== */
-
-  /* Large mobile (430px and below) */
-  @media (max-width: 430px) {
-    .cb-videos__heading {
-      font-size: 12px;
-    }
-
-    .cb-video-portrait {
-      max-width: 280px;
-    }
-
-    .cb-video-portrait--tiktok {
-      min-height: 497px;
-    }
-  }
-
-  /* Medium mobile (380px and below) */
-  @media (max-width: 380px) {
-    .cb-video-portrait {
-      max-width: 260px;
-    }
-
-    .cb-video-portrait--tiktok {
-      min-height: 462px;
-    }
-  }
-
-  /* Small mobile (340px and below) */
-  @media (max-width: 340px) {
-    .cb-video-portrait {
-      max-width: calc(100vw - 40px);
-    }
-
-    .cb-video-portrait--tiktok {
-      min-height: calc((100vw - 40px) * 1.78);
-    }
-  }
-</style>

@@ -2520,6 +2520,81 @@ body.cb-suppress-cart cart-notification {
 }
 
 /* ============================================
+   VIDEOS
+   Format-based layout: Landscape + Portrait
+   ============================================ */
+
+.cb-videos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cb-space-xl);
+}
+
+/* Landscape videos - full width, stacked */
+.cb-videos__landscape {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cb-space-md);
+}
+
+/* Portrait videos - horizontal scroll */
+.cb-videos__portrait {
+  display: flex;
+  gap: var(--cb-space-md);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--cb-space-sm);
+}
+
+.cb-videos__portrait::-webkit-scrollbar {
+  display: none;
+}
+
+/* Base video card */
+.cb-video {
+  position: relative;
+  border-radius: var(--cb-radius-lg);
+  overflow: hidden;
+  background: var(--cb-text-dark);
+  flex-shrink: 0;
+}
+
+.cb-video iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Landscape - 16:9 */
+.cb-video--landscape {
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+/* Portrait - 9:16 */
+.cb-video--portrait {
+  width: 200px;
+  aspect-ratio: 9/16;
+  scroll-snap-align: start;
+}
+
+/* TikTok blockquote overrides */
+.cb-video--tiktok {
+  min-height: 355px;
+}
+
+.cb-video--tiktok blockquote.tiktok-embed {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+/* ============================================
    EMPTY STATE
    ============================================ */
 
