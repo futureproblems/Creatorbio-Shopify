@@ -2568,7 +2568,7 @@ body.cb-suppress-cart cart-notification {
   border: none;
 }
 
-/* Portrait videos - Beacons style */
+/* Portrait videos - YouTube Shorts uses aspect ratio */
 .cb-video--portrait {
   width: 100%;
   max-width: 325px;
@@ -2576,7 +2576,6 @@ body.cb-suppress-cart cart-notification {
   overflow: hidden;
 }
 
-/* YouTube Shorts - clean embed */
 .cb-video--portrait iframe {
   position: absolute;
   top: 0;
@@ -2586,29 +2585,46 @@ body.cb-suppress-cart cart-notification {
   border: none;
 }
 
-/* TikTok - crop the bloated UI */
+/* TikTok - Fixed dimensions like bio page (325x575px) */
 .cb-video--tiktok {
-  /* Override padding to account for cropping */
-  padding-top: 155%; /* Slightly shorter to crop bottom UI */
+  padding-top: 0; /* Override aspect ratio */
+  width: 325px !important;
+  max-width: 325px;
+  height: 575px !important;
+  min-height: 575px;
+  border-radius: var(--cb-radius-xl);
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.cb-video--tiktok blockquote.tiktok-embed {
+.cb-video--tiktok .cb-tiktok-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden !important;
+  background: #000;
+  position: relative;
+}
+
+.cb-video--tiktok .tiktok-embed {
   margin: 0 !important;
   padding: 0 !important;
-  max-width: none !important;
-  min-width: 0 !important;
-  position: absolute;
-  top: -80px; /* Crop top header */
-  left: 0;
   width: 100% !important;
-  height: calc(100% + 200px) !important; /* Extend to crop both ends */
+  height: 100% !important;
+  border: none !important;
+  position: relative !important;
+  top: -1px !important;
 }
 
 .cb-video--tiktok iframe {
   width: 100% !important;
   height: 100% !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
 }
 
 /* ============================================
