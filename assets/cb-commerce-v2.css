@@ -2537,78 +2537,78 @@ body.cb-suppress-cart cart-notification {
   gap: var(--cb-space-md);
 }
 
-/* Portrait videos - horizontal scroll */
+/* Portrait videos - stacked and centered like Beacons */
 .cb-videos__portrait {
   display: flex;
-  gap: var(--cb-space-md);
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: var(--cb-space-sm);
-}
-
-.cb-videos__portrait::-webkit-scrollbar {
-  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--cb-space-xl);
 }
 
 /* Base video card */
 .cb-video {
   position: relative;
-  border-radius: var(--cb-radius-lg);
+  border-radius: var(--cb-radius-xl);
   overflow: hidden;
-  background: var(--cb-text-dark);
-  flex-shrink: 0;
-}
-
-.cb-video iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
+  background: #000;
 }
 
 /* Landscape - 16:9 */
 .cb-video--landscape {
   width: 100%;
-  aspect-ratio: 16/9;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
 }
 
-/* Portrait videos - 9:16 container that clips content */
+.cb-video--landscape iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Portrait videos - Beacons style */
 .cb-video--portrait {
-  width: 280px;
-  aspect-ratio: 9/16;
-  scroll-snap-align: start;
+  width: 100%;
+  max-width: 325px;
+  padding-top: 177.78%; /* 9:16 aspect ratio */
   overflow: hidden;
-  position: relative;
-  background: #000;
 }
 
-/* YouTube Shorts iframe - fits container */
+/* YouTube Shorts - clean embed */
 .cb-video--portrait iframe {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  border: none;
 }
 
-/* TikTok - position to crop out extra UI */
+/* TikTok - crop the bloated UI */
+.cb-video--tiktok {
+  /* Override padding to account for cropping */
+  padding-top: 155%; /* Slightly shorter to crop bottom UI */
+}
+
 .cb-video--tiktok blockquote.tiktok-embed {
   margin: 0 !important;
   padding: 0 !important;
   max-width: none !important;
   min-width: 0 !important;
   position: absolute;
-  top: -70px;
+  top: -80px; /* Crop top header */
   left: 0;
   width: 100% !important;
-  height: calc(100% + 140px) !important;
+  height: calc(100% + 200px) !important; /* Extend to crop both ends */
 }
 
 .cb-video--tiktok iframe {
   width: 100% !important;
   height: 100% !important;
   border: none !important;
+  border-radius: 0 !important;
 }
 
 /* ============================================
