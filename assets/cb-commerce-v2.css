@@ -2580,19 +2580,38 @@ body.cb-suppress-cart cart-notification {
   scroll-snap-align: start;
 }
 
-/* TikTok - their embeds need more space */
-.cb-video--tiktok {
-  width: 325px;
-  height: 580px;
+/* TikTok link card - links out instead of embedding */
+.cb-video--tiktok-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cb-space-md);
+  background: linear-gradient(135deg, #25F4EE 0%, #FE2C55 50%, #000 100%);
+  text-decoration: none;
+  transition: transform var(--cb-duration-fast) var(--cb-ease),
+              opacity var(--cb-duration-fast) var(--cb-ease);
 }
 
-.cb-video--tiktok blockquote.tiktok-embed {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  min-width: 0 !important;
+.cb-video--tiktok-link:hover {
+  transform: scale(1.02);
+}
+
+.cb-video--tiktok-link:active {
+  opacity: 0.9;
+}
+
+.cb-video__tiktok-icon {
+  color: #fff;
+}
+
+.cb-video__tiktok-label {
+  font-family: var(--cb-font-body);
+  font-size: var(--cb-text-sm);
+  font-weight: var(--cb-weight-semibold);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* ============================================
