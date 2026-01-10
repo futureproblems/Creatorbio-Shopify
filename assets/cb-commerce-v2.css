@@ -2468,7 +2468,7 @@ body.cb-suppress-cart cart-notification {
 .cb-links-list {
   display: flex;
   flex-direction: column;
-  gap: var(--cb-space-sm);
+  gap: var(--cb-space-xs);
 }
 
 .cb-link-card {
@@ -2477,21 +2477,15 @@ body.cb-suppress-cart cart-notification {
   justify-content: space-between;
   gap: var(--cb-space-md);
   padding: var(--cb-space-md) var(--cb-space-lg);
-  min-height: 56px;
-  background: var(--cb-bg-elevated);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: transparent;
   border-radius: var(--cb-radius-md);
   text-decoration: none;
-  border: 1px solid var(--cb-border-default);
-  transition: all var(--cb-duration-fast) var(--cb-ease);
+  transition: background var(--cb-duration-fast) var(--cb-ease);
   -webkit-tap-highlight-color: transparent;
 }
 
 .cb-link-card:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,0.9);
-  box-shadow: var(--cb-shadow-md);
+  background: var(--cb-bg-elevated);
 }
 
 .cb-link-card:focus-visible {
@@ -2500,47 +2494,29 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-link-card:active {
-  transform: scale(0.98);
-}
-
-.cb-link-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
+  opacity: 0.7;
 }
 
 .cb-link-card__title {
+  flex: 1;
+  min-width: 0;
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-base);
   font-weight: var(--cb-weight-medium);
   color: var(--cb-text-primary);
-  letter-spacing: var(--cb-tracking-normal);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.cb-link-card__subtitle {
-  font-family: var(--cb-font-body);
-  font-size: var(--cb-text-sm);
-  font-weight: var(--cb-weight-normal);
-  color: var(--cb-text-muted);
-}
-
 .cb-link-card__arrow {
   color: var(--cb-text-muted);
-  transition: transform var(--cb-duration-fast) var(--cb-ease),
-              color var(--cb-duration-fast) var(--cb-ease);
+  transition: transform var(--cb-duration-fast) var(--cb-ease);
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
 }
 
 .cb-link-card:hover .cb-link-card__arrow {
   transform: translate(2px, -2px);
-  color: var(--cb-text-tertiary);
 }
 
 /* ============================================
