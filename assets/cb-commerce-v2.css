@@ -2585,15 +2585,15 @@ body.cb-suppress-cart cart-notification {
   border: none;
 }
 
-/* TikTok - Fixed dimensions like bio page (325x575px) */
+/* TikTok - Fixed dimensions at 75% scale (244x431px) */
 .cb-video--tiktok {
   padding-top: 0; /* Override aspect ratio */
-  width: 325px !important;
-  max-width: 325px;
-  height: 575px !important;
-  min-height: 575px;
+  width: 244px !important;
+  max-width: 244px;
+  height: 431px !important;
+  min-height: 431px;
   border-radius: var(--cb-radius-xl);
-  padding: 8px;
+  padding: 6px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
