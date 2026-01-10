@@ -2572,7 +2572,7 @@ body.cb-suppress-cart cart-notification {
 .cb-video--portrait {
   width: 100%;
   max-width: 325px;
-  padding-top: 177.78%; /* 9:16 aspect ratio */
+  padding-top: 176%; /* 9:16 aspect ratio */
   overflow: hidden;
 }
 
