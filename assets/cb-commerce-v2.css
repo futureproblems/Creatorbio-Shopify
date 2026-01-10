@@ -2575,12 +2575,31 @@ body.cb-suppress-cart cart-notification {
 
 /* Portrait videos - 9:16 container that clips content */
 .cb-video--portrait {
-  width: 280px;
+  width: min(280px, 70vw);
   aspect-ratio: 9/16;
   scroll-snap-align: start;
   overflow: hidden;
   position: relative;
   background: #000;
+}
+
+/* Responsive portrait videos */
+@media (max-width: 380px) {
+  .cb-video--portrait {
+    width: min(240px, 65vw);
+  }
+}
+
+@media (min-width: 500px) {
+  .cb-video--portrait {
+    width: 300px;
+  }
+}
+
+@media (min-width: 768px) {
+  .cb-video--portrait {
+    width: 320px;
+  }
 }
 
 /* YouTube Shorts iframe - fits container */
