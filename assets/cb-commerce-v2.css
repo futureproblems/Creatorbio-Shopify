@@ -2575,8 +2575,8 @@ body.cb-suppress-cart cart-notification {
 
 /* Portrait videos - all same size to match TikTok */
 .cb-video--portrait {
-  width: 325px;
-  height: 580px;
+  width: 360px;
+  height: 640px;
   scroll-snap-align: start;
 }
 
