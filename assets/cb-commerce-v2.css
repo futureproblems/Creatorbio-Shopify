@@ -3320,7 +3320,7 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-music-player__item--spotify .cb-music-player__iframe {
-  min-height: 352px;
+  min-height: 152px;
 }
 
 .cb-music-player__item--apple .cb-music-player__iframe {
