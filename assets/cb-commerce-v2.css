@@ -2537,23 +2537,32 @@ body.cb-suppress-cart cart-notification {
   gap: var(--cb-space-md);
 }
 
-/* Portrait videos - stacked and centered like Beacons */
+/* Portrait videos - horizontal scroll */
 .cb-videos__portrait {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--cb-space-lg);
+  gap: var(--cb-space-md);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--cb-space-sm);
+}
+
+.cb-videos__portrait::-webkit-scrollbar {
+  display: none;
 }
 
 /* Base video card */
 .cb-video {
   position: relative;
-  border-radius: var(--cb-radius-xl);
+  border-radius: var(--cb-radius-lg);
   overflow: hidden;
-  background: #000;
+  background: var(--cb-text-dark);
+  flex-shrink: 0;
 }
 
 .cb-video iframe {
+  width: 100%;
+  height: 100%;
   border: none;
   display: block;
 }
@@ -2564,31 +2573,42 @@ body.cb-suppress-cart cart-notification {
   aspect-ratio: 16/9;
 }
 
-.cb-video--landscape iframe {
+/* Portrait videos - 9:16 container that clips content */
+.cb-video--portrait {
+  width: 280px;
+  aspect-ratio: 9/16;
+  scroll-snap-align: start;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+
+/* YouTube Shorts iframe - fits container */
+.cb-video--portrait iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 }
 
-/* Portrait videos - natural size, centered */
-.cb-video--portrait {
-  width: 100%;
-  max-width: 340px;
-}
-
-/* YouTube Shorts */
-.cb-video--portrait iframe {
-  width: 100%;
-  height: 600px;
-}
-
-/* TikTok - let it be natural size */
-.cb-video--tiktok {
-  background: transparent;
-}
-
+/* TikTok - position to crop out extra UI */
 .cb-video--tiktok blockquote.tiktok-embed {
   margin: 0 !important;
-  max-width: 100% !important;
+  padding: 0 !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  position: absolute;
+  top: -70px;
+  left: 0;
+  width: 100% !important;
+  height: calc(100% + 140px) !important;
+}
+
+.cb-video--tiktok iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
 }
 
 /* ============================================
