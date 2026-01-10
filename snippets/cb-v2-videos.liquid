@@ -117,7 +117,7 @@
               {%- assign video_id = video_url | split: '/video/' | last | split: '?' | first -%}
             {%- endif -%}
             {%- if video_id != blank -%}
-              <div class="cb-video cb-video--portrait cb-video--tiktok" data-video-id="{{ video_id }}">
+              <div class="cb-video-wrapper-tiktok" data-video-id="{{ video_id }}">
                 <div class="cb-tiktok-inner">
                   <blockquote
                     class="tiktok-embed"
@@ -139,24 +139,14 @@
         <script>
           (function() {
             function styleTikTokEmbeds() {
-              document.querySelectorAll('.cb-video--tiktok').forEach(function(container) {
-                var inner = container.querySelector('.cb-tiktok-inner');
-                if (!inner) return;
-
-                // Style the inner wrapper
-                inner.style.cssText = 'position:relative;width:75%;height:100%;margin:0 auto;';
-
-                // Find TikTok's injected container (first div child or the embed itself)
-                var tiktokContainer = inner.querySelector('div') || inner.firstElementChild;
-                if (tiktokContainer && tiktokContainer.tagName !== 'BLOCKQUOTE') {
-                  tiktokContainer.style.cssText = 'position:absolute;top:0;left:46px;right:-50px;bottom:0;';
-                }
-
-                // Style the iframe
+              document.querySelectorAll('.cb-video-wrapper-tiktok').forEach(function(container) {
                 var iframe = container.querySelector('iframe');
-                if (iframe) {
-                  iframe.style.cssText = 'width:100%;height:100%;border:none;';
-                  iframe.setAttribute('scrolling', 'no');
+                if (iframe && !iframe.dataset.styled) {
+                  iframe.style.width = '100%';
+                  iframe.style.height = '100%';
+                  iframe.style.border = 'none';
+                  iframe.style.borderRadius = '12px';
+                  iframe.dataset.styled = 'true';
                 }
               });
             }
