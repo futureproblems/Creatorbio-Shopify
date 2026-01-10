@@ -2573,16 +2573,17 @@ body.cb-suppress-cart cart-notification {
   aspect-ratio: 16/9;
 }
 
-/* Portrait - 9:16 */
+/* Portrait videos - fixed height, natural width */
 .cb-video--portrait {
-  width: 200px;
-  aspect-ratio: 9/16;
+  width: 270px;
+  height: 480px;
   scroll-snap-align: start;
 }
 
-/* TikTok blockquote overrides */
+/* TikTok - their embeds need more space */
 .cb-video--tiktok {
-  min-height: 355px;
+  width: 325px;
+  height: 580px;
 }
 
 .cb-video--tiktok blockquote.tiktok-embed {
