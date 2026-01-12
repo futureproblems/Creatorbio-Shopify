@@ -2705,12 +2705,12 @@ body.cb-suppress-cart cart-notification {
 }
 
 /* ============================================
-   SECTION NAV PILL
+   SECTION NAV TAB
    ============================================ */
 
 .cb-section-nav {
   position: fixed;
-  right: max(12px, calc(50vw - 227px));
+  right: max(0px, calc(50vw - 215px));
   top: 50%;
   transform: translateY(-50%);
   z-index: 9999;
@@ -2725,88 +2725,102 @@ body.cb-suppress-cart cart-notification {
   visibility: visible;
 }
 
-/* The pill button showing current section */
-.cb-section-nav__pill {
+/* Small tab trigger - always visible */
+.cb-section-nav__tab {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  width: 28px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  color: #fff;
-  font-family: var(--cb-font-body), -apple-system, sans-serif;
-  font-size: 12px;
-  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
 }
 
-.cb-section-nav__pill:hover {
-  background: rgba(0, 0, 0, 0.75);
-  transform: scale(1.02);
+.cb-section-nav__tab:hover {
+  background: rgba(0, 0, 0, 0.65);
+  width: 32px;
 }
 
-.cb-section-nav__label {
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.cb-section-nav__tab-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
 }
 
-.cb-section-nav__icon {
-  transition: transform 0.3s ease;
-  opacity: 0.7;
+.cb-section-nav__tab-icon span {
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  transition: all 0.2s ease;
 }
 
-/* Rotate icon when expanded */
-.cb-section-nav.expanded .cb-section-nav__icon {
-  transform: rotate(180deg);
+/* Animate dots when expanded */
+.cb-section-nav.expanded .cb-section-nav__tab-icon span:nth-child(1) {
+  transform: translateY(4px);
+  opacity: 0;
+}
+.cb-section-nav.expanded .cb-section-nav__tab-icon span:nth-child(3) {
+  transform: translateY(-4px);
+  opacity: 0;
+}
+
+/* Hidden pill - only shows current section in menu header */
+.cb-section-nav__pill {
+  display: none;
 }
 
 /* Dropdown menu */
 .cb-section-nav__menu {
   position: absolute;
-  bottom: calc(100% + 8px);
-  right: 0;
+  bottom: 50%;
+  right: calc(100% + 8px);
+  transform: translateY(50%);
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 8px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   /* Hidden by default */
   opacity: 0;
   visibility: hidden;
-  transform: translateY(8px);
+  transform: translateY(50%) translateX(8px);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  min-width: 120px;
+  min-width: 110px;
 }
 
 .cb-section-nav.expanded .cb-section-nav__menu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateY(50%) translateX(0);
 }
 
 .cb-section-nav__item {
   padding: 10px 14px;
   background: transparent;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
-  font-family: var(--cb-font-body), -apple-system, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13px;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .cb-section-nav__item:hover {
@@ -2822,7 +2836,7 @@ body.cb-suppress-cart cart-notification {
 /* Mobile positioning */
 @media (max-width: 480px) {
   .cb-section-nav {
-    right: 12px;
+    right: 0;
   }
 }
 

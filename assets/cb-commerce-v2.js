@@ -1622,8 +1622,7 @@
         document.body.appendChild(sectionNav);
       }
 
-      const pill = sectionNav ? sectionNav.querySelector('.cb-section-nav__pill') : null;
-      const pillLabel = sectionNav ? sectionNav.querySelector('.cb-section-nav__label') : null;
+      const tab = sectionNav ? sectionNav.querySelector('.cb-section-nav__tab') : null;
       const menuItems = sectionNav ? sectionNav.querySelectorAll('.cb-section-nav__item') : [];
 
       // Get all sections by ID directly (more reliable)
@@ -1655,12 +1654,12 @@
         });
       }
 
-      // Toggle menu on pill click
-      if (pill) {
-        pill.addEventListener('click', (e) => {
+      // Toggle menu on tab click
+      if (tab) {
+        tab.addEventListener('click', (e) => {
           e.stopPropagation();
           const isExpanded = sectionNav.classList.toggle('expanded');
-          pill.setAttribute('aria-expanded', isExpanded);
+          tab.setAttribute('aria-expanded', isExpanded);
         });
       }
 
@@ -1668,7 +1667,7 @@
       document.addEventListener('click', (e) => {
         if (sectionNav && !sectionNav.contains(e.target)) {
           sectionNav.classList.remove('expanded');
-          if (pill) pill.setAttribute('aria-expanded', 'false');
+          if (tab) tab.setAttribute('aria-expanded', 'false');
         }
       });
 
@@ -1682,7 +1681,7 @@
           }
           // Close menu after selection
           sectionNav.classList.remove('expanded');
-          if (pill) pill.setAttribute('aria-expanded', 'false');
+          if (tab) tab.setAttribute('aria-expanded', 'false');
         });
       });
 
@@ -1701,7 +1700,6 @@
       const updateActiveSection = () => {
         const viewportMiddle = window.innerHeight / 3;
         let activeId = 'shop';
-        let activeLabel = 'Shop';
 
         // Find which section is in view
         for (let i = sections.length - 1; i >= 0; i--) {
@@ -1714,24 +1712,16 @@
           }
         }
 
-        // Update menu items and get label
+        // Update menu items
         menuItems.forEach(item => {
           const isActive = item.dataset.scrollTo === activeId;
           item.classList.toggle('active', isActive);
-          if (isActive) {
-            activeLabel = item.dataset.label || item.textContent;
-          }
         });
 
-        // Update pill label
-        if (pillLabel) {
-          pillLabel.textContent = activeLabel;
-        }
-
         // Update anchor tabs
-        anchorTabs.forEach(tab => {
-          const isActive = tab.dataset.anchor === activeId;
-          tab.classList.toggle('active', isActive);
+        anchorTabs.forEach(anchorTab => {
+          const isActive = anchorTab.dataset.anchor === activeId;
+          anchorTab.classList.toggle('active', isActive);
         });
       };
 
