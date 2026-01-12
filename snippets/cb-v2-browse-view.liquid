@@ -20,6 +20,43 @@
 
 <div class="cb-view cb-view--browse" data-view-content="browse">
 
+  {%- comment -%} ========== ANCHOR TABS ========== {%- endcomment -%}
+  {%- comment -%} Check which sections have content for tabs {%- endcomment -%}
+  {%- assign tab_has_socials = false -%}
+  {%- if social_stats != blank or social_proof_cards != blank or instagram_url != blank or tiktok_url != blank or youtube_url != blank or twitter_url != blank -%}
+    {%- assign tab_has_socials = true -%}
+  {%- endif -%}
+  {%- assign tab_has_links = false -%}
+  {%- if links_json != blank -%}
+    {%- assign tab_links_check = links_json | parse_json -%}
+    {%- if tab_links_check.size > 0 -%}{%- assign tab_has_links = true -%}{%- endif -%}
+  {%- endif -%}
+  {%- assign tab_has_videos = false -%}
+  {%- if videos_json != blank -%}
+    {%- assign tab_videos_check = videos_json | parse_json -%}
+    {%- if tab_videos_check.size > 0 -%}{%- assign tab_has_videos = true -%}{%- endif -%}
+  {%- endif -%}
+  {%- assign tab_has_music = false -%}
+  {%- if music_items != blank and music_items.size > 0 -%}
+    {%- assign tab_has_music = true -%}
+  {%- endif -%}
+
+  <div class="cb-anchor-tabs">
+    <button class="cb-anchor-tab active" data-anchor="shop">Shop</button>
+    {%- if tab_has_socials -%}
+      <button class="cb-anchor-tab" data-anchor="section-socials">Socials</button>
+    {%- endif -%}
+    {%- if tab_has_links -%}
+      <button class="cb-anchor-tab" data-anchor="section-links">Links</button>
+    {%- endif -%}
+    {%- if tab_has_videos -%}
+      <button class="cb-anchor-tab" data-anchor="section-videos">Videos</button>
+    {%- endif -%}
+    {%- if tab_has_music -%}
+      <button class="cb-anchor-tab" data-anchor="section-music">Music</button>
+    {%- endif -%}
+  </div>
+
   {%- comment -%} ========== CONTAINED SHOP SECTION ========== {%- endcomment -%}
   <div class="cb-shop" id="shop" data-shop-view="grid" data-section="shop">
     {%- comment -%} Dynamic Header {%- endcomment -%}

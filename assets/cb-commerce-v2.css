@@ -2654,6 +2654,47 @@ body.cb-suppress-cart cart-notification {
 }
 
 /* ============================================
+   ANCHOR TABS (Top Navigation)
+   ============================================ */
+
+.cb-anchor-tabs {
+  display: flex;
+  gap: 8px;
+  padding: var(--cb-space-md) 0;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.cb-anchor-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.cb-anchor-tab {
+  padding: 10px 18px;
+  border-radius: 100px;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--cb-text-medium);
+  font-family: var(--cb-font-body);
+  font-size: var(--cb-text-sm);
+  font-weight: var(--cb-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.cb-anchor-tab:hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--cb-text-dark);
+}
+
+.cb-anchor-tab.active {
+  background: var(--cb-text-dark);
+  color: #fff;
+}
+
+/* ============================================
    FLOATING DOT NAVIGATION
    ============================================ */
 

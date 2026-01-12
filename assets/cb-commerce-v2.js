@@ -1610,17 +1610,16 @@
     }
 
     // ============================================
-    // FLOATING DOT NAVIGATION
+    // ANCHOR TABS & FLOATING DOT NAVIGATION
     // ============================================
 
     initDotNav() {
       const dotNav = document.querySelector('.cb-dot-nav');
-      if (!dotNav) return;
-
-      const dots = dotNav.querySelectorAll('.cb-dot-nav__dot');
+      const anchorTabs = document.querySelectorAll('.cb-anchor-tab');
+      const dots = dotNav ? dotNav.querySelectorAll('.cb-dot-nav__dot') : [];
       const sections = document.querySelectorAll('[data-section]');
 
-      // Click to scroll
+      // Click to scroll - Dots
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
           const targetId = dot.dataset.scrollTo;
@@ -1631,7 +1630,18 @@
         });
       });
 
-      // Scroll spy - highlight active section
+      // Click to scroll - Anchor Tabs
+      anchorTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetId = tab.dataset.anchor;
+          const target = document.getElementById(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Scroll spy - highlight active section in both dots and tabs
       const observerOptions = {
         root: null,
         rootMargin: '-20% 0px -60% 0px',
@@ -1642,9 +1652,17 @@
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const sectionId = entry.target.id;
+
+            // Update dots
             dots.forEach(dot => {
               const isActive = dot.dataset.scrollTo === sectionId;
               dot.classList.toggle('active', isActive);
+            });
+
+            // Update anchor tabs
+            anchorTabs.forEach(tab => {
+              const isActive = tab.dataset.anchor === sectionId;
+              tab.classList.toggle('active', isActive);
             });
           }
         });
