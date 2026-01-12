@@ -1619,6 +1619,28 @@
       const dots = dotNav ? dotNav.querySelectorAll('.cb-dot-nav__dot') : [];
       const sections = document.querySelectorAll('[data-section]');
 
+      // Show/hide dot nav on scroll
+      if (dotNav) {
+        const showThreshold = 300; // pixels to scroll before showing
+        let ticking = false;
+
+        const updateDotNavVisibility = () => {
+          if (window.scrollY > showThreshold) {
+            dotNav.classList.add('visible');
+          } else {
+            dotNav.classList.remove('visible');
+          }
+          ticking = false;
+        };
+
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            requestAnimationFrame(updateDotNavVisibility);
+            ticking = true;
+          }
+        });
+      }
+
       // Click to scroll - Dots
       dots.forEach(dot => {
         dot.addEventListener('click', () => {
@@ -1644,7 +1666,7 @@
       // Scroll spy - highlight active section in both dots and tabs
       const observerOptions = {
         root: null,
-        rootMargin: '-20% 0px -60% 0px',
+        rootMargin: '-10% 0px -70% 0px',
         threshold: 0
       };
 
