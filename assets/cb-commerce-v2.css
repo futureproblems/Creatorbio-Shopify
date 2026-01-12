@@ -2527,14 +2527,14 @@ body.cb-suppress-cart cart-notification {
 .cb-videos {
   display: flex;
   flex-direction: column;
-  gap: var(--cb-space-lg); /* 16px between landscape and portrait sections */
+  gap: var(--cb-space-2xl); /* 24px between landscape and portrait sections */
 }
 
 /* Landscape videos - full width, stacked */
 .cb-videos__landscape {
   display: flex;
   flex-direction: column;
-  gap: var(--cb-space-lg); /* 16px between each video */
+  gap: var(--cb-space-2xl); /* 24px between each video */
 }
 
 /* Portrait videos - stacked and centered like Beacons */
@@ -2542,7 +2542,7 @@ body.cb-suppress-cart cart-notification {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--cb-space-lg); /* 16px between each video */
+  gap: var(--cb-space-2xl); /* 24px between each video */
 }
 
 /* Base video card */
