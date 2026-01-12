@@ -3,7 +3,8 @@
   Full-height banner with creator info overlay
 
   Required variables:
-  - banner_image_url: Background image URL
+  - banner_image_url: Background image or video URL
+  - banner_video_url: Optional separate video URL (takes priority)
   - creator_name: Display name
   - creator_tags: Array of badge labels (e.g., ["Creator", "Designer"])
   - bio: Short bio text
@@ -15,15 +16,44 @@
   - name_single_line: Boolean for single line name display
 {%- endcomment -%}
 
+{%- comment -%} Determine if we have a video {%- endcomment -%}
+{%- assign hero_is_video = false -%}
+{%- assign hero_media_url = banner_image_url -%}
+
+{%- if banner_video_url != blank -%}
+  {%- assign hero_is_video = true -%}
+  {%- assign hero_media_url = banner_video_url -%}
+{%- elsif banner_image_url != blank -%}
+  {%- assign url_lower = banner_image_url | downcase -%}
+  {%- if url_lower contains '.mp4' or url_lower contains '.webm' or url_lower contains '.mov' or url_lower contains '.m4v' -%}
+    {%- assign hero_is_video = true -%}
+  {%- endif -%}
+{%- endif -%}
+
 <div class="cb-hero">
-  {%- comment -%} Background Image - &nbsp; prevents div:empty rule from hiding {%- endcomment -%}
-  <div class="cb-hero__bg" style="
-    {%- if banner_image_url != blank -%}
-      background-image: url({{ banner_image_url }});
-    {%- else -%}
-      background: linear-gradient(135deg, #8B7355 0%, #A0826D 20%, #C4A882 40%, #E8D5BE 60%, #D4B896 80%, #6B5344 100%);
-    {%- endif -%}
-  ">&nbsp;</div>
+  {%- comment -%} Background - Video or Image {%- endcomment -%}
+  {%- if hero_is_video and hero_media_url != blank -%}
+    <div class="cb-hero__bg cb-hero__bg--video">
+      <video
+        class="cb-hero__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      >
+        <source src="{{ hero_media_url }}" type="video/mp4">
+      </video>
+    </div>
+  {%- else -%}
+    <div class="cb-hero__bg" style="
+      {%- if banner_image_url != blank -%}
+        background-image: url({{ banner_image_url }});
+      {%- else -%}
+        background: linear-gradient(135deg, #8B7355 0%, #A0826D 20%, #C4A882 40%, #E8D5BE 60%, #D4B896 80%, #6B5344 100%);
+      {%- endif -%}
+    ">&nbsp;</div>
+  {%- endif -%}
   <div class="cb-hero__overlay">&nbsp;</div>
   <div class="cb-hero__fade">&nbsp;</div>
 

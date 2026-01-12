@@ -12,6 +12,7 @@
 {%- assign avatar_url = page.metafields.creator_bio.avatar_url.value -%}
 {%- assign hide_avatar = page.metafields.creator_bio.hide_avatar.value -%}
 {%- assign banner_image_url = page.metafields.creator_bio.banner_image_url.value -%}
+{%- assign banner_video_url = page.metafields.creator_bio.banner_video_url.value -%}
 {%- assign full_name = page.metafields.creator_bio.full_name.value -%}
 {%- assign username = page.metafields.creator_bio.username.value -%}
 {%- assign user_id = page.metafields.creator_bio.user_id.value -%}
@@ -179,6 +180,7 @@
   {%- comment -%} ========== HERO BANNER ========== {%- endcomment -%}
   {%- render 'cb-v2-hero',
     banner_image_url: banner_image_url,
+    banner_video_url: banner_video_url,
     creator_name: creator_name,
     creator_tags: creator_tags,
     bio: bio,
