@@ -1616,8 +1616,19 @@
     initDotNav() {
       const dotNav = document.querySelector('.cb-dot-nav');
       const anchorTabs = document.querySelectorAll('.cb-anchor-tab');
+
+      // Move dot nav to body to escape any transform containers
+      if (dotNav && dotNav.parentElement !== document.body) {
+        document.body.appendChild(dotNav);
+      }
+
       const dots = dotNav ? dotNav.querySelectorAll('.cb-dot-nav__dot') : [];
-      const sections = document.querySelectorAll('[data-section]');
+
+      // Get all sections by ID directly (more reliable)
+      const sectionIds = ['shop', 'section-socials', 'section-links', 'section-videos', 'section-music'];
+      const sections = sectionIds
+        .map(id => document.getElementById(id))
+        .filter(el => el !== null);
 
       // Show/hide dot nav on scroll
       if (dotNav) {
@@ -1665,25 +1676,32 @@
 
       // Scroll spy - highlight active section in both dots and tabs
       const updateActiveSection = () => {
-        const scrollPos = window.scrollY + 150; // offset for header
+        // Use getBoundingClientRect for accurate position relative to viewport
+        const viewportMiddle = window.innerHeight / 3; // Check upper third of viewport
         let activeId = 'shop'; // default to shop
 
-        sections.forEach(section => {
-          const top = section.offsetTop;
-          const height = section.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
+        // Find which section is in view (from bottom to top to get the correct one)
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const section = sections[i];
+          const rect = section.getBoundingClientRect();
+
+          // If the top of the section is above the viewport middle, it's the active section
+          if (rect.top <= viewportMiddle) {
             activeId = section.id;
+            break;
           }
-        });
+        }
 
         // Update dots
         dots.forEach(dot => {
-          dot.classList.toggle('active', dot.dataset.scrollTo === activeId);
+          const isActive = dot.dataset.scrollTo === activeId;
+          dot.classList.toggle('active', isActive);
         });
 
         // Update anchor tabs
         anchorTabs.forEach(tab => {
-          tab.classList.toggle('active', tab.dataset.anchor === activeId);
+          const isActive = tab.dataset.anchor === activeId;
+          tab.classList.toggle('active', isActive);
         });
       };
 

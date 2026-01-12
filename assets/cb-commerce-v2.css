@@ -2660,10 +2660,19 @@ body.cb-suppress-cart cart-notification {
 .cb-anchor-tabs {
   display: flex;
   gap: 8px;
-  padding: var(--cb-space-md) 0;
+  padding: var(--cb-space-md) var(--cb-space-lg);
+  margin: 0 calc(-1 * var(--cb-space-lg));
   overflow-x: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  /* Sticky positioning */
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  /* Background with blur for sticky state */
+  background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .cb-anchor-tabs::-webkit-scrollbar {
@@ -2704,13 +2713,13 @@ body.cb-suppress-cart cart-notification {
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 100;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  /* Always visible for testing */
+  opacity: 1;
+  visibility: visible;
 }
 
 .cb-dot-nav.visible {
@@ -2723,12 +2732,12 @@ body.cb-suppress-cart cart-notification {
   flex-direction: column;
   gap: 12px;
   padding: 12px 8px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .cb-dot-nav__dot {
@@ -2736,7 +2745,7 @@ body.cb-suppress-cart cart-notification {
   height: 10px;
   border-radius: 50%;
   border: none;
-  background: var(--cb-text-muted);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -2744,12 +2753,12 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-dot-nav__dot:hover {
-  background: var(--cb-text-medium);
+  background: rgba(255, 255, 255, 0.7);
   transform: scale(1.3);
 }
 
 .cb-dot-nav__dot.active {
-  background: var(--cb-text-dark);
+  background: #fff;
   transform: scale(1.2);
 }
 
@@ -2758,7 +2767,7 @@ body.cb-suppress-cart cart-notification {
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--cb-text-dark);
+  background: #1A1612;
   color: #fff;
   padding: 6px 12px;
   border-radius: 6px;
@@ -2778,7 +2787,7 @@ body.cb-suppress-cart cart-notification {
   top: 50%;
   transform: translateY(-50%);
   border: 5px solid transparent;
-  border-left-color: var(--cb-text-dark);
+  border-left-color: #1A1612;
 }
 
 .cb-dot-nav__dot:hover .cb-dot-nav__tooltip {

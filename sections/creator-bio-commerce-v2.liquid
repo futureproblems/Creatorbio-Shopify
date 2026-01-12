@@ -255,6 +255,55 @@
 
 </section>
 
+{%- comment -%} ========== FLOATING DOT NAVIGATION (Outside transform container) ========== {%- endcomment -%}
+{%- comment -%} Check which sections have content {%- endcomment -%}
+{%- assign dot_has_socials = false -%}
+{%- if social_stats != blank or instagram_url != blank or tiktok_url != blank or youtube_url != blank or twitter_url != blank -%}
+  {%- assign dot_has_socials = true -%}
+{%- endif -%}
+{%- assign dot_has_links = false -%}
+{%- if links_json != blank -%}
+  {%- assign dot_links_check = links_json | parse_json -%}
+  {%- if dot_links_check.size > 0 -%}{%- assign dot_has_links = true -%}{%- endif -%}
+{%- endif -%}
+{%- assign dot_has_videos = false -%}
+{%- if videos_json != blank -%}
+  {%- assign dot_videos_check = videos_json | parse_json -%}
+  {%- if dot_videos_check.size > 0 -%}{%- assign dot_has_videos = true -%}{%- endif -%}
+{%- endif -%}
+{%- assign dot_has_music = false -%}
+{%- if music_items != blank and music_items.size > 0 -%}
+  {%- assign dot_has_music = true -%}
+{%- endif -%}
+
+<nav class="cb-dot-nav" aria-label="Section navigation">
+  <div class="cb-dot-nav__dots">
+    <button class="cb-dot-nav__dot active" data-scroll-to="shop" aria-label="Shop">
+      <span class="cb-dot-nav__tooltip">Shop</span>
+    </button>
+    {%- if dot_has_socials -%}
+      <button class="cb-dot-nav__dot" data-scroll-to="section-socials" aria-label="Socials">
+        <span class="cb-dot-nav__tooltip">Socials</span>
+      </button>
+    {%- endif -%}
+    {%- if dot_has_links -%}
+      <button class="cb-dot-nav__dot" data-scroll-to="section-links" aria-label="Links">
+        <span class="cb-dot-nav__tooltip">Links</span>
+      </button>
+    {%- endif -%}
+    {%- if dot_has_videos -%}
+      <button class="cb-dot-nav__dot" data-scroll-to="section-videos" aria-label="Videos">
+        <span class="cb-dot-nav__tooltip">Videos</span>
+      </button>
+    {%- endif -%}
+    {%- if dot_has_music -%}
+      <button class="cb-dot-nav__dot" data-scroll-to="section-music" aria-label="Music">
+        <span class="cb-dot-nav__tooltip">Music</span>
+      </button>
+    {%- endif -%}
+  </div>
+</nav>
+
 {%- comment -%} ========================================
   INLINE STYLES (can be moved to external CSS)
 ======================================== {%- endcomment -%}
