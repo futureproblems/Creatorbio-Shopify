@@ -2710,34 +2710,91 @@ body.cb-suppress-cart cart-notification {
 
 .cb-dot-nav {
   position: fixed;
-  right: 12px;
+  /* Position relative to content area (430px centered) */
+  right: calc(50% - 215px - 8px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  /* Always visible for testing */
-  opacity: 1;
-  visibility: visible;
+  align-items: flex-end;
+  /* Hidden by default, show on hover/scroll */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
+/* Show when scrolled past threshold */
 .cb-dot-nav.visible {
   opacity: 1;
   visibility: visible;
 }
 
+/* Small trigger tab - always visible when nav is visible */
+.cb-dot-nav__trigger {
+  width: 24px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px 0 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.cb-dot-nav__trigger::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 -8px 0 rgba(255, 255, 255, 0.6), 0 8px 0 rgba(255, 255, 255, 0.6);
+}
+
+.cb-dot-nav__trigger:hover {
+  background: rgba(0, 0, 0, 0.5);
+  width: 28px;
+}
+
+/* Dots container - hidden by default, shown on hover */
 .cb-dot-nav__dots {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 12px 8px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-right: 8px;
+}
+
+/* Show dots on hover */
+.cb-dot-nav:hover .cb-dot-nav__dots {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Hide trigger when dots are shown */
+.cb-dot-nav:hover .cb-dot-nav__trigger {
+  opacity: 0;
 }
 
 .cb-dot-nav__dot {
@@ -2794,6 +2851,13 @@ body.cb-suppress-cart cart-notification {
   opacity: 1;
   visibility: visible;
   right: 24px;
+}
+
+/* Mobile: position at edge of screen */
+@media (max-width: 480px) {
+  .cb-dot-nav {
+    right: 0;
+  }
 }
 
 /* Section styling for one-page layout */
