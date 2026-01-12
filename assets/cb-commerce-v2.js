@@ -46,6 +46,7 @@
       this.updateCartCount();
       this.initCategoryFilters();
       this.initBottomTabs();
+      this.initDotNav();
       this.initAccordions();
       this.initializeAnalytics();
       this.applyDynamicPricing();
@@ -1606,6 +1607,51 @@
           }
         });
       });
+    }
+
+    // ============================================
+    // FLOATING DOT NAVIGATION
+    // ============================================
+
+    initDotNav() {
+      const dotNav = document.querySelector('.cb-dot-nav');
+      if (!dotNav) return;
+
+      const dots = dotNav.querySelectorAll('.cb-dot-nav__dot');
+      const sections = document.querySelectorAll('[data-section]');
+
+      // Click to scroll
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const targetId = dot.dataset.scrollTo;
+          const target = document.getElementById(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Scroll spy - highlight active section
+      const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0
+      };
+
+      const observerCallback = (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.id;
+            dots.forEach(dot => {
+              const isActive = dot.dataset.scrollTo === sectionId;
+              dot.classList.toggle('active', isActive);
+            });
+          }
+        });
+      };
+
+      const observer = new IntersectionObserver(observerCallback, observerOptions);
+      sections.forEach(section => observer.observe(section));
     }
 
     // ============================================
