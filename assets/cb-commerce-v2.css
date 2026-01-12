@@ -2710,8 +2710,9 @@ body.cb-suppress-cart cart-notification {
 
 .cb-dot-nav {
   position: fixed;
-  /* Position relative to content area (430px centered) */
-  right: calc(50% - 215px - 8px);
+  /* Position at right edge of content area (430px centered) */
+  /* On wide screens: 50vw - 215px = distance from right edge to content edge */
+  right: max(8px, calc(50vw - 223px));
   top: 50%;
   transform: translateY(-50%);
   z-index: 9999;
