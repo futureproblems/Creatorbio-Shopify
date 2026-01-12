@@ -1664,34 +1664,43 @@
       });
 
       // Scroll spy - highlight active section in both dots and tabs
-      const observerOptions = {
-        root: null,
-        rootMargin: '-10% 0px -70% 0px',
-        threshold: 0
-      };
+      const updateActiveSection = () => {
+        const scrollPos = window.scrollY + 150; // offset for header
+        let activeId = 'shop'; // default to shop
 
-      const observerCallback = (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const sectionId = entry.target.id;
-
-            // Update dots
-            dots.forEach(dot => {
-              const isActive = dot.dataset.scrollTo === sectionId;
-              dot.classList.toggle('active', isActive);
-            });
-
-            // Update anchor tabs
-            anchorTabs.forEach(tab => {
-              const isActive = tab.dataset.anchor === sectionId;
-              tab.classList.toggle('active', isActive);
-            });
+        sections.forEach(section => {
+          const top = section.offsetTop;
+          const height = section.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            activeId = section.id;
           }
+        });
+
+        // Update dots
+        dots.forEach(dot => {
+          dot.classList.toggle('active', dot.dataset.scrollTo === activeId);
+        });
+
+        // Update anchor tabs
+        anchorTabs.forEach(tab => {
+          tab.classList.toggle('active', tab.dataset.anchor === activeId);
         });
       };
 
-      const observer = new IntersectionObserver(observerCallback, observerOptions);
-      sections.forEach(section => observer.observe(section));
+      // Throttled scroll handler
+      let scrollTicking = false;
+      window.addEventListener('scroll', () => {
+        if (!scrollTicking) {
+          requestAnimationFrame(() => {
+            updateActiveSection();
+            scrollTicking = false;
+          });
+          scrollTicking = true;
+        }
+      });
+
+      // Initial update
+      updateActiveSection();
     }
 
     // ============================================

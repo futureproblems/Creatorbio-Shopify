@@ -2673,9 +2673,9 @@ body.cb-suppress-cart cart-notification {
 .cb-anchor-tab {
   padding: 10px 18px;
   border-radius: 100px;
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   background: transparent;
-  color: var(--cb-text-medium);
+  color: rgba(255, 255, 255, 0.7);
   font-family: var(--cb-font-body);
   font-size: var(--cb-text-sm);
   font-weight: var(--cb-weight-medium);
@@ -2685,18 +2685,14 @@ body.cb-suppress-cart cart-notification {
 }
 
 .cb-anchor-tab:hover {
-  color: var(--cb-text-dark);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .cb-anchor-tab.active {
-  background: var(--cb-text-dark);
-  color: #fff;
-  border-color: transparent;
-}
-
-/* Non-active tabs get subtle border on dark backgrounds */
-.cb-anchor-tab:not(.active) {
-  border-color: var(--cb-text-muted);
+  background: #fff;
+  color: #000;
+  border-color: #fff;
 }
 
 /* ============================================
