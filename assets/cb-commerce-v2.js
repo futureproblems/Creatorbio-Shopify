@@ -1610,19 +1610,21 @@
     }
 
     // ============================================
-    // ANCHOR TABS & FLOATING DOT NAVIGATION
+    // SECTION NAV PILL & ANCHOR TABS
     // ============================================
 
     initDotNav() {
-      const dotNav = document.querySelector('.cb-dot-nav');
+      const sectionNav = document.querySelector('.cb-section-nav');
       const anchorTabs = document.querySelectorAll('.cb-anchor-tab');
 
-      // Move dot nav to body to escape any transform containers
-      if (dotNav && dotNav.parentElement !== document.body) {
-        document.body.appendChild(dotNav);
+      // Move section nav to body to escape any transform containers
+      if (sectionNav && sectionNav.parentElement !== document.body) {
+        document.body.appendChild(sectionNav);
       }
 
-      const dots = dotNav ? dotNav.querySelectorAll('.cb-dot-nav__dot') : [];
+      const pill = sectionNav ? sectionNav.querySelector('.cb-section-nav__pill') : null;
+      const pillLabel = sectionNav ? sectionNav.querySelector('.cb-section-nav__label') : null;
+      const menuItems = sectionNav ? sectionNav.querySelectorAll('.cb-section-nav__item') : [];
 
       // Get all sections by ID directly (more reliable)
       const sectionIds = ['shop', 'section-socials', 'section-links', 'section-videos', 'section-music'];
@@ -1630,36 +1632,57 @@
         .map(id => document.getElementById(id))
         .filter(el => el !== null);
 
-      // Show/hide dot nav on scroll
-      if (dotNav) {
-        const showThreshold = 300; // pixels to scroll before showing
+      // Show/hide section nav on scroll
+      if (sectionNav) {
+        const showThreshold = 400; // pixels to scroll before showing
         let ticking = false;
 
-        const updateDotNavVisibility = () => {
+        const updateNavVisibility = () => {
           if (window.scrollY > showThreshold) {
-            dotNav.classList.add('visible');
+            sectionNav.classList.add('visible');
           } else {
-            dotNav.classList.remove('visible');
+            sectionNav.classList.remove('visible');
+            sectionNav.classList.remove('expanded'); // Close menu when hidden
           }
           ticking = false;
         };
 
         window.addEventListener('scroll', () => {
           if (!ticking) {
-            requestAnimationFrame(updateDotNavVisibility);
+            requestAnimationFrame(updateNavVisibility);
             ticking = true;
           }
         });
       }
 
-      // Click to scroll - Dots
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          const targetId = dot.dataset.scrollTo;
+      // Toggle menu on pill click
+      if (pill) {
+        pill.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isExpanded = sectionNav.classList.toggle('expanded');
+          pill.setAttribute('aria-expanded', isExpanded);
+        });
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (sectionNav && !sectionNav.contains(e.target)) {
+          sectionNav.classList.remove('expanded');
+          if (pill) pill.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Menu item clicks - scroll to section
+      menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const targetId = item.dataset.scrollTo;
           const target = document.getElementById(targetId);
           if (target) {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
+          // Close menu after selection
+          sectionNav.classList.remove('expanded');
+          if (pill) pill.setAttribute('aria-expanded', 'false');
         });
       });
 
@@ -1674,29 +1697,36 @@
         });
       });
 
-      // Scroll spy - highlight active section in both dots and tabs
+      // Scroll spy - update active section
       const updateActiveSection = () => {
-        // Use getBoundingClientRect for accurate position relative to viewport
-        const viewportMiddle = window.innerHeight / 3; // Check upper third of viewport
-        let activeId = 'shop'; // default to shop
+        const viewportMiddle = window.innerHeight / 3;
+        let activeId = 'shop';
+        let activeLabel = 'Shop';
 
-        // Find which section is in view (from bottom to top to get the correct one)
+        // Find which section is in view
         for (let i = sections.length - 1; i >= 0; i--) {
           const section = sections[i];
           const rect = section.getBoundingClientRect();
 
-          // If the top of the section is above the viewport middle, it's the active section
           if (rect.top <= viewportMiddle) {
             activeId = section.id;
             break;
           }
         }
 
-        // Update dots
-        dots.forEach(dot => {
-          const isActive = dot.dataset.scrollTo === activeId;
-          dot.classList.toggle('active', isActive);
+        // Update menu items and get label
+        menuItems.forEach(item => {
+          const isActive = item.dataset.scrollTo === activeId;
+          item.classList.toggle('active', isActive);
+          if (isActive) {
+            activeLabel = item.dataset.label || item.textContent;
+          }
         });
+
+        // Update pill label
+        if (pillLabel) {
+          pillLabel.textContent = activeLabel;
+        }
 
         // Update anchor tabs
         anchorTabs.forEach(tab => {

@@ -276,31 +276,26 @@
   {%- assign dot_has_music = true -%}
 {%- endif -%}
 
-<nav class="cb-dot-nav" aria-label="Section navigation">
-  <div class="cb-dot-nav__trigger" aria-label="Show navigation"></div>
-  <div class="cb-dot-nav__dots">
-    <button class="cb-dot-nav__dot active" data-scroll-to="shop" aria-label="Shop">
-      <span class="cb-dot-nav__tooltip">Shop</span>
-    </button>
+<nav class="cb-section-nav" aria-label="Section navigation">
+  <button class="cb-section-nav__pill" aria-expanded="false">
+    <span class="cb-section-nav__label">Shop</span>
+    <svg class="cb-section-nav__icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+  <div class="cb-section-nav__menu">
+    <button class="cb-section-nav__item active" data-scroll-to="shop" data-label="Shop">Shop</button>
     {%- if dot_has_socials -%}
-      <button class="cb-dot-nav__dot" data-scroll-to="section-socials" aria-label="Socials">
-        <span class="cb-dot-nav__tooltip">Socials</span>
-      </button>
+      <button class="cb-section-nav__item" data-scroll-to="section-socials" data-label="Socials">Socials</button>
     {%- endif -%}
     {%- if dot_has_links -%}
-      <button class="cb-dot-nav__dot" data-scroll-to="section-links" aria-label="Links">
-        <span class="cb-dot-nav__tooltip">Links</span>
-      </button>
+      <button class="cb-section-nav__item" data-scroll-to="section-links" data-label="Links">Links</button>
     {%- endif -%}
     {%- if dot_has_videos -%}
-      <button class="cb-dot-nav__dot" data-scroll-to="section-videos" aria-label="Videos">
-        <span class="cb-dot-nav__tooltip">Videos</span>
-      </button>
+      <button class="cb-section-nav__item" data-scroll-to="section-videos" data-label="Videos">Videos</button>
     {%- endif -%}
     {%- if dot_has_music -%}
-      <button class="cb-dot-nav__dot" data-scroll-to="section-music" aria-label="Music">
-        <span class="cb-dot-nav__tooltip">Music</span>
-      </button>
+      <button class="cb-section-nav__item" data-scroll-to="section-music" data-label="Music">Music</button>
     {%- endif -%}
   </div>
 </nav>

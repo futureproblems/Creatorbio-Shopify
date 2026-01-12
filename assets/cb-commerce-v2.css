@@ -2705,159 +2705,124 @@ body.cb-suppress-cart cart-notification {
 }
 
 /* ============================================
-   FLOATING DOT NAVIGATION
+   SECTION NAV PILL
    ============================================ */
 
-.cb-dot-nav {
+.cb-section-nav {
   position: fixed;
-  /* Position at right edge of content area (430px centered) */
-  /* On wide screens: 50vw - 215px = distance from right edge to content edge */
-  right: max(8px, calc(50vw - 223px));
+  right: max(12px, calc(50vw - 227px));
   top: 50%;
   transform: translateY(-50%);
   z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  /* Hidden by default, show on hover/scroll */
+  /* Hidden by default */
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* Show when scrolled past threshold */
-.cb-dot-nav.visible {
+.cb-section-nav.visible {
   opacity: 1;
   visibility: visible;
 }
 
-/* Small trigger tab - always visible when nav is visible */
-.cb-dot-nav__trigger {
-  width: 24px;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 12px 0 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-right: none;
+/* The pill button showing current section */
+.cb-section-nav__pill {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.cb-dot-nav__trigger::before {
-  content: '';
-  width: 4px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  box-shadow: 0 -8px 0 rgba(255, 255, 255, 0.6), 0 8px 0 rgba(255, 255, 255, 0.6);
-}
-
-.cb-dot-nav__trigger:hover {
-  background: rgba(0, 0, 0, 0.5);
-  width: 28px;
-}
-
-/* Dots container - hidden by default, shown on hover */
-.cb-dot-nav__dots {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px 8px;
-  background: rgba(0, 0, 0, 0.5);
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-  /* Hidden state */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(10px);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  margin-right: 8px;
-}
-
-/* Show dots on hover */
-.cb-dot-nav:hover .cb-dot-nav__dots {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-}
-
-/* Hide trigger when dots are shown */
-.cb-dot-nav:hover .cb-dot-nav__trigger {
-  opacity: 0;
-}
-
-.cb-dot-nav__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  padding: 0;
-}
-
-.cb-dot-nav__dot:hover {
-  background: rgba(255, 255, 255, 0.7);
-  transform: scale(1.3);
-}
-
-.cb-dot-nav__dot.active {
-  background: #fff;
-  transform: scale(1.2);
-}
-
-.cb-dot-nav__tooltip {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #1A1612;
+  border-radius: 20px;
   color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
+  font-family: var(--cb-font-body), -apple-system, sans-serif;
   font-size: 12px;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
   white-space: nowrap;
+}
+
+.cb-section-nav__pill:hover {
+  background: rgba(0, 0, 0, 0.75);
+  transform: scale(1.02);
+}
+
+.cb-section-nav__label {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cb-section-nav__icon {
+  transition: transform 0.3s ease;
+  opacity: 0.7;
+}
+
+/* Rotate icon when expanded */
+.cb-section-nav.expanded .cb-section-nav__icon {
+  transform: rotate(180deg);
+}
+
+/* Dropdown menu */
+.cb-section-nav__menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  /* Hidden by default */
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s ease;
-  pointer-events: none;
+  transform: translateY(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 120px;
 }
 
-.cb-dot-nav__tooltip::after {
-  content: '';
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-left-color: #1A1612;
-}
-
-.cb-dot-nav__dot:hover .cb-dot-nav__tooltip {
+.cb-section-nav.expanded .cb-section-nav__menu {
   opacity: 1;
   visibility: visible;
-  right: 24px;
+  transform: translateY(0);
 }
 
-/* Mobile: position at edge of screen */
+.cb-section-nav__item {
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--cb-font-body), -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cb-section-nav__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.cb-section-nav__item.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* Mobile positioning */
 @media (max-width: 480px) {
-  .cb-dot-nav {
-    right: 0;
+  .cb-section-nav {
+    right: 12px;
   }
 }
 
