@@ -9,6 +9,7 @@
 {%- assign avatar_url = page.metafields.creator_bio.avatar_url.value -%}
 {%- assign hide_avatar = page.metafields.creator_bio.hide_avatar.value -%}
 {%- assign banner_image_url = page.metafields.creator_bio.banner_image_url.value -%}
+{%- assign banner_video_url = page.metafields.creator_bio.banner_video_url.value -%}
 {%- assign full_name = page.metafields.creator_bio.full_name.value -%}
 {%- assign username = page.metafields.creator_bio.username.value -%}
 {%- assign user_id = page.metafields.creator_bio.user_id.value -%}
@@ -30,6 +31,12 @@
   {%- assign email_url = socials.email -%}
   {%- assign snapchat_url = socials.snapchat -%}
   {%- assign amazon_url = socials.amazon -%}
+{%- endif -%}
+
+{%- comment -%} Social Proof Cards {%- endcomment -%}
+{%- assign social_proof_cards_json = page.metafields.creator_bio.social_proof_cards.value -%}
+{%- if social_proof_cards_json != blank -%}
+  {%- assign social_proof_cards = social_proof_cards_json | parse_json -%}
 {%- endif -%}
 
 {%- assign theme_settings_json = page.metafields.creator_bio.theme_settings.value -%}
@@ -205,8 +212,14 @@
 
     {%- comment -%} Hero Section {%- endcomment -%}
     <div class="cbcom-minimal-hero">
-      {%- comment -%} Blurred organic background {%- endcomment -%}
-      <div class="cbcom-minimal-hero-bg" style="{%- if banner_image_url != blank -%}background-image: url('{{ banner_image_url }}');{%- elsif section.settings.banner_image != blank -%}background-image: url('{{ section.settings.banner_image | image_url: width: 1600 }}');{%- else -%}background: linear-gradient(135deg, #8B7355 0%, #A0826D 20%, #C4A882 40%, #E8D5BE 60%, #D4B896 80%, #6B5344 100%);{%- endif -%}"></div>
+      {%- comment -%} Video or Image background {%- endcomment -%}
+      {%- if banner_video_url != blank -%}
+        <video class="cbcom-minimal-hero-video" autoplay muted loop playsinline>
+          <source src="{{ banner_video_url }}" type="video/mp4">
+        </video>
+      {%- else -%}
+        <div class="cbcom-minimal-hero-bg" style="{%- if banner_image_url != blank -%}background-image: url('{{ banner_image_url }}');{%- elsif section.settings.banner_image != blank -%}background-image: url('{{ section.settings.banner_image | image_url: width: 1600 }}');{%- else -%}background: linear-gradient(135deg, #8B7355 0%, #A0826D 20%, #C4A882 40%, #E8D5BE 60%, #D4B896 80%, #6B5344 100%);{%- endif -%}"></div>
+      {%- endif -%}
       <div class="cbcom-minimal-hero-overlay"></div>
 
       <div class="cbcom-minimal-hero-content">
@@ -616,6 +629,89 @@
             </a>
           {%- endif -%}
         </div>
+
+        {%- comment -%} Social Proof Cards {%- endcomment -%}
+        <!-- DEBUG: social_proof_cards_json = {{ social_proof_cards_json }} -->
+        <!-- DEBUG: social_proof_cards = {{ social_proof_cards }} -->
+        <!-- DEBUG: instagram.imageUrl = {{ social_proof_cards.instagram.imageUrl }} -->
+        {%- if social_proof_cards != blank -%}
+          {%- assign has_proof_cards = false -%}
+          {%- if social_proof_cards.instagram.imageUrl != blank or social_proof_cards.instagram.videoUrl != blank -%}{%- assign has_proof_cards = true -%}{%- endif -%}
+          {%- if social_proof_cards.tiktok.imageUrl != blank or social_proof_cards.tiktok.videoUrl != blank -%}{%- assign has_proof_cards = true -%}{%- endif -%}
+          {%- if social_proof_cards.youtube.imageUrl != blank or social_proof_cards.youtube.videoUrl != blank -%}{%- assign has_proof_cards = true -%}{%- endif -%}
+
+          {%- if has_proof_cards -%}
+            <div class="cbcom-social-proof-cards">
+              {%- comment -%} Instagram & TikTok Grid (9:16 portrait) {%- endcomment -%}
+              {%- if social_proof_cards.instagram.imageUrl != blank or social_proof_cards.instagram.videoUrl != blank or social_proof_cards.tiktok.imageUrl != blank or social_proof_cards.tiktok.videoUrl != blank -%}
+                <div class="cbcom-proof-cards-grid">
+                  {%- comment -%} Instagram Card {%- endcomment -%}
+                  {%- if social_proof_cards.instagram.imageUrl != blank or social_proof_cards.instagram.videoUrl != blank -%}
+                    {%- assign ig_link = social_proof_cards.instagram.profileUrl | default: instagram_url -%}
+                    <a href="{{ ig_link }}" class="cbcom-proof-card cbcom-proof-card--portrait" target="_blank" rel="noopener">
+                      {%- if social_proof_cards.instagram.mediaType == 'video' and social_proof_cards.instagram.videoUrl != blank -%}
+                        <video class="cbcom-proof-card__media" autoplay muted loop playsinline>
+                          <source src="{{ social_proof_cards.instagram.videoUrl }}" type="video/mp4">
+                        </video>
+                      {%- elsif social_proof_cards.instagram.imageUrl != blank -%}
+                        <img class="cbcom-proof-card__media" src="{{ social_proof_cards.instagram.imageUrl }}" alt="Instagram">
+                      {%- endif -%}
+                      <div class="cbcom-proof-card__overlay"></div>
+                      <div class="cbcom-proof-card__icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0z"/>
+                        </svg>
+                      </div>
+                      <div class="cbcom-proof-card__label">FOLLOWERS</div>
+                    </a>
+                  {%- endif -%}
+
+                  {%- comment -%} TikTok Card {%- endcomment -%}
+                  {%- if social_proof_cards.tiktok.imageUrl != blank or social_proof_cards.tiktok.videoUrl != blank -%}
+                    {%- assign tt_link = social_proof_cards.tiktok.profileUrl | default: tiktok_url -%}
+                    <a href="{{ tt_link }}" class="cbcom-proof-card cbcom-proof-card--portrait" target="_blank" rel="noopener">
+                      {%- if social_proof_cards.tiktok.mediaType == 'video' and social_proof_cards.tiktok.videoUrl != blank -%}
+                        <video class="cbcom-proof-card__media" autoplay muted loop playsinline>
+                          <source src="{{ social_proof_cards.tiktok.videoUrl }}" type="video/mp4">
+                        </video>
+                      {%- elsif social_proof_cards.tiktok.imageUrl != blank -%}
+                        <img class="cbcom-proof-card__media" src="{{ social_proof_cards.tiktok.imageUrl }}" alt="TikTok">
+                      {%- endif -%}
+                      <div class="cbcom-proof-card__overlay"></div>
+                      <div class="cbcom-proof-card__icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                      </div>
+                      <div class="cbcom-proof-card__label">FOLLOWERS</div>
+                    </a>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              {%- comment -%} YouTube Card (16:9 landscape, full width) {%- endcomment -%}
+              {%- if social_proof_cards.youtube.imageUrl != blank or social_proof_cards.youtube.videoUrl != blank -%}
+                {%- assign yt_link = social_proof_cards.youtube.channelUrl | default: youtube_url -%}
+                <a href="{{ yt_link }}" class="cbcom-proof-card cbcom-proof-card--landscape" target="_blank" rel="noopener">
+                  {%- if social_proof_cards.youtube.mediaType == 'video' and social_proof_cards.youtube.videoUrl != blank -%}
+                    <video class="cbcom-proof-card__media" autoplay muted loop playsinline>
+                      <source src="{{ social_proof_cards.youtube.videoUrl }}" type="video/mp4">
+                    </video>
+                  {%- elsif social_proof_cards.youtube.imageUrl != blank -%}
+                    <img class="cbcom-proof-card__media" src="{{ social_proof_cards.youtube.imageUrl }}" alt="YouTube">
+                  {%- endif -%}
+                  <div class="cbcom-proof-card__overlay"></div>
+                  <div class="cbcom-proof-card__icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </div>
+                  <div class="cbcom-proof-card__label">SUBSCRIBERS</div>
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
       </div>
         {%- endif -%}
       {%- endif -%}
@@ -1970,6 +2066,15 @@
   transform: scale(1.15);
 }
 
+.cbcom-minimal-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
 .cbcom-minimal-hero-overlay {
   position: absolute;
   inset: 0;
@@ -2792,6 +2897,92 @@
 /* ========== MINIMAL UTILITY CLASSES ========== */
 .cbcom-minimal-hidden {
   display: none !important;
+}
+
+/* ========== SOCIAL PROOF CARDS ========== */
+.cbcom-social-proof-cards {
+  margin-top: 20px;
+}
+
+.cbcom-proof-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cbcom-proof-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #1A1A1A;
+  display: block;
+  text-decoration: none;
+}
+
+.cbcom-proof-card--portrait {
+  aspect-ratio: 9/16;
+}
+
+.cbcom-proof-card--landscape {
+  aspect-ratio: 16/9;
+}
+
+.cbcom-proof-card__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cbcom-proof-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, transparent 40%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.8) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cbcom-proof-card__icon {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  color: #FFFFFF;
+  z-index: 3;
+}
+
+.cbcom-proof-card__label {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  color: rgba(255,255,255,0.7);
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  z-index: 3;
+}
+
+@media (max-width: 480px) {
+  .cbcom-proof-cards-grid {
+    gap: 8px;
+  }
+
+  .cbcom-proof-card {
+    border-radius: 12px;
+  }
+
+  .cbcom-proof-card__icon {
+    bottom: 8px;
+    left: 8px;
+  }
+
+  .cbcom-proof-card__label {
+    bottom: 8px;
+    right: 8px;
+    font-size: 8px;
+  }
 }
 </style>
 
