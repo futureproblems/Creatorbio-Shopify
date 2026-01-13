@@ -10,12 +10,18 @@
   - instagram_url, tiktok_url, youtube_url, twitter_url: Social URLs (fallbacks)
 {%- endcomment -%}
 
-{%- comment -%} Extract video URLs {%- endcomment -%}
+{%- comment -%} Extract video and image URLs {%- endcomment -%}
 {%- assign ig_video_url = social_proof_cards.instagram.videoUrl -%}
+{%- assign ig_image_url = social_proof_cards.instagram.imageUrl -%}
+{%- assign ig_media_type = social_proof_cards.instagram.mediaType | default: 'video' -%}
 {%- assign ig_profile_url = social_proof_cards.instagram.profileUrl | default: instagram_url -%}
 {%- assign tt_video_url = social_proof_cards.tiktok.videoUrl -%}
+{%- assign tt_image_url = social_proof_cards.tiktok.imageUrl -%}
+{%- assign tt_media_type = social_proof_cards.tiktok.mediaType | default: 'video' -%}
 {%- assign tt_profile_url = social_proof_cards.tiktok.profileUrl | default: tiktok_url -%}
 {%- assign yt_video_url = social_proof_cards.youtube.videoUrl -%}
+{%- assign yt_image_url = social_proof_cards.youtube.imageUrl -%}
+{%- assign yt_media_type = social_proof_cards.youtube.mediaType | default: 'video' -%}
 {%- assign yt_channel_url = social_proof_cards.youtube.channelUrl | default: youtube_url -%}
 
 {%- comment -%} Get follower counts {%- endcomment -%}
@@ -25,17 +31,17 @@
 
 {%- comment -%} Check if we have any social content to show {%- endcomment -%}
 {%- assign has_instagram = false -%}
-{%- if ig_video_url != blank or instagram_url != blank or social_stats.instagram != blank -%}
+{%- if ig_video_url != blank or ig_image_url != blank or instagram_url != blank or social_stats.instagram != blank -%}
   {%- assign has_instagram = true -%}
 {%- endif -%}
 
 {%- assign has_tiktok = false -%}
-{%- if tt_video_url != blank or tiktok_url != blank or social_stats.tiktok != blank -%}
+{%- if tt_video_url != blank or tt_image_url != blank or tiktok_url != blank or social_stats.tiktok != blank -%}
   {%- assign has_tiktok = true -%}
 {%- endif -%}
 
 {%- assign has_youtube = false -%}
-{%- if yt_video_url != blank -%}
+{%- if yt_video_url != blank or yt_image_url != blank -%}
   {%- assign has_youtube = true -%}
 {%- endif -%}
 
@@ -58,9 +64,15 @@
              target="_blank"
              rel="noopener noreferrer">
 
-            {%- comment -%} Video Layer {%- endcomment -%}
+            {%- comment -%} Media Layer (Video or Image) {%- endcomment -%}
             <div class="cb-social-card__video">
-              {%- if ig_video_url != blank -%}
+              {%- if ig_media_type == 'image' and ig_image_url != blank -%}
+                <img
+                  src="{{ ig_image_url }}"
+                  alt="Instagram"
+                  class="cb-social-card__image-el"
+                />
+              {%- elsif ig_video_url != blank -%}
                 <video
                   src="{{ ig_video_url }}"
                   autoplay
@@ -107,9 +119,15 @@
              target="_blank"
              rel="noopener noreferrer">
 
-            {%- comment -%} Video Layer {%- endcomment -%}
+            {%- comment -%} Media Layer (Video or Image) {%- endcomment -%}
             <div class="cb-social-card__video">
-              {%- if tt_video_url != blank -%}
+              {%- if tt_media_type == 'image' and tt_image_url != blank -%}
+                <img
+                  src="{{ tt_image_url }}"
+                  alt="TikTok"
+                  class="cb-social-card__image-el"
+                />
+              {%- elsif tt_video_url != blank -%}
                 <video
                   src="{{ tt_video_url }}"
                   autoplay
@@ -155,16 +173,24 @@
          target="_blank"
          rel="noopener noreferrer">
 
-        {%- comment -%} Video Layer {%- endcomment -%}
+        {%- comment -%} Media Layer (Video or Image) {%- endcomment -%}
         <div class="cb-social-card__video">
-          <video
-            src="{{ yt_video_url }}"
-            autoplay
-            loop
-            muted
-            playsinline
-            class="cb-social-card__video-el"
-          ></video>
+          {%- if yt_media_type == 'image' and yt_image_url != blank -%}
+            <img
+              src="{{ yt_image_url }}"
+              alt="YouTube"
+              class="cb-social-card__image-el"
+            />
+          {%- elsif yt_video_url != blank -%}
+            <video
+              src="{{ yt_video_url }}"
+              autoplay
+              loop
+              muted
+              playsinline
+              class="cb-social-card__video-el"
+            ></video>
+          {%- endif -%}
         </div>
 
         {%- comment -%} Gradient Overlay {%- endcomment -%}
@@ -246,6 +272,13 @@
 
   /* Native Video Element */
   .cb-social-card__video-el {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Image Element */
+  .cb-social-card__image-el {
     width: 100%;
     height: 100%;
     object-fit: cover;
