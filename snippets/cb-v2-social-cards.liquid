@@ -170,6 +170,7 @@
     {%- if has_youtube -%}
       <a href="{{ yt_channel_url | default: '#' }}"
          class="cb-social-card cb-social-card--youtube"
+         data-youtube-url="{{ yt_channel_url }}"
          target="_blank"
          rel="noopener noreferrer">
 
@@ -205,7 +206,7 @@
 
         {%- comment -%} Stats {%- endcomment -%}
         <div class="cb-social-card__stats">
-          <span class="cb-social-card__count">{{ yt_subscribers }}</span>
+          <span class="cb-social-card__count" id="yt-subscriber-count">{{ yt_subscribers }}</span>
           <span class="cb-social-card__label">SUBSCRIBERS</span>
         </div>
       </a>
@@ -370,3 +371,41 @@
     }
   }
 </style>
+
+<script>
+  // Fetch YouTube subscriber count on page load
+  (function() {
+    const ytCard = document.querySelector('[data-youtube-url]');
+    if (!ytCard) return;
+
+    const ytUrl = ytCard.getAttribute('data-youtube-url');
+    if (!ytUrl) return;
+
+    const countEl = document.getElementById('yt-subscriber-count');
+    if (!countEl) return;
+
+    // Fetch from edge function
+    fetch('https://dhgygwmivncnsydgzfor.supabase.co/functions/v1/youtube-profile-fetch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channelUrl: ytUrl })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.data.subscribers > 0) {
+        // Format the number
+        const subs = data.data.subscribers;
+        let formatted;
+        if (subs >= 1000000) {
+          formatted = (subs / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        } else if (subs >= 1000) {
+          formatted = (subs / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        } else {
+          formatted = subs.toString();
+        }
+        countEl.textContent = formatted;
+      }
+    })
+    .catch(err => console.error('YouTube fetch error:', err));
+  })();
+</script>
