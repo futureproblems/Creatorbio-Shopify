@@ -51,6 +51,29 @@
       this.initializeAnalytics();
       this.applyDynamicPricing();
       this.initShopSection();
+      this.initLinksCarousel();
+    }
+
+    // Links carousel navigation
+    initLinksCarousel() {
+      const carousel = document.querySelector('.cb-links-carousel');
+      if (!carousel) return;
+
+      const prevBtn = document.querySelector('[data-links-nav="prev"]');
+      const nextBtn = document.querySelector('[data-links-nav="next"]');
+      const scrollAmount = 160;
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+      }
     }
 
     clearSessionData() {

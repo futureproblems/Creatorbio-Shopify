@@ -358,22 +358,31 @@
 
   {%- if has_links -%}
     <section class="cb-section" id="section-links" data-section="links">
-      <div class="cb-section-header">
-        <h3 class="cb-section-title">Links</h3>
+      <div class="cb-section-header cb-links-header">
+        <h3 class="cb-section-title">SHOP HERE</h3>
+        <div class="cb-links-nav">
+          <button class="cb-links-nav-btn" data-links-nav="prev" aria-label="Previous">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button class="cb-links-nav-btn" data-links-nav="next" aria-label="Next">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="cb-section-content">
         {%- assign parsed_links = links_json | parse_json -%}
-        <div class="cb-links-list">
+        <div class="cb-links-carousel">
           {%- for link in parsed_links -%}
             {%- assign link_url = link.url -%}
             {%- unless link_url contains 'http://' or link_url contains 'https://' -%}
               {%- assign link_url = link_url | prepend: 'https://' -%}
             {%- endunless -%}
-            <a href="{{ link_url }}" class="cb-link-card" target="_blank" rel="noopener">
-              <span class="cb-link-card__title">{{ link.title }}</span>
-              <svg class="cb-link-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M7 17L17 7M17 7H7M17 7V17"/>
-              </svg>
+            <a href="{{ link_url }}" class="cb-link-btn {% if forloop.first %}cb-link-btn--active{% endif %}" target="_blank" rel="noopener">
+              <span class="cb-link-btn__title">{{ link.title }}</span>
             </a>
           {%- endfor -%}
         </div>
