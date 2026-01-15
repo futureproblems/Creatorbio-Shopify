@@ -167,7 +167,6 @@
     {%- endif -%}
 
     {%- comment -%} ========== YouTube Card - Full Width Banner (below grid) ========== {%- endcomment -%}
-    <!-- DEBUG: youtube_url={{ youtube_url }}, yt_channel_url={{ yt_channel_url }} -->
     {%- if has_youtube -%}
       {%- assign final_yt_url = yt_channel_url | default: youtube_url -%}
       <a href="{{ final_yt_url | default: '#' }}"
